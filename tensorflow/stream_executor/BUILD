@@ -9,6 +9,7 @@ cc_library(
             "*.cc",
             "lib/*.cc",
             "platform/default/*.cc",
+            "cl/*.cc",
         ],
         exclude = [
             "**/*_test.cc",
@@ -21,6 +22,7 @@ cc_library(
     hdrs = glob([
         "*.h",
         "cuda/*.h",
+        "cl/*.h",
         "lib/*.h",
         "lib/gtl/*.h",
         "platform/**/*.h",

@@ -1,10 +1,12 @@
 cc_binary(
     name = "hugh",
-    srcs = ["hugh.cc", "cl_platform.cc", "cl_platform.h"],
+    srcs = [
+        "hugh.cc",
+        #"../stream_executor/cl_platform.cc",
+        #"../stream_executor/cl_platform.h",
+    ],
     deps = [
-           "//tensorflow/core:core_cpu",
-         #   "//tensorflow/core:core_cpu_internal",
-         "//tensorflow/core:framework",
+        "//tensorflow/core:core_cpu",
+        "//tensorflow/core:framework",
     ]
 )
-
