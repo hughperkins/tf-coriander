@@ -62,6 +62,7 @@ cc_library(
         "thirdparty/lua-5.1.5/src/*.h",
     ]),
     copts = [
+      "-I/usr/include",
       "-Iexternal/EasyCL/thirdparty/lua-5.1.5/src",
     ],
     visibility = ["//visibility:public"],
