@@ -17,6 +17,58 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
   eigen_version = "97c1ebe6ccc2"
   eigen_sha256 = "58ab9fa44391c850d783fe0867f42a00b5300293b7d73bbbbc8756c2e649fea2"
 
+  native.new_git_repository(
+      name = "clew",
+      remote = "https://github.com/hughperkins/clew",
+      tag = "0.11",
+      build_file_content = """
+cc_library(
+    name = "clew-lib",
+    srcs = glob(
+    [
+        "src/*.c",
+    ]),
+    hdrs = glob(
+    [
+        "include/*.h",
+    ]),
+    copts = [
+      "-Iexternal/clew/include",
+    ],
+    visibility = ["//visibility:public"],
+)
+""",
+  )
+
+  native.new_git_repository(
+      name = "EasyCL",
+      remote = "https://github.com/hughperkins/EasyCL",
+      tag = "v3.1.0",
+      build_file_content = """
+cc_library(
+    name = "easycl-lib",
+    srcs = glob(
+    [
+        "*.cpp",
+        "templates/*.cpp",
+        "util/*.cpp",
+        "thirdparty/lua-5.1.5/src/*.c",
+    ]),
+    hdrs = glob(
+    [
+        "*.h",
+        "util/*.h",
+        "templates/*.h",
+        "thirdparty/lua-5.1.5/src/*.h",
+    ]),
+    copts = [
+      "-Iexternal/EasyCL/thirdparty/lua-5.1.5/src",
+    ],
+    visibility = ["//visibility:public"],
+)
+""",
+  )
+
   native.new_http_archive(
     name = "eigen_archive",
     url = "http://bitbucket.org/eigen/eigen/get/" + eigen_version + ".tar.gz",
