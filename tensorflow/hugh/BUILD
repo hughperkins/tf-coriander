@@ -6,7 +6,6 @@ cc_binary(
         #"../stream_executor/cl_platform.h",
     ],
     deps = [
-        "@local_usr_lib//:libopencl",
         "@clew//:clew-lib",
         "@EasyCL//:easycl-lib",
         "//tensorflow/core:core_cpu",

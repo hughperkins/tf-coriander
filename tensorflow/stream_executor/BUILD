@@ -40,6 +40,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "@EasyCL//:easycl-lib",
+        "@local_usr_lib//:libopencl",
         "//tensorflow/core:lib",
         "@local_config_cuda//cuda:cuda_headers",
     ],
