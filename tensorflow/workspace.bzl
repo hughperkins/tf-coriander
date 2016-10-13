@@ -91,9 +91,13 @@ cc_library(
     [
     ]),
     copts = [
+        "-Iexternal/EasyCL"
       # "-Iexternal/clew/include",
     ],
     visibility = ["//visibility:public"],
+    deps = [
+        "@EasyCL//:easycl-lib"
+    ]
 )
 """,
   )
