@@ -17,6 +17,12 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
   eigen_version = "97c1ebe6ccc2"
   eigen_sha256 = "58ab9fa44391c850d783fe0867f42a00b5300293b7d73bbbbc8756c2e649fea2"
 
+  native.new_local_repository(
+    name = "local_usr_lib",
+    path = "/usr/lib/x86_64-linux-gnu/",
+    build_file = "opencl.BUILD"
+  )
+
   native.new_git_repository(
       name = "clew",
       remote = "https://github.com/hughperkins/clew",
