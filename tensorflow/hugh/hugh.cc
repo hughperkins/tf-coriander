@@ -32,6 +32,10 @@ int main(int argc, char *argv[]) {
 
     SessionOptions opts;
     // lets try things from core/common_runtime/kernel_benchmark_testlib.cc next?
+    string device = "gpu";  // this kind of from core/kernels/basic_ops_benchmark_test.cc
+    string t = str_util::Uppercase(device);
+    Device* device_ =
+        DeviceFactory::NewDevice(t, opts, "/job:localhost/replica:0/task:0");
 
     cout << "all done" << endl;
     return 0;
