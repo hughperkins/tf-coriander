@@ -87,37 +87,46 @@ const string& ClPlatform::Name() const {
 }
 
 port::StatusOr<StreamExecutor*> ClPlatform::ExecutorForDevice(int ordinal) {
+    std::cout << "ClPlatform::ExecuteForDevice(" << ordinal << ")" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf(
             "failed initializing StreamExecutor for cl device")};
 }
+
 port::StatusOr<StreamExecutor*> ClPlatform::ExecutorForDeviceWithPluginConfig(
   int ordinal, const PluginConfig& plugin_config) {
+    std::cout << "ClPlatform::ExecutorForDeviceWithPluginConfig()" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf(
             "failed initializing StreamExecutor for cl device")};
 }
+
 port::StatusOr<StreamExecutor*> ClPlatform::GetExecutor(
   const StreamExecutorConfig& config) {
+    std::cout << "ClPlatform::GetExecutor()" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf(
             "failed initializing StreamExecutor for cl device")};
 }
+
 port::StatusOr<std::unique_ptr<StreamExecutor>> ClPlatform::GetUncachedExecutor(
   const StreamExecutorConfig& config) {
+    std::cout << "ClPlatform::GetUncachedExecutor()" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf(
             "failed initializing StreamExecutor for cl device")};
 }
+
 void ClPlatform::UnregisterTraceListener(TraceListener* listener) {
-    
+    std::cout << "ClPlatform::UnregisterTraceListener()" << std::endl;
 }
 
 } // namespace cl
+
 static void InitializeClPlatform() {
     std::unique_ptr<cl::ClPlatform> platform(new cl::ClPlatform);
     SE_CHECK_OK(MultiPlatformManager::RegisterPlatform(std::move(platform)));
@@ -128,4 +137,3 @@ static void InitializeClPlatform() {
 
 REGISTER_MODULE_INITIALIZER(cl_platform,
                             perftools::gputools::InitializeClPlatform());
-
