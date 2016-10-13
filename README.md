@@ -14,6 +14,11 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 - opencl context created.  :-P
 
+```
+bazel --batch run --verbose_failures //tensorflow/hugh
+```
+<img src="doc/img/clcontextonhd5500.png?raw=true" width="600" height="400" />
+
 ## Roadmap
 
 - use [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) to port the bulk of tensorflow
