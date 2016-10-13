@@ -3,6 +3,7 @@
 #include "tensorflow/cc/framework/scope.h"
 #include "tensorflow/cc/ops/standard_ops.h"
 #include "tensorflow/core/common_runtime/graph_runner.h"
+#include "tensorflow/core/public/session_options.h"
 
 #include <iostream>
 #include <vector>
@@ -28,6 +29,9 @@ int main(int argc, char *argv[]) {
     std::vector<Tensor> outputs;
     Status s = GraphRunner::Run(root.graph(), nullptr, Env::Default(), {},
                                 {c.name()}, &outputs);
+
+    SessionOptions opts;
+    // lets try things from core/common_runtime/kernel_benchmark_testlib.cc next?
 
     cout << "all done" << endl;
     return 0;
