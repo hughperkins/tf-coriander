@@ -13,5 +13,6 @@ cc_binary(
         "@EasyCL//:easycl-lib",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
+        "//tensorflow/core:gpu_runtime",
     ]
 )
