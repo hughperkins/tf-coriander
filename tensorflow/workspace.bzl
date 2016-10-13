@@ -76,6 +76,28 @@ cc_library(
 """,
   )
 
+  native.new_git_repository(
+      name = "cuda-on-cl",
+      remote = "https://github.com/hughperkins/cuda-on-cl",
+      tag = "v1.0.0",
+      build_file_content = """
+cc_library(
+    name = "cocl-lib",
+    srcs = glob(
+    [
+        "src/hostside_opencl_funcs.cpp",
+    ]),
+    hdrs = glob(
+    [
+    ]),
+    copts = [
+      # "-Iexternal/clew/include",
+    ],
+    visibility = ["//visibility:public"],
+)
+""",
+  )
+
   native.new_http_archive(
     name = "eigen_archive",
     url = "http://bitbucket.org/eigen/eigen/get/" + eigen_version + ".tar.gz",
