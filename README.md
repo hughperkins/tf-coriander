@@ -24,3 +24,5 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 - Why fork the repo?  Why not make a standalone repo, that contains only the opencl bits, and uses tensorflow as a dependency?
   - well, I might.  In the future.  My bazel knowledge is a bit elementary for now :-P
+- How can I see your contributions compared to all the mainstream Tensorflow stuff?
+  - [this link](https://github.com/hughperkins/tensorflow-cl/compare/master...tensorflow-cl)
