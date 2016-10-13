@@ -2,7 +2,9 @@
 #include "tensorflow/core/graph/graph.h"
 #include "tensorflow/cc/framework/scope.h"
 #include "tensorflow/cc/ops/standard_ops.h"
+
 #include <iostream>
+#include <vector>
 
 // #include <cuda_runtime.h>
 
@@ -22,7 +24,7 @@ int main(int argc, char *argv[]) {
     // from common_runtime/graph_runner_test.cc
     Scope root = Scope::NewRootScope();
     auto c = ops::Const(root, 42.0f);
-    // std::vector<Tensor> outputs;
+    std::vector<Tensor> outputs;
     // Status s = GraphRunner::Run(root.graph(), nullptr, Env::Default(), {},
     //                             {c.name()}, &outputs);
 
