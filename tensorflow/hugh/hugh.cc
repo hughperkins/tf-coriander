@@ -7,8 +7,11 @@
 using namespace std;
 using namespace tensorflow;
 
+void assure_initialized();
+
 int main(int argc, char *argv[]) {
     cout << "hugh" << endl;
+    assure_initialized();
     Graph graph(OpRegistry::Global());
     float *gpuFloats;
     const int N = 1024;
