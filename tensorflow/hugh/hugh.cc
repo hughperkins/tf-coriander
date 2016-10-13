@@ -1,5 +1,7 @@
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/graph/graph.h"
+#include "tensorflow/cc/framework/scope.h"
+#include "tensorflow/cc/ops/standard_ops.h"
 #include <iostream>
 
 // #include <cuda_runtime.h>
@@ -16,6 +18,14 @@ int main(int argc, char *argv[]) {
     // float *gpuFloats;
     // const int N = 1024;
     //cudaMalloc((void **)(&gpuFloats), N * sizeof(float));
+
+    // from common_runtime/graph_runner_test.cc
+    Scope root = Scope::NewRootScope();
+    auto c = ops::Const(root, 42.0f);
+    // std::vector<Tensor> outputs;
+    // Status s = GraphRunner::Run(root.graph(), nullptr, Env::Default(), {},
+    //                             {c.name()}, &outputs);
+
     cout << "all done" << endl;
     return 0;
 }

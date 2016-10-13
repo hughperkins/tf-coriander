@@ -14,5 +14,6 @@ cc_binary(
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",
+        "//tensorflow/cc:cc_ops",
     ]
 )
