@@ -23,6 +23,14 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
     build_file = "opencl.BUILD"
   )
 
+  # this should be moved to something more robust/standard sooner or later,
+  # but gets it working for now
+  native.new_local_repository(
+    name = "cuda_for_cocl",
+    path = "/usr/local/cuda-7.5/",
+    build_file = "cuda_for_cocl.BUILD"
+  )
+
   native.new_git_repository(
       name = "clew",
       remote = "https://github.com/hughperkins/clew",

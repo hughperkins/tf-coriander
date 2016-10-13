@@ -6,6 +6,8 @@ cc_binary(
         #"../stream_executor/cl_platform.h",
     ],
     deps = [
+        "@cuda_for_cocl//:cuda_headers",
+        "@local_usr_lib//:libopencl",
         "@cocl//:cocl-lib",
         "@clew//:clew-lib",
         "@EasyCL//:easycl-lib",
