@@ -36,11 +36,15 @@ cc_library(
     ],
     linkopts = [
         "-ldl",
+        # "-lcocl",
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@EasyCL//:easycl-lib",
+        "@cuda_for_cocl//:cuda_headers",
         "@local_usr_lib//:libopencl",
+        "@cocl//:cocl-lib",
+        "@clew//:clew-lib",
+        "@EasyCL//:easycl-lib",
         "//tensorflow/core:lib",
         "@local_config_cuda//cuda:cuda_headers",
     ],

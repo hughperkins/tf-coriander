@@ -32,11 +32,15 @@ namespace cl {
 PLATFORM_DEFINE_ID(kClPlatformId);
 const std::string name = "OpenCL";
 
+extern "C" {
+    void hostside_opencl_funcs_assure_initialized();
+}
 
 ClPlatform::ClPlatform() {
     std::cout << "ClPlatform()" << std::endl;
-    port::Printf("using port clplatform");
-    EasyCL *cl = EasyCL::createForFirstGpuOtherwiseCpu();
+    hostside_opencl_funcs_assure_initialized();
+    // port::Printf("using port clplatform");
+    // EasyCL *cl = EasyCL::createForFirstGpuOtherwiseCpu();
     std::cout << "end of ClPlatform() constructor" << std::endl;
 }
 
