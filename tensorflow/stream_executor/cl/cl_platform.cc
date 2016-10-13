@@ -21,6 +21,7 @@ limitations under the License.
 #include "tensorflow/stream_executor/lib/ptr_util.h"
 #include "tensorflow/stream_executor/lib/status.h"
 #include "tensorflow/stream_executor/lib/stringprintf.h"
+#include "EasyCL.h"
 
 #include <iostream>
 
@@ -34,6 +35,7 @@ PLATFORM_DEFINE_ID(kClPlatformId);
 ClPlatform::ClPlatform() {
     std::cout << "ClPlatform()" << std::endl;
     port::Printf("using port clplatform");
+    EasyCL *cl = EasyCL::createForFirstGpuOtherwiseCpu();
 }
 
 ClPlatform::~ClPlatform() {}
