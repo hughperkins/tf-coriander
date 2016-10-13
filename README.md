@@ -19,6 +19,20 @@ bazel --batch run --verbose_failures //tensorflow/hugh
 ```
 <img src="doc/img/clcontextonhd5500.png?raw=true" width="600" height="400" />
 
+## How to run
+
+### Pre-requisites
+
+- normal non-gpu tensorflow prerequisites, for building from source
+- cuda toolkit 7.5, at /usr/local/cuda-7.5
+- when you run `./configure`, you can put `n` for cuda, gpu etc
+
+### Procedure
+
+```
+bazel --batch run --verbose_failures //tensorflow/hugh
+```
+
 ## Roadmap
 
 - use [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) to port the bulk of tensorflow
