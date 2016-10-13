@@ -8,6 +8,7 @@ using namespace tensorflow;
 int main(int argc, char *argv[]) {
     cout << "hugh" << endl;
     Graph graph(OpRegistry::Global());
+    cout << "all done" << endl;
     return 0;
 }
 

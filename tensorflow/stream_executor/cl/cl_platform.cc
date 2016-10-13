@@ -30,23 +30,34 @@ namespace gputools {
 namespace cl {
 
 PLATFORM_DEFINE_ID(kClPlatformId);
+const std::string name = "OpenCL";
 
 
 ClPlatform::ClPlatform() {
     std::cout << "ClPlatform()" << std::endl;
     port::Printf("using port clplatform");
     EasyCL *cl = EasyCL::createForFirstGpuOtherwiseCpu();
+    std::cout << "end of ClPlatform() constructor" << std::endl;
 }
 
-ClPlatform::~ClPlatform() {}
+ClPlatform::~ClPlatform() {
+    std::cout << "~ClPlatform()" << std::endl;
+}
 
-Platform::Id ClPlatform::id() const { return kClPlatformId; }
+Platform::Id ClPlatform::id() const {
+    return kClPlatformId;
+    std::cout << "ClPlatform::id()" << std::endl;
+}
 
 int ClPlatform::VisibleDeviceCount() const {
-return 1;
+    std::cout << "ClPlatform::VisibleDeviceCount" << std::endl;
+    return 1;
 }
 
-const string& ClPlatform::Name() const { return "OpenCL"; }
+const string& ClPlatform::Name() const {
+    std::cout << "ClPlatform::name()" << std::endl;
+    return name;
+}
 
 port::StatusOr<StreamExecutor*> ClPlatform::ExecutorForDevice(int ordinal) {
     return port::Status{

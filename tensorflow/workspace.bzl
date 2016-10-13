@@ -77,7 +77,7 @@ cc_library(
   )
 
   native.new_git_repository(
-      name = "cuda-on-cl",
+      name = "cocl",
       remote = "https://github.com/hughperkins/cuda-on-cl",
       tag = "v1.0.0",
       build_file_content = """
