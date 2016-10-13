@@ -23,10 +23,21 @@ limitations under the License.
 #include "tensorflow/stream_executor/lib/stringprintf.h"
 #include "EasyCL.h"
 
+// namespace perftools {
+// namespace gputools {
+// namespace 
+// using namespace perftools::gputools::cuda;
+// #include <cuda_runtime.h>
+#include <cuda.h>
+#include <cuda_device_runtime_api.h>
+#include "tensorflow/stream_executor/cuda/cuda_driver.h"
+
 #include <iostream>
 
 namespace perftools {
 namespace gputools {
+
+using namespace cuda;
 namespace cl {
 
 PLATFORM_DEFINE_ID(kClPlatformId);
@@ -53,9 +64,21 @@ Platform::Id ClPlatform::id() const {
     std::cout << "ClPlatform::id()" << std::endl;
 }
 
+// int ClPlatform::VisibleDeviceCount() const {
+//     std::cout << "ClPlatform::VisibleDeviceCount" << std::endl;
+//     return 1;
+// }
 int ClPlatform::VisibleDeviceCount() const {
-    std::cout << "ClPlatform::VisibleDeviceCount" << std::endl;
-    return 1;
+  // Throw away the result - it logs internally, and this [containing] function
+  // isn't in the path of user control. It's safe to call this > 1x.
+  if (!cuda::CUDADriver::Init().ok()) {
+    std::cout << "soi-disant CUDADriver failed to initialize" << std::endl;
+    return -1;
+  }
+  std::cout << "soi-disant CUDADriver initialized ok." << std::endl;
+  std::cout << "num devices " << CUDADriver::GetDeviceCount() << std::endl;
+
+  return CUDADriver::GetDeviceCount();
 }
 
 const string& ClPlatform::Name() const {

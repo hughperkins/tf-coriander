@@ -10,14 +10,16 @@ cc_library(
             "lib/*.cc",
             "platform/default/*.cc",
             "cl/*.cc",
+            "cuda/cuda_driver.cc",
+            "cuda/cuda_diagnostics.cc",
         ],
         exclude = [
             "**/*_test.cc",
         ],
-    ) + if_cuda(
-        glob([
-            "cuda/*.cc",
-        ]),
+    # ) + if_cuda(
+    #     glob([
+    #         "cuda/*.cc",
+    #     ]),
     ),
     hdrs = glob([
         "*.h",
