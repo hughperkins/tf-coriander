@@ -1380,8 +1380,8 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
 
 /* static */ int CLDriver::GetDeviceCount() {
   int device_count = 0;
-  CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuDeviceGetCount(&device_count);
+  // CUresult res = CUDA_ERROR_UNKNOWN;
+  CUresult res = cuDeviceGetCount(&device_count);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "could not retrieve CUDA device count: " << ToString(res);
     return 0;
