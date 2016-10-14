@@ -50,6 +50,9 @@ namespace perftools {
 namespace gputools {
 namespace cuda {
 
+class CudaContext;
+class CUDAKernel;
+
 // CUDA-platform implementation of the platform-agnostic
 // StreamExecutorInferface.
 class CUDAExecutor : public internal::StreamExecutorInterface {

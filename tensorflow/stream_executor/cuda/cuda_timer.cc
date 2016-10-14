@@ -13,6 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+#include "cuda.h"
+
 #include "tensorflow/stream_executor/cuda/cuda_timer.h"
 
 #include "tensorflow/stream_executor/cuda/cuda_driver.h"

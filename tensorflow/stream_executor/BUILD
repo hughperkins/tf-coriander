@@ -12,6 +12,10 @@ cc_library(
             "cl/*.cc",
             "cuda/cuda_driver.cc",
             "cuda/cuda_diagnostics.cc",
+            "cuda/cuda_activation.cc",
+            # "cl/cl_gpu_executor.cc",
+            # "cuda/cuda_timer.cc",
+            # "cuda/cuda_stream.cc",
         ],
         exclude = [
             "**/*_test.cc",

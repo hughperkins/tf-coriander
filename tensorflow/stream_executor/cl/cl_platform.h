@@ -33,6 +33,9 @@ limitations under the License.
 namespace perftools {
 namespace gputools {
 namespace cl {
+
+    extern const Platform::Id kClPlatformId;
+
 class ClPlatform : public Platform {
 public:
 ClPlatform();

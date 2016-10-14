@@ -15,7 +15,7 @@ limitations under the License.
 
 // TODO(opensource): Use a more generic sounding preprocessor name than
 // GOOGLE_CUDA
-#if GOOGLE_CUDA
+//#if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -167,7 +167,7 @@ class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
     }
     AsyncFreeData* afData =
         new AsyncFreeData(allocator_, buffer, operation_, step_id_);
-    cudaError_t err = cudaStreamAddCallback(*stream_, asyncFree, afData, 0);
+    cudaError_t err; // = cudaStreamAddCallback(*stream_, asyncFree, afData, 0);
     CHECK_EQ(err, cudaSuccess);
   }
 
@@ -1047,4 +1047,4 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
 
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+//#endif  // GOOGLE_CUDA
