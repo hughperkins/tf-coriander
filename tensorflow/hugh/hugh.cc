@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     SessionOptions opts;
     std::cout << "5" << std::endl;
     // lets try things from core/common_runtime/kernel_benchmark_testlib.cc next?
-    string device = "GPU";  // this kind of from core/kernels/basic_ops_benchmark_test.cc
+    string device = "gpu";  // this kind of from core/kernels/basic_ops_benchmark_test.cc
     string t = str_util::Uppercase(device);
     std::cout << "6" << std::endl;
     Device* device_ =

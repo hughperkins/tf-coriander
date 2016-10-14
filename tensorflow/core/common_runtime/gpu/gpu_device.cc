@@ -56,6 +56,8 @@ limitations under the License.
 #include "tensorflow/core/util/device_name_utils.h"
 #include "tensorflow/core/util/stream_executor_util.h"
 
+#include <iostream>
+
 namespace gpu = ::perftools::gputools;
 
 namespace tensorflow {
@@ -232,6 +234,7 @@ BaseGPUDevice::BaseGPUDevice(const SessionOptions& options, const string& name,
       gpu_id_(gpu_id),
       sync_every_op_(sync_every_op),
       max_streams_(max_streams) {
+  std::cout <<   "BaseGPUDevice::BaseGPUDevice()" << std::endl;
   ProcessState::singleton()->EnableGPUDevice();
 }
 
@@ -247,6 +250,7 @@ BaseGPUDevice::~BaseGPUDevice() {
 }
 
 Status BaseGPUDevice::Init(const SessionOptions& options) {
+  std::cout << "BaseGPUDevice::Init() " << std::endl;
   auto executor_status = GPUMachineManager()->ExecutorForDevice(gpu_id_);
   if (!executor_status.status().ok()) {
     return errors::Internal("Failed to get StreamExecutor for device ",
@@ -592,10 +596,12 @@ void BaseGPUDevice::ReinitializeGpuDevice(OpKernelContext* context,
 Status BaseGPUDeviceFactory::CreateDevices(const SessionOptions& options,
                                            const string& name_prefix,
                                            std::vector<Device*>* devices) {
+  std::cout << "gpu_device.cc BaseGPUDeviceFactory::CreateDevices" << std::endl;
   int n = INT_MAX;
   auto iter = options.config.device_count().find("GPU");
   if (iter != options.config.device_count().end()) {
     n = iter->second;
+    std::cout << "n " << n << std::endl;
   }
   std::vector<int> valid_gpu_ids;
   TF_RETURN_IF_ERROR(GetValidDeviceIds(
@@ -603,7 +609,9 @@ Status BaseGPUDeviceFactory::CreateDevices(const SessionOptions& options,
   if (static_cast<size_t>(n) > valid_gpu_ids.size()) {
     n = valid_gpu_ids.size();
   }
+  std::cout << "n " << n << std::endl;
   for (int i = 0; i < n; i++) {
+    std::cout << "i " << i << std::endl;
     BaseGPUDevice* gpu_device;
     TF_RETURN_IF_ERROR(CreateGPUDevice(options,
                                        strings::StrCat(name_prefix, "/gpu:", i),
@@ -644,7 +652,7 @@ Status BaseGPUDeviceFactory::CreateGPUDevice(const SessionOptions& options,
                                              const string& name, int gpu_id,
                                              BaseGPUDevice** out_device) {
   CHECK_GE(gpu_id, 0);
-
+std::cout << "BaseGPUDeviceFactory::CreateGPUDevice gpu_id " << gpu_id << std::endl;
   // Look up the device, to see its attributes.
   gpu::Platform* gpu_platform = GPUMachineManager();
   CHECK_LT(gpu_id, gpu_platform->VisibleDeviceCount());
@@ -864,15 +872,20 @@ Status EnablePeerAccess(gpu::Platform* platform,
 
 Status BaseGPUDeviceFactory::GetValidDeviceIds(
     const string& visible_device_list, std::vector<int>* ids) {
+  std::cout << "BaseGPUDeviceFactory::GetValidDeviceIds()" << std::endl;
   TF_RETURN_IF_ERROR(ValidateGPUMachineManager());
 
+  std::cout << "BaseGPUDeviceFactory::GetValidDevceIds" << std::endl;
   gpu::Platform* gpu_manager = GPUMachineManager();
   if (gpu_manager == nullptr) {
+    std::cout << "getvaliddeviceids, gpu_manager is null" << std::endl;
     return Status::OK();
   }
+  std::cout << "getvaliddeviceids, got a gpu_managerl" << std::endl;
 
   // If there are no GPUs visible, do nothing.
   if (gpu_manager->VisibleDeviceCount() <= 0) {
+    std::cout << "gpu_manager->VisibleDeviceCount is 0" << std::endl;
     return Status::OK();
   }
 

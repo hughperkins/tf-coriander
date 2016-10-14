@@ -474,6 +474,14 @@ def tf_cuda_library(deps=None, cuda_deps=None, copts=None, **kwargs):
   if not copts:
     copts = []
 
+  # print('tf_cuda_library kwargs name=%s' % (kwargs['name']))
+  name = kwargs['name']
+  if 'stream_executor' in name or 'gpu' in name:
+    print(kwargs)
+  """
+  kwargs is eg:
+  {"alwayslink": 1, "hdrs": [], "linkstatic": 1, "name": "base64_ops", "srcs": ["base64_ops.cc"]}.
+  """
   native.cc_library(
       deps = deps + if_cuda(cuda_deps + ["//tensorflow/core:cuda"]),
       copts = copts + if_cuda(["-DGOOGLE_CUDA=1"]),

@@ -41,7 +41,7 @@ using namespace cuda;
 namespace cl {
 
 PLATFORM_DEFINE_ID(kClPlatformId);
-const std::string name = "OpenCL";
+const std::string name = "CL";
 
 extern "C" {
     void hostside_opencl_funcs_assure_initialized();
@@ -60,8 +60,8 @@ ClPlatform::~ClPlatform() {
 }
 
 Platform::Id ClPlatform::id() const {
-    return kClPlatformId;
     std::cout << "ClPlatform::id()" << std::endl;
+    return kClPlatformId;
 }
 
 // int ClPlatform::VisibleDeviceCount() const {
@@ -71,6 +71,7 @@ Platform::Id ClPlatform::id() const {
 int ClPlatform::VisibleDeviceCount() const {
   // Throw away the result - it logs internally, and this [containing] function
   // isn't in the path of user control. It's safe to call this > 1x.
+  std::cout << "ClPlatform::VisibleDeviceCount()" << std::endl;
   if (!cuda::CUDADriver::Init().ok()) {
     std::cout << "soi-disant CUDADriver failed to initialize" << std::endl;
     return -1;

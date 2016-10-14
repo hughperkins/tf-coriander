@@ -1148,6 +1148,7 @@ DeviceDescription *CUDAExecutor::PopulateDeviceDescription() const {
 namespace gpu = ::perftools::gputools;
 
 void initialize_cl_gpu_executor() {
+  std::cout << "cl_gpu_executor.cc initialize_cl_gpu_executor()" << std::endl;
   // port::StatusOr<void *> status =
   //     gpu::internal::CachedDsoLoader::GetLibclDsoHandle();
   // if (!status.ok()) {
