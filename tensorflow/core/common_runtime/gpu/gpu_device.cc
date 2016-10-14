@@ -17,7 +17,11 @@ limitations under the License.
 // GOOGLE_CUDA
 //#if GOOGLE_CUDA
 
+// all hacked into opencl instead... how to separate this file in two is for the future
+
 #define EIGEN_USE_GPU
+
+#include "cuda.h"
 
 #include "tensorflow/core/common_runtime/gpu/gpu_device.h"
 
@@ -46,7 +50,7 @@ limitations under the License.
 #include "tensorflow/core/lib/strings/numbers.h"
 #include "tensorflow/core/lib/strings/str_util.h"
 #include "tensorflow/core/lib/strings/strcat.h"
-#include "tensorflow/core/platform/cuda.h"
+#include "tensorflow/core/platform/cl.h"
 #include "tensorflow/core/platform/logging.h"
 #include "tensorflow/core/platform/macros.h"
 #include "tensorflow/core/platform/stream_executor.h"
@@ -74,6 +78,8 @@ namespace tensorflow {
 // corresponding stream have completed.  The following two classes
 // serve this purpose in two different compilation environments.
 
+// this means, "is it being compiled by cuda compiler?"
+// in practice, means ....  ???
 #if defined(__GCUDACC__) || defined(__GCUDACC_HOST__)
 class EigenAllocator : public ::Eigen::Allocator {
  public:
@@ -436,7 +442,9 @@ void BaseGPUDevice::Compute(OpKernel* op_kernel, OpKernelContext* context) {
         if (idc->stream() != stream) stream->ThenWaitFor(idc->stream());
       }
     }
-    gpu::cuda::ScopedActivateExecutorContext scoped_activation{
+    // this line was hard-coded to cuda
+    // now it's hard-coded to cl :-P
+    gpu::cl::ScopedActivateExecutorContext scoped_activation{
         stream->parent()};
     op_kernel->Compute(context);
     if (context->status().ok()) {
