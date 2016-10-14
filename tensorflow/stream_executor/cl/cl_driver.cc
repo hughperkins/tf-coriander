@@ -492,7 +492,7 @@ static port::Status InternalInit() {
   // } else if (internal::CachedDsoLoader::GetLibcudaDsoHandle().ok()) {
     // We only call cuInit if we can dynload libcuda.
 
-    // res = cuInit(0 /* = flags */);
+  res = cuInit(0 /* = flags */);
   // }
 
   if (res == CUDA_SUCCESS) {
