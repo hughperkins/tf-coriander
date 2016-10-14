@@ -69,8 +69,8 @@ internal::StreamExecutorInterface *StreamExecutorImplementationFromPlatformKind(
     case PlatformKind::kCuda:
       factory = *internal::MakeCUDAExecutorImplementation();
       break;
-    case PlatformKind::kOpenCL:
-      factory = *internal::MakeOpenCLExecutorImplementation();
+    case PlatformKind::kCl:
+      factory = *internal::MakeCLExecutorImplementation();
       break;
     case PlatformKind::kHost:
       factory = internal::MakeHostExecutorImplementation;
@@ -174,8 +174,8 @@ StreamExecutor::StreamExecutor(
       tracing_enabled_(false) {
   if (port::Lowercase(platform_->Name()) == "cuda") {
     platform_kind_ = PlatformKind::kCuda;
-  } else if (port::Lowercase(platform_->Name()) == "opencl") {
-    platform_kind_ = PlatformKind::kOpenCL;
+  } else if (port::Lowercase(platform_->Name()) == "cl") {
+    platform_kind_ = PlatformKind::kCl;
   } else if (port::Lowercase(platform_->Name()) == "host") {
     platform_kind_ = PlatformKind::kHost;
   }

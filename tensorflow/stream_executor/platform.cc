@@ -29,8 +29,8 @@ string PlatformKindString(PlatformKind kind) {
   switch (kind) {
     case PlatformKind::kCuda:
       return "CUDA";
-    case PlatformKind::kOpenCL:
-      return "OpenCL";
+    case PlatformKind::kCl:
+      return "CL";
     case PlatformKind::kHost:
       return "Host";
     case PlatformKind::kMock:
@@ -53,7 +53,7 @@ PlatformKind PlatformKindFromString(string kind) {
 bool PlatformIsRunnable(PlatformKind kind) {
   switch (kind) {
     case PlatformKind::kCuda:
-    case PlatformKind::kOpenCL:
+    case PlatformKind::kCl:
     case PlatformKind::kHost:
       return true;
     default:
@@ -64,7 +64,7 @@ bool PlatformIsRunnable(PlatformKind kind) {
 bool PlatformIsRunnableOnDevice(PlatformKind kind) {
   switch (kind) {
     case PlatformKind::kCuda:
-    case PlatformKind::kOpenCL:
+    case PlatformKind::kCl:
       return true;
     default:
       return false;

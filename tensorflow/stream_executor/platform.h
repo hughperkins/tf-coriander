@@ -41,7 +41,7 @@ class StreamExecutor;
 enum class PlatformKind {
   kInvalid,
   kCuda,
-  kOpenCL,
+  kCl,
   kHost,
   kMock,
   kSize,

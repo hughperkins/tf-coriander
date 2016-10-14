@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+#include "cuda.h"
+
 #include "tensorflow/stream_executor/cl/cl_platform.h"
 
 #include "tensorflow/stream_executor/lib/error.h"
@@ -21,6 +23,7 @@ limitations under the License.
 #include "tensorflow/stream_executor/lib/ptr_util.h"
 #include "tensorflow/stream_executor/lib/status.h"
 #include "tensorflow/stream_executor/lib/stringprintf.h"
+#include "tensorflow/stream_executor/cl/cl_gpu_executor.h"
 #include "EasyCL.h"
 
 // namespace perftools {
@@ -37,7 +40,6 @@ limitations under the License.
 namespace perftools {
 namespace gputools {
 
-using namespace cuda;
 namespace cl {
 
 PLATFORM_DEFINE_ID(kClPlatformId);
@@ -72,14 +74,14 @@ int ClPlatform::VisibleDeviceCount() const {
   // Throw away the result - it logs internally, and this [containing] function
   // isn't in the path of user control. It's safe to call this > 1x.
   std::cout << "ClPlatform::VisibleDeviceCount()" << std::endl;
-  if (!cuda::CUDADriver::Init().ok()) {
-    std::cout << "soi-disant CUDADriver failed to initialize" << std::endl;
+  if (!CLDriver::Init().ok()) {
+    std::cout << "soi-disant CLDriver failed to initialize" << std::endl;
     return -1;
   }
-  std::cout << "soi-disant CUDADriver initialized ok." << std::endl;
-  std::cout << "num devices " << CUDADriver::GetDeviceCount() << std::endl;
+  std::cout << "soi-disant CLDriver initialized ok." << std::endl;
+  std::cout << "num devices " << CLDriver::GetDeviceCount() << std::endl;
 
-  return CUDADriver::GetDeviceCount();
+  return CLDriver::GetDeviceCount();
 }
 
 const string& ClPlatform::Name() const {
@@ -88,7 +90,7 @@ const string& ClPlatform::Name() const {
 }
 
 port::StatusOr<StreamExecutor*> ClPlatform::ExecutorForDevice(int ordinal) {
-    std::cout << "ClPlatform::ExecuteForDevice(" << ordinal << ")" << std::endl;
+    std::cout << "ClPlatform::ExecutorForDevice(" << ordinal << ")" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf(
@@ -98,28 +100,57 @@ port::StatusOr<StreamExecutor*> ClPlatform::ExecutorForDevice(int ordinal) {
 port::StatusOr<StreamExecutor*> ClPlatform::ExecutorForDeviceWithPluginConfig(
   int ordinal, const PluginConfig& plugin_config) {
     std::cout << "ClPlatform::ExecutorForDeviceWithPluginConfig()" << std::endl;
-    return port::Status{
-        port::error::INTERNAL,
-        port::Printf(
-            "failed initializing StreamExecutor for cl device")};
+
+  StreamExecutorConfig config;
+  config.ordinal = ordinal;
+  config.plugin_config = PluginConfig();
+  config.device_options = DeviceOptions::Default();
+  return GetExecutor(config);
+
+    // return port::Status{
+    //     port::error::INTERNAL,
+    //     port::Printf(
+    //         "failed initializing StreamExecutor for cl device")};
 }
 
 port::StatusOr<StreamExecutor*> ClPlatform::GetExecutor(
   const StreamExecutorConfig& config) {
     std::cout << "ClPlatform::GetExecutor()" << std::endl;
-    return port::Status{
-        port::error::INTERNAL,
-        port::Printf(
-            "failed initializing StreamExecutor for cl device")};
+  mutex_lock lock(mu_);
+
+  port::StatusOr<StreamExecutor*> status = executor_cache_.Get(config);
+  if (status.ok()) {
+    return status.ValueOrDie();
+  }
+
+  port::StatusOr<std::unique_ptr<StreamExecutor>> executor =
+      GetUncachedExecutor(config);
+  if (!executor.ok()) {
+    return executor.status();
+  }
+
+  StreamExecutor* naked_executor = executor.ValueOrDie().get();
+  executor_cache_.Insert(config, executor.ConsumeValueOrDie());
+  return naked_executor;
 }
 
 port::StatusOr<std::unique_ptr<StreamExecutor>> ClPlatform::GetUncachedExecutor(
   const StreamExecutorConfig& config) {
     std::cout << "ClPlatform::GetUncachedExecutor()" << std::endl;
+  auto executor = port::MakeUnique<StreamExecutor>(
+      this, new CLExecutor(config.plugin_config));
+  std::cout << "cl_platform.cc GetUncachedExecutor() created new CUDAExecutor" << std::endl;
+  auto init_status = executor->Init(config.ordinal, config.device_options);
+  if (!init_status.ok()) {
+    std::cout << "cl_platform.cc GetUncachedExecutor() CUDAExecutor->init() failed" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf(
-            "failed initializing StreamExecutor for cl device")};
+            "failed initializing StreamExecutor for CL device ordinal %d: %s",
+            config.ordinal, init_status.ToString().c_str())};
+  }
+
+  return std::move(executor);
 }
 
 void ClPlatform::UnregisterTraceListener(TraceListener* listener) {

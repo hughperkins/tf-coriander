@@ -38,22 +38,29 @@ namespace cl {
 
 class ClPlatform : public Platform {
 public:
-ClPlatform();
-~ClPlatform() override;
-int VisibleDeviceCount() const override;
-Platform::Id id() const override;
-const string& Name() const override;
-virtual port::StatusOr<StreamExecutor*> ExecutorForDevice(int ordinal);
-virtual port::StatusOr<StreamExecutor*> ExecutorForDeviceWithPluginConfig(
-  int ordinal, const PluginConfig& plugin_config);
-virtual port::StatusOr<StreamExecutor*> GetExecutor(
-  const StreamExecutorConfig& config);
-virtual port::StatusOr<std::unique_ptr<StreamExecutor>> GetUncachedExecutor(
-  const StreamExecutorConfig& config);
-virtual void UnregisterTraceListener(TraceListener* listener);
-virtual void RegisterTraceListener(std::unique_ptr<TraceListener> listener) {}
+    ClPlatform();
+    ~ClPlatform() override;
+    int VisibleDeviceCount() const override;
+    Platform::Id id() const override;
+    const string& Name() const override;
+    virtual port::StatusOr<StreamExecutor*> ExecutorForDevice(int ordinal);
+    virtual port::StatusOr<StreamExecutor*> ExecutorForDeviceWithPluginConfig(
+      int ordinal, const PluginConfig& plugin_config);
+    virtual port::StatusOr<StreamExecutor*> GetExecutor(
+      const StreamExecutorConfig& config);
+    virtual port::StatusOr<std::unique_ptr<StreamExecutor>> GetUncachedExecutor(
+      const StreamExecutorConfig& config);
+    virtual void UnregisterTraceListener(TraceListener* listener);
+    virtual void RegisterTraceListener(std::unique_ptr<TraceListener> listener) {}
 
-  SE_DISALLOW_COPY_AND_ASSIGN(ClPlatform);
+private:
+    // mutex that guards internal state.
+    mutable mutex mu_;
+
+    // Cache of created executors.
+    ExecutorCache executor_cache_;
+
+    SE_DISALLOW_COPY_AND_ASSIGN(ClPlatform);
 };
 
 }

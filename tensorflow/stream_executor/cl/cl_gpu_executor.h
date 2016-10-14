@@ -13,6 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+// The CL implementation is mostly so I can set have rng, cublas etc to false for now
+// Not sure if we need this in the future.  Uncertain on this point :-)
+
 // The CUDA implementation of the StreamExecutorInterface functionality.
 // CUDA inclusions are ideally confined to this implementation file.
 //
@@ -25,7 +28,7 @@ limitations under the License.
 #include <map>
 #include <set>
 
-#include "tensorflow/stream_executor/cuda/cuda_kernel.h"
+#include "tensorflow/stream_executor/cl/cl_kernel.h"
 #include "tensorflow/stream_executor/event.h"
 #include "tensorflow/stream_executor/lib/status.h"
 #include "tensorflow/stream_executor/lib/statusor.h"
@@ -48,15 +51,15 @@ class RngSupport;
 
 namespace perftools {
 namespace gputools {
-namespace cuda {
+namespace cl {
 
 // CUDA-platform implementation of the platform-agnostic
 // StreamExecutorInferface.
-class CUDAExecutor : public internal::StreamExecutorInterface {
+class CLExecutor : public internal::StreamExecutorInterface {
  public:
   // sub_platform indicates the subplatform used in this executor; it must
   // be a CUDA type.
-  explicit CUDAExecutor(const PluginConfig &plugin_config)
+  explicit CLExecutor(const PluginConfig &plugin_config)
       : device_(0),
         context_(nullptr),
         device_ordinal_(0),
@@ -67,7 +70,7 @@ class CUDAExecutor : public internal::StreamExecutorInterface {
   // See the corresponding StreamExecutor methods for method comments on the
   // following overrides.
 
-  ~CUDAExecutor() override;
+  ~CLExecutor() override;
 
   port::Status Init(int device_ordinal, DeviceOptions device_options) override;
 
@@ -90,11 +93,11 @@ class CUDAExecutor : public internal::StreamExecutorInterface {
   // There's no external interface for us to otherwise control these DMA
   // settings.
   void *HostMemoryAllocate(uint64 size) override {
-    return CUDADriver::HostAllocate(context_, size);
+    return CLDriver::HostAllocate(context_, size);
   }
 
   void HostMemoryDeallocate(void *location) override {
-    return CUDADriver::HostDeallocate(context_, location);
+    return CLDriver::HostDeallocate(context_, location);
   }
 
   bool HostMemoryRegister(void *location, uint64 size) override;
@@ -163,7 +166,7 @@ class CUDAExecutor : public internal::StreamExecutorInterface {
 
   bool BlockHostUntilDone(Stream *stream) override;
 
-  int PlatformDeviceCount() override { return CUDADriver::GetDeviceCount(); }
+  int PlatformDeviceCount() override { return CLDriver::GetDeviceCount(); }
 
   port::Status EnablePeerAccessTo(StreamExecutorInterface *other) override;
 
@@ -217,7 +220,7 @@ class CUDAExecutor : public internal::StreamExecutorInterface {
 
   void *CudaContextHack() override;
 
-  CudaContext* cuda_context();
+  ClContext* cl_context();
 
  private:
   // Attempts to find a more specific version of the file indicated by
@@ -236,7 +239,7 @@ class CUDAExecutor : public internal::StreamExecutorInterface {
                                    void *data);
 
   // Collects metadata for the specified kernel.
-  bool GetKernelMetadata(CUDAKernel *cuda_kernel,
+  bool GetKernelMetadata(CLKernel *cuda_kernel,
                          KernelMetadata *kernel_metadata);
 
   // Determines if the given kernel's occupancy could be improved by only
@@ -272,7 +275,7 @@ class CUDAExecutor : public internal::StreamExecutorInterface {
   CUdevice device_;
 
   // Handle for session with the library/driver. Immutable post-initialization.
-  CudaContext* context_;
+  ClContext* context_;
 
   // The device ordinal value that this executor was initialized with; recorded
   // for use in getting device metadata. Immutable post-initialization.
@@ -287,7 +290,7 @@ class CUDAExecutor : public internal::StreamExecutorInterface {
   // The plugin configuration associated with this instance.
   PluginConfig plugin_config_;
 
-  SE_DISALLOW_COPY_AND_ASSIGN(CUDAExecutor);
+  SE_DISALLOW_COPY_AND_ASSIGN(CLExecutor);
 };
 
 }  // namespace cl
