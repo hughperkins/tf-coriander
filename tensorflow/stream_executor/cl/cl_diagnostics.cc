@@ -305,70 +305,76 @@ void Diagnostician::WarnOnDsoKernelMismatch(
 
 
 port::StatusOr<DriverVersion> Diagnostician::FindKernelDriverVersion() {
-#if defined(__APPLE__)
-  CFStringRef kext_ids[1];
-  kext_ids[0] = kDriverKextIdentifier;
-  CFArrayRef kext_id_query = CFArrayCreate(nullptr, (const void**)kext_ids, 1, &kCFTypeArrayCallBacks);
-  CFDictionaryRef kext_infos = KextManagerCopyLoadedKextInfo(kext_id_query, nullptr);
-  CFRelease(kext_id_query);
+// #if defined(__APPLE__)
+//   CFStringRef kext_ids[1];
+//   kext_ids[0] = kDriverKextIdentifier;
+//   CFArrayRef kext_id_query = CFArrayCreate(nullptr, (const void**)kext_ids, 1, &kCFTypeArrayCallBacks);
+//   CFDictionaryRef kext_infos = KextManagerCopyLoadedKextInfo(kext_id_query, nullptr);
+//   CFRelease(kext_id_query);
 
-  CFDictionaryRef cl_driver_info = nullptr;
-  if (CFDictionaryGetValueIfPresent(kext_infos, kDriverKextIdentifier, (const void**)&cl_driver_info)) {
-    // NOTE: OSX CL driver does not currently store the same driver version
-    // in kCFBundleVersionKey as is returned by cuDriverGetVersion
-    CFRelease(kext_infos);
-    const CFStringRef str = (CFStringRef)CFDictionaryGetValue(
-        cl_driver_info, kCFBundleVersionKey);
-    const char *version = CFStringGetCStringPtr(str, kCFStringEncodingUTF8);
+//   CFDictionaryRef cl_driver_info = nullptr;
+//   if (CFDictionaryGetValueIfPresent(kext_infos, kDriverKextIdentifier, (const void**)&cl_driver_info)) {
+//     // NOTE: OSX CL driver does not currently store the same driver version
+//     // in kCFBundleVersionKey as is returned by cuDriverGetVersion
+//     CFRelease(kext_infos);
+//     const CFStringRef str = (CFStringRef)CFDictionaryGetValue(
+//         cl_driver_info, kCFBundleVersionKey);
+//     const char *version = CFStringGetCStringPtr(str, kCFStringEncodingUTF8);
 
-    // version can be NULL in which case treat it as empty string
-    // see
-    // https://developer.apple.com/library/mac/documentation/CoreFoundation/Conceptual/CFStrings/Articles/AccessingContents.html#//apple_ref/doc/uid/20001184-100980-TPXREF112
-    if (version == NULL) {
-      return StringToDriverVersion("");
-    }
-    return StringToDriverVersion(version);
-  }
-  CFRelease(kext_infos);
-  auto status =
-    port::Status{port::error::INTERNAL,
-                 port::StrCat("failed to read driver bundle version: ",
-                              CFStringGetCStringPtr(kDriverKextIdentifier, kCFStringEncodingUTF8))
-    };
-  return status;
-#else
-  FILE *driver_version_file = fopen(kDriverVersionPath, "r");
-  if (driver_version_file == nullptr) {
-    return port::Status{
-        port::error::PERMISSION_DENIED,
-        port::StrCat("could not open driver version path for reading: ",
-                     kDriverVersionPath)};
-  }
+//     // version can be NULL in which case treat it as empty string
+//     // see
+//     // https://developer.apple.com/library/mac/documentation/CoreFoundation/Conceptual/CFStrings/Articles/AccessingContents.html#//apple_ref/doc/uid/20001184-100980-TPXREF112
+//     if (version == NULL) {
+//       return StringToDriverVersion("");
+//     }
+//     return StringToDriverVersion(version);
+//   }
+//   CFRelease(kext_infos);
+//   auto status =
+//     port::Status{port::error::INTERNAL,
+//                  port::StrCat("failed to read driver bundle version: ",
+//                               CFStringGetCStringPtr(kDriverKextIdentifier, kCFStringEncodingUTF8))
+//     };
+//   return status;
+// #else
+//   FILE *driver_version_file = fopen(kDriverVersionPath, "r");
+//   if (driver_version_file == nullptr) {
+//     return port::Status{
+//         port::error::PERMISSION_DENIED,
+//         port::StrCat("could not open driver version path for reading: ",
+//                      kDriverVersionPath)};
+//   }
 
-  static const int kContentsSize = 1024;
-  port::InlinedVector<char, 4> contents(kContentsSize);
-  size_t retcode =
-      fread(contents.begin(), 1, kContentsSize - 2, driver_version_file);
-  if (retcode < kContentsSize - 1) {
-    contents[retcode] = '\0';
-  }
-  contents[kContentsSize - 1] = '\0';
+//   static const int kContentsSize = 1024;
+//   port::InlinedVector<char, 4> contents(kContentsSize);
+//   size_t retcode =
+//       fread(contents.begin(), 1, kContentsSize - 2, driver_version_file);
+//   if (retcode < kContentsSize - 1) {
+//     contents[retcode] = '\0';
+//   }
+//   contents[kContentsSize - 1] = '\0';
 
-  if (retcode != 0) {
-    LOG(INFO) << "driver version file contents: \"\"\"" << contents.begin()
-              << "\"\"\"";
-    fclose(driver_version_file);
-    return FindKernelModuleVersion(string{contents.begin()});
-  }
+//   if (retcode != 0) {
+//     LOG(INFO) << "driver version file contents: \"\"\"" << contents.begin()
+//               << "\"\"\"";
+//     fclose(driver_version_file);
+//     return FindKernelModuleVersion(string{contents.begin()});
+//   }
+
+//   auto status =
+//       port::Status{port::error::INTERNAL,
+//                    port::StrCat("failed to read driver version file contents: ",
+//                                 kDriverVersionPath, "; ferror: ",
+//                                 ferror(driver_version_file))};
+//   fclose(driver_version_file);
+//   return status;
+// #endif
+
 
   auto status =
       port::Status{port::error::INTERNAL,
-                   port::StrCat("failed to read driver version file contents: ",
-                                kDriverVersionPath, "; ferror: ",
-                                ferror(driver_version_file))};
-  fclose(driver_version_file);
+                   port::StrCat("failed to read driver version file contents: ")};
   return status;
-#endif
 }
 
 
