@@ -91,10 +91,11 @@ const string& ClPlatform::Name() const {
 
 port::StatusOr<StreamExecutor*> ClPlatform::ExecutorForDevice(int ordinal) {
     std::cout << "ClPlatform::ExecutorForDevice(" << ordinal << ")" << std::endl;
-    return port::Status{
-        port::error::INTERNAL,
-        port::Printf(
-            "failed initializing StreamExecutor for cl device")};
+  StreamExecutorConfig config;
+  config.ordinal = ordinal;
+  config.plugin_config = PluginConfig();
+  config.device_options = DeviceOptions::Default();
+  return GetExecutor(config);
 }
 
 port::StatusOr<StreamExecutor*> ClPlatform::ExecutorForDeviceWithPluginConfig(
