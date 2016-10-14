@@ -872,16 +872,16 @@ Status EnablePeerAccess(gpu::Platform* platform,
 
 Status BaseGPUDeviceFactory::GetValidDeviceIds(
     const string& visible_device_list, std::vector<int>* ids) {
-  std::cout << "BaseGPUDeviceFactory::GetValidDeviceIds()" << std::endl;
+  std::cout << "gpu_device.cc BaseGPUDeviceFactory::GetValidDeviceIds()" << std::endl;
   TF_RETURN_IF_ERROR(ValidateGPUMachineManager());
 
-  std::cout << "BaseGPUDeviceFactory::GetValidDevceIds" << std::endl;
+  std::cout << "gpu_device.cc BaseGPUDeviceFactory::GetValidDevceIds" << std::endl;
   gpu::Platform* gpu_manager = GPUMachineManager();
   if (gpu_manager == nullptr) {
-    std::cout << "getvaliddeviceids, gpu_manager is null" << std::endl;
+    std::cout << "gpu_device.cc getvaliddeviceids, gpu_manager is null" << std::endl;
     return Status::OK();
   }
-  std::cout << "getvaliddeviceids, got a gpu_managerl" << std::endl;
+  std::cout << "gpu_device.cc getvaliddeviceids, got a gpu_manager" << std::endl;
 
   // If there are no GPUs visible, do nothing.
   if (gpu_manager->VisibleDeviceCount() <= 0) {
@@ -891,6 +891,7 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
 
   // If the user wants to remap the visible to virtual GPU mapping,
   // check for that here.
+  std::cout << "gpu_device.cc getvaliddeviceids, 1" << std::endl;
   std::vector<int> visible_gpu_order;
   if (visible_device_list.empty()) {
     visible_gpu_order.resize(gpu_manager->VisibleDeviceCount());
@@ -918,6 +919,7 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
     }
   }
 
+  std::cout << "gpu_device.cc getvaliddeviceids, 2" << std::endl;
   // Validate no repeats.
   std::set<int> visible_device_set(visible_gpu_order.begin(),
                                    visible_gpu_order.end());
@@ -928,8 +930,10 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
         visible_device_list);
   }
 
+  std::cout << "gpu_device.cc getvaliddeviceids, 3" << std::endl;
   bool new_gpu_found = false;
   for (int i = 0; i < visible_gpu_order.size(); ++i) {
+    std::cout << "gpu_device.cc GetValidDeviceIds post-3, gpu device i " << i << std::endl;
     int gpu_id = visible_gpu_order[i];
 
     // Only perform this once per visible gpu id.
@@ -940,8 +944,10 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
     visible_gpu_initialized_[gpu_id] = true;
     new_gpu_found = true;
 
+    std::cout << "gpu_device.cc GetValidDeviceIds()  getting executor for device " << gpu_id << std::endl;
     auto executor = gpu_manager->ExecutorForDevice(gpu_id);
     if (!executor.ok()) {
+      std::cout << "gpu_device.cc GetValidDeviceIds()  not executor for device " << gpu_id << std::endl;
       return StreamExecutorUtil::ConvertStatus(executor.status());
     }
 
@@ -971,6 +977,7 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
               << strings::HumanReadableNumBytes(free_bytes);
   }
 
+  std::cout << "gpu_device.cc getvaliddeviceids, 4" << std::endl;
   if (new_gpu_found) {
     // Enable peer access
     TF_RETURN_IF_ERROR(EnablePeerAccess(gpu_manager, visible_gpu_order));
@@ -996,6 +1003,7 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
     }
   }
 
+  std::cout << "gpu_device.cc getvaliddeviceids, 5" << std::endl;
   auto cuda_supported_capabilities = GetSupportedCudaComputeCapabilities();
   if (cuda_supported_capabilities.empty()) {
     return errors::FailedPrecondition(
@@ -1055,6 +1063,7 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
               << "(" << GetShortDeviceDescription(visible_gpu_id, desc) << ")";
   }
 
+  std::cout << "gpu_device.cc getvaliddeviceids, 6" << std::endl;
   return Status::OK();
 }
 
