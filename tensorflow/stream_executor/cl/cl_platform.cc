@@ -150,6 +150,7 @@ port::StatusOr<std::unique_ptr<StreamExecutor>> ClPlatform::GetUncachedExecutor(
             "failed initializing StreamExecutor for CL device ordinal %d: %s",
             config.ordinal, init_status.ToString().c_str())};
   }
+  std::cout << "created executor ok" << std::endl;
 
   return std::move(executor);
 }

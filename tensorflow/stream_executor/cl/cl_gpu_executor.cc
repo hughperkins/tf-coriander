@@ -161,16 +161,19 @@ port::Status CLExecutor::Init(int device_ordinal,
 
   auto status = CLDriver::Init();
   if (!status.ok()) {
+    std::cout << "CLExecutor::Init() CLDriver::Init() failed" << std::endl;
     return status;
   }
 
   status = CLDriver::GetDevice(device_ordinal_, &device_);
   if (!status.ok()) {
+    std::cout << "CLExecutor::Init() CLDriver::getdevice() failed" << std::endl;
     return status;
   }
 
   status = CLDriver::CreateContext(device_, device_options, &context_);
   if (!status.ok()) {
+    std::cout << "CLExecutor::Init() CLDriver::createcontext() failed" << std::endl;
     return status;
   }
 

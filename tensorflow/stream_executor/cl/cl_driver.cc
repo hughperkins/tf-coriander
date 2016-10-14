@@ -40,6 +40,8 @@ limitations under the License.
 #include "tensorflow/stream_executor/platform/port.h"
 #include "tensorflow/stream_executor/lib/inlined_vector.h"
 
+#include <iostream>
+
 bool FLAGS_gpuexec_cuda_driver_inject_init_error = false;
 bool FLAGS_gpuexec_cuda_sync_around_driver_calls = false;
 bool FLAGS_gpuexec_cuda_device_0_only = false;
@@ -526,7 +528,7 @@ static port::Status InternalInit() {
 /* static */ port::Status CLDriver::GetDevice(int device_ordinal,
                                                 CUdevice *device) {
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuDeviceGet(device, device_ordinal);
+  res = cuDeviceGet(device, device_ordinal);
   if (res == CUDA_SUCCESS) {
     return port::Status::OK();
   }
@@ -597,18 +599,21 @@ bool DeviceOptionsToContextFlags(DeviceOptions device_options, int *flags) {
     // TODO(leary) Need to see if NVIDIA can expunge the leakiness in their
     // context creation: see http://b/13248943
 
-    // res = cuCtxCreate_v2(&new_context, flags, device);
+    res = cuCtxCreate_v2(&new_context, flags, device);
   }
-  // CHECK_EQ(CUDA_SUCCESS, cuCtxSetCurrent(former_context));
+  CHECK_EQ(CUDA_SUCCESS, cuCtxSetCurrent(former_context));
 
   if (res == CUDA_SUCCESS) {
+    std::cout << "CLDriver::CreateContext cuCtxSetCurrent  succeeded ok" << std::endl;
     *context = CreatedContexts::Add(new_context);
     CHECK(*context != nullptr)
         << "success in this call must entail non-null result";
     VLOG(2) << "created context " << context << " for this thread";
+    std::cout << "CLDriver::CreateContext cuCtxSetCurrent  succeeded ok => returning ok" << std::endl;
     return port::Status::OK();
   }
 
+  std::cout << "CLDriver::CreateContext cuCtxSetCurrent failed" << std::endl;
   string message = "failed call to cuCtxCreate: " + ToString(res);
   if (res == CUDA_ERROR_OUT_OF_MEMORY) {
     uint64 total_memory;
@@ -1474,8 +1479,8 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
   *cc_major = 0;
   *cc_minor = 0;
   CUresult result = CUDA_ERROR_UNKNOWN;
-  // CUresult result =
-  //     cuDeviceComputeCapability(cc_major, cc_minor, device);
+  result =
+       cuDeviceComputeCapability(cc_major, cc_minor, device);
   if (result == CUDA_SUCCESS) {
     return port::Status::OK();
   }
@@ -1579,7 +1584,7 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
 
 /* static */ bool CLDriver::GetDriverVersion(int *driver_version) {
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuDriverGetVersion(driver_version);
+  res = cuDriverGetVersion(driver_version);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query driver version: " << ToString(res);
     return false;
@@ -1736,7 +1741,7 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
 /* static */ CUcontext CLDriver::CurrentContextOrDie() {
   CUcontext current = nullptr;
   CUresult result = CUDA_ERROR_UNKNOWN;
-  // CUresult result = cuCtxGetCurrent(&current);
+  result = cuCtxGetCurrent(&current);
   if (result != CUDA_SUCCESS) {
     LOG(FATAL) << "failed to query current context: " << ToString(result);
   }
