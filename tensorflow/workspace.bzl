@@ -57,7 +57,7 @@ cc_library(
   native.new_git_repository(
       name = "EasyCL",
       remote = "https://github.com/hughperkins/EasyCL",
-      tag = "v3.2.0",
+      tag = "v4.0.0",
       build_file_content = """
 cc_library(
     name = "easycl-lib",
@@ -87,7 +87,7 @@ cc_library(
   native.new_git_repository(
       name = "cocl",
       remote = "https://github.com/hughperkins/cuda-on-cl",
-      tag = "v2.12.0",
+      tag = "v2.13.0",
       build_file_content = """
 cc_library(
     name = "cocl-lib",
