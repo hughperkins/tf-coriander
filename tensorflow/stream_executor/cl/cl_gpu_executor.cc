@@ -98,9 +98,8 @@ std::function<string(const string &)> g_cubinate;
 
 static CLEvent *AsCLEvent(Event *event) {
   std::cout << "cl_gpu_executor::AsCLEvent()" << std::endl;
-  return 0;
-  // DCHECK(event != nullptr);
-  // return static_cast<CLEvent *>(event->implementation());
+  DCHECK(event != nullptr);
+  return static_cast<CLEvent *>(event->implementation());
 }
 
 
@@ -562,9 +561,8 @@ bool CLExecutor::SynchronousMemSet(DeviceMemoryBase *location, int value,
 bool CLExecutor::SynchronousMemcpy(DeviceMemoryBase *gpu_dst,
                                      const void *host_src, uint64 size) {
   std::cout << "cl_gpu_executor::SynchronousMemcpy()" << std::endl;
-  return false;
-  // return CLDriver::SynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
-  //                                         host_src, size);
+  return CLDriver::SynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
+                                        host_src, size);
 }
 
 bool CLExecutor::SynchronousMemcpy(void *host_dst,
@@ -730,7 +728,6 @@ void CLExecutor::DeallocateTimer(Timer *timer) {
 
 bool CLExecutor::CreateStreamDependency(Stream *dependent, Stream *other) {
   std::cout << "cl_gpu_executor::CreateStreamDependency()" << std::endl;
-  // return false;
   CUevent other_completed_event = *AsCLStream(other)->completed_event();
   bool ok = CLDriver::RecordEvent(context_, other_completed_event,
                                     AsCLStreamValue(other))
@@ -982,8 +979,8 @@ CLExecutor::CreateEventImplementation() {
 std::unique_ptr<internal::KernelInterface>
 CLExecutor::CreateKernelImplementation() {
   std::cout << "CLExecutor::CreateKernelImplementation" << std::endl;
-  return std::unique_ptr<internal::KernelInterface>();
-  // return std::unique_ptr<internal::KernelInterface>(new CLKernel());
+  // return std::unique_ptr<internal::KernelInterface>();
+  return std::unique_ptr<internal::KernelInterface>(new CLKernel());
 }
 
 std::unique_ptr<internal::StreamInterface>
@@ -1001,13 +998,11 @@ CLExecutor::GetTimerImplementation() {
 
 void *CLExecutor::CudaContextHack() { 
   std::cout << "CLExecutor::CudaContextHack" << std::endl;
-  // return 0;
   return context_;
 }
 
 ClContext* CLExecutor::cl_context() { 
   std::cout << "CLExecutor::cl_context" << std::endl;
-  // return 0;
   return context_; 
 }
 
