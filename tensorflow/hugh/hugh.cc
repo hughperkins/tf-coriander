@@ -53,6 +53,12 @@ int main(int argc, char *argv[]) {
 
     auto var = test::graph::Var(&graph, DT_FLOAT, TensorShape({1}));
 
+    Tensor data(DT_FLOAT, TensorShape({1}));
+    data.flat<float>().setZero();
+    auto zeros = test::graph::Constant(&graph, data);
+
+    test::graph::Assign(&graph, var, zeros);
+
     // Graph* g = new Graph(OpRegistry::Global());
     // auto var = Var(g, 1);
     // test::graph::Assign(g, var, Zeros(g, 1));

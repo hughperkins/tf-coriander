@@ -56,7 +56,7 @@ void OpRegistry::Register(OpRegistrationDataFactory op_data_factory) {
   if (!s.ok()) {
     std::cout << "op.cc OpRegistry::REgistry failed to get registrationdata" << std::endl;
   }
-  std::cout << "op.cc OpRegistry::Register() op name " << op_reg_data->op_def.name() << std::endl;
+  // std::cout << "op.cc OpRegistry::Register() op name " << op_reg_data->op_def.name() << std::endl;
 
   mutex_lock lock(mu_);
   if (initialized_) {
