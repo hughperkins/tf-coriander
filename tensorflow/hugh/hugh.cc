@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 
     Rendezvous *rendez = NewLocalRendezvous();
 
-    //   const int graph_def_version = g->versions().producer();
+    const int graph_def_version = graph.versions().producer();
 
     //   LocalExecutorParams params;
     //   params.device = device_;
