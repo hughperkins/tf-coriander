@@ -87,7 +87,7 @@ cc_library(
   native.new_git_repository(
       name = "cocl",
       remote = "https://github.com/hughperkins/cuda-on-cl",
-      tag = "v2.7.0",
+      tag = "v2.8.0",
       build_file_content = """
 cc_library(
     name = "cocl-lib",

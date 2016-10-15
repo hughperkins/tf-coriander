@@ -97,6 +97,7 @@ class CUDATimer;
 std::function<string(const string &)> g_cubinate;
 
 static CUDAEvent *AsCUDAEvent(Event *event) {
+  std::cout << "cl_gpu_executor::AsCUDAEvent()" << std::endl;
   return 0;
   // DCHECK(event != nullptr);
   // return static_cast<CUDAEvent *>(event->implementation());
@@ -106,6 +107,7 @@ static CUDAEvent *AsCUDAEvent(Event *event) {
 // Given a platform-independent timer datatype, returns the internal CUDA
 // platform implementation pointer.
 static CUDATimer *AsCUDATimer(Timer *timer) {
+  std::cout << "cl_gpu_executor::AsCUDATimer()" << std::endl;
   return 0;
   // DCHECK(timer != nullptr);
   // return static_cast<CUDATimer *>(timer->implementation());
@@ -118,6 +120,7 @@ static CUDATimer *AsCUDATimer(Timer *timer) {
 // libcl APIs, so the caller should take care to only pass the result of const
 // GPU memory conversions to libcl functions which will honor constness.
 static CUdeviceptr AsClDevicePtr(const DeviceMemoryBase &gpu_mem) {
+  std::cout << "cl_gpu_executor::AsClDevicePtr()" << std::endl;
   return reinterpret_cast<CUdeviceptr>(gpu_mem.opaque());
 }
 
@@ -127,17 +130,20 @@ static CUdeviceptr AsClDevicePtr(DeviceMemoryBase *gpu_mem) {
 }
 
 static ClContext* GetClContext(Stream *stream) {
+  std::cout << "cl_gpu_executor::GetClContext()" << std::endl;
   return static_cast<CLExecutor *>(stream->parent()->implementation())
       ->cl_context();
 }
 
 ClContext* ExtractClContext(CLExecutor *cl_exec) {
+  std::cout << "cl_gpu_executor::ExtractClContext()" << std::endl;
   return 0;
   // CHECK(cl_exec != nullptr);
   // return cl_exec->cl_context();
 }
 
 CLExecutor *ExtractClExecutor(StreamExecutor *stream_exec) {
+  std::cout << "cl_gpu_executor::ExtractClExecutor()" << std::endl;
   return 0;
   // return static_cast<CLExecutor *>(stream_exec->implementation());
 }
@@ -241,6 +247,7 @@ static string GetBinaryDir(bool strip_exe) {
 
 bool CLExecutor::GetKernel(const MultiKernelLoaderSpec &spec,
                              KernelBase *kernel) {
+  std::cout << "cl_gpu_executor::GetKernel()" << std::endl;
   return false;
   // CLKernel *cl_kernel = AsCLKernel(kernel);
   // CUmodule module = nullptr;
@@ -341,6 +348,7 @@ bool CLExecutor::GetKernel(const MultiKernelLoaderSpec &spec,
 
 bool CLExecutor::GetKernelMetadata(CLKernel *cl_kernel,
                                      KernelMetadata *kernel_metadata) {
+  std::cout << "cl_gpu_executor::GetKernelMetadata()" << std::endl;
   return false;
   // int value;
   // if (!CLDriver::FuncGetAttribute(CU_FUNC_ATTRIBUTE_NUM_REGS,
@@ -363,6 +371,7 @@ bool CLExecutor::GetKernelMetadata(CLKernel *cl_kernel,
 bool CLExecutor::Launch(Stream *stream, const ThreadDim &thread_dims,
                           const BlockDim &block_dims, const KernelBase &kernel,
                           const std::vector<KernelArg> &args) {
+  std::cout << "cl_gpu_executor::Launch()" << std::endl;
   return false;
   // CHECK_EQ(kernel.Arity(), args.size());
   // CUstream custream = AsCUDAStreamValue(stream);
@@ -422,6 +431,7 @@ bool CLExecutor::Launch(Stream *stream, const ThreadDim &thread_dims,
 void CLExecutor::OccupancyCheck(const KernelBase &kernel,
                                   const ThreadDim &thread_dims,
                                   const BlockDim &block_dims) {
+  std::cout << "cl_gpu_executor::OccupancyCheck()" << std::endl;
   // VLOG(2) << "Computing kernel occupancy for kernel "
   //         << kernel.demangled_name();
   // VLOG(2) << "Thread dimensions (" << thread_dims.x << ", " << thread_dims.y
@@ -478,25 +488,29 @@ void CLExecutor::OccupancyCheck(const KernelBase &kernel,
 }
 
 void *CLExecutor::Allocate(uint64 size) {
-  // return CLDriver::DeviceAllocate(context_, size);
-  return 0;
+  std::cout << "cl_gpu_executor::Allocate()" << std::endl;
+  return CLDriver::DeviceAllocate(context_, size);
+  //return 0;
 }
 
 void *CLExecutor::AllocateSubBuffer(DeviceMemoryBase *mem,
                                       uint64 offset_bytes, uint64 size_bytes) {
+  std::cout << "cl_gpu_executor::AllocateSubBuffer()" << std::endl;
   // offset and size are in bytes, so char* works as the pointer type.
   // return reinterpret_cast<char *>(mem->opaque()) + offset_bytes;
   return 0;
 }
 
 void CLExecutor::Deallocate(DeviceMemoryBase *mem) {
+  std::cout << "cl_gpu_executor::Deallocate()" << std::endl;
   // CUDA "sub-buffers" are just pointer + offset, so no dealloc is necessary.
-  // if (!mem->is_sub_buffer()) {
-  //   CLDriver::DeviceDeallocate(context_, mem->opaque());
-  // }
+  if (!mem->is_sub_buffer()) {
+     CLDriver::DeviceDeallocate(context_, mem->opaque());
+  }
 }
 
 bool CLExecutor::HostMemoryRegister(void *location, uint64 size) {
+  std::cout << "cl_gpu_executor::HostMemoryRegister()" << std::endl;
   return false;
   // if (location == nullptr || size == 0) {
   //   LOG(WARNING) << "attempting to register null or zero-sized memory: "
@@ -507,29 +521,33 @@ bool CLExecutor::HostMemoryRegister(void *location, uint64 size) {
 }
 
 bool CLExecutor::HostMemoryUnregister(void *location) {
+  std::cout << "cl_gpu_executor::HostMemoryUnregister()" << std::endl;
   return false;
   // VLOG(2) << "unregistering " << location;
   // return CLDriver::HostUnregister(context_, location);
 }
 
 bool CLExecutor::SynchronizeAllActivity() {
+  std::cout << "cl_gpu_executor::SynchronizeAllActivity()" << std::endl;
   return false;
   // return CLDriver::SynchronizeContext(context_);
 }
 
 bool CLExecutor::SynchronousMemZero(DeviceMemoryBase *location, uint64 size) {
-  return false;
-  // if (reinterpret_cast<uintptr_t>(location->opaque()) % 4 == 0 &&
-  //     size % 4 == 0) {
-  //   return CLDriver::SynchronousMemsetUint32(
-  //       context_, AsClDevicePtr(location), 0x0, size / 4);
-  // }
-  // return CLDriver::SynchronousMemsetUint8(context_, AsClDevicePtr(location),
-  //                                           0x0, size);
+  std::cout << "cl_gpu_executor::SynchronousMemZero()" << std::endl;
+  // return false;
+  if (reinterpret_cast<uintptr_t>(location->opaque()) % 4 == 0 &&
+      size % 4 == 0) {
+    return CLDriver::SynchronousMemsetUint32(
+        context_, AsClDevicePtr(location), 0x0, size / 4);
+  }
+  return CLDriver::SynchronousMemsetUint8(context_, AsClDevicePtr(location),
+                                            0x0, size);
 }
 
 bool CLExecutor::SynchronousMemSet(DeviceMemoryBase *location, int value,
                                      uint64 size) {
+  std::cout << "cl_gpu_executor::SynchronousMemSet()" << std::endl;
   return false;
   // if (reinterpret_cast<uintptr_t>(location->opaque()) % 4 == 0 &&
   //     size % 4 == 0) {
@@ -546,6 +564,7 @@ bool CLExecutor::SynchronousMemSet(DeviceMemoryBase *location, int value,
 
 bool CLExecutor::SynchronousMemcpy(DeviceMemoryBase *gpu_dst,
                                      const void *host_src, uint64 size) {
+  std::cout << "cl_gpu_executor::SynchronousMemcpy()" << std::endl;
   return false;
   // return CLDriver::SynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
   //                                         host_src, size);
@@ -554,6 +573,7 @@ bool CLExecutor::SynchronousMemcpy(DeviceMemoryBase *gpu_dst,
 bool CLExecutor::SynchronousMemcpy(void *host_dst,
                                      const DeviceMemoryBase &gpu_src,
                                      uint64 size) {
+  std::cout << "cl_gpu_executor::SynchronousMemcpy()" << std::endl;
   return false;
   // return CLDriver::SynchronousMemcpyD2H(context_, host_dst,
   //                                         AsClDevicePtr(gpu_src), size);
@@ -561,6 +581,7 @@ bool CLExecutor::SynchronousMemcpy(void *host_dst,
 
 bool CLExecutor::SynchronousMemcpyDeviceToDevice(
     DeviceMemoryBase *gpu_dst, const DeviceMemoryBase &gpu_src, uint64 size) {
+  std::cout << "cl_gpu_executor::SynchronousMemcpyDeviceToDevice()" << std::endl;
   return false;
   // return CLDriver::SynchronousMemcpyD2D(context_, AsClDevicePtr(gpu_dst),
   //                                         AsClDevicePtr(gpu_src), size);
@@ -568,6 +589,7 @@ bool CLExecutor::SynchronousMemcpyDeviceToDevice(
 
 bool CLExecutor::MemZero(Stream *stream, DeviceMemoryBase *location,
                            uint64 size) {
+  std::cout << "cl_gpu_executor::MemZero()" << std::endl;
   return false;
   // if (reinterpret_cast<uintptr_t>(location->opaque()) % 4 == 0 &&
   //     size % 4 == 0) {
@@ -579,6 +601,7 @@ bool CLExecutor::MemZero(Stream *stream, DeviceMemoryBase *location,
 
 bool CLExecutor::Memset(Stream *stream, DeviceMemoryBase *location,
                            uint8 pattern, uint64 size) {
+  std::cout << "cl_gpu_executor::Memset()" << std::endl;
   return false;
   // VLOG(2) << "enqueueing memset8 operation onto stream " << stream
   //         << " at location " << location << " with size " << size
@@ -590,6 +613,7 @@ bool CLExecutor::Memset(Stream *stream, DeviceMemoryBase *location,
 
 bool CLExecutor::Memset32(Stream *stream, DeviceMemoryBase *location,
                             uint32 pattern, uint64 size) {
+  std::cout << "cl_gpu_executor::Memset32()" << std::endl;
   return false;
   // VLOG(2) << "enqueueing memset32 operation onto stream " << stream
   //         << " at location " << location << " with size " << size
@@ -611,6 +635,7 @@ bool CLExecutor::Memcpy(Stream *stream, void *host_dst,
 
 bool CLExecutor::Memcpy(Stream *stream, DeviceMemoryBase *gpu_dst,
                           const void *host_src, uint64 size) {
+  std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
   return false;
   // return CLDriver::AsynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
   //                                          host_src, size,
@@ -621,6 +646,7 @@ bool CLExecutor::MemcpyDeviceToDevice(Stream *stream,
                                         DeviceMemoryBase *gpu_dst,
                                         const DeviceMemoryBase &gpu_src,
                                         uint64 size) {
+  std::cout << "cl_gpu_executor::MemcpyDevicetoDevice()" << std::endl;
   return false;
   // return CLDriver::AsynchronousMemcpyD2D(context_, AsClDevicePtr(gpu_dst),
   //                                          AsClDevicePtr(gpu_src), size,
@@ -629,6 +655,7 @@ bool CLExecutor::MemcpyDeviceToDevice(Stream *stream,
 
 bool CLExecutor::HostCallback(Stream *stream,
                                 std::function<void()> callback) {
+  std::cout << "cl_gpu_executor::HostCallback()" << std::endl;
   return false;
   // auto callback_ptr = new std::function<void()>(callback);
   // return CLDriver::AddStreamCallback(context_, AsCUDAStreamValue(stream),
@@ -638,6 +665,7 @@ bool CLExecutor::HostCallback(Stream *stream,
 /* static */ void CLExecutor::InternalHostCallback(CUstream stream,
                                                      CUresult status,
                                                      void *data) {
+  std::cout << "cl_gpu_executor::InternalHostCallback()" << std::endl;
   // std::function<void()> *callback =
   //     reinterpret_cast<std::function<void()> *>(data);
   // (*callback)();
@@ -645,6 +673,7 @@ bool CLExecutor::HostCallback(Stream *stream,
 }
 
 port::Status CLExecutor::AllocateEvent(Event *event) {
+  std::cout << "cl_gpu_executor::AllocateEvent()" << std::endl;
   // return AsCUDAEvent(event)->Init();
     return port::Status{
         port::error::INTERNAL,
@@ -652,6 +681,7 @@ port::Status CLExecutor::AllocateEvent(Event *event) {
   }
 
 port::Status CLExecutor::DeallocateEvent(Event *event) {
+  std::cout << "cl_gpu_executor::DeallocateEvent()" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf("not implemented")};
@@ -659,6 +689,7 @@ port::Status CLExecutor::DeallocateEvent(Event *event) {
 }
 
 port::Status CLExecutor::RecordEvent(Stream *stream, Event *event) {
+  std::cout << "cl_gpu_executor::RecordEvent()" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf("not implemented")};
@@ -666,6 +697,7 @@ port::Status CLExecutor::RecordEvent(Stream *stream, Event *event) {
 }
 
 port::Status CLExecutor::WaitForEvent(Stream *stream, Event *event) {
+  std::cout << "cl_gpu_executor::WaitForEvent()" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf("not implemented")};
@@ -682,6 +714,7 @@ port::Status CLExecutor::WaitForEvent(Stream *stream, Event *event) {
 }
 
 Event::Status CLExecutor::PollForEventStatus(Event *event) {
+  std::cout << "cl_gpu_executor::PollForEventSTatus()" << std::endl;
      return Event::Status::kError;
     // return Event::Status{
     //     Event::error::INTERNAL,
@@ -690,11 +723,13 @@ Event::Status CLExecutor::PollForEventStatus(Event *event) {
 }
 
 bool CLExecutor::AllocateStream(Stream *stream) {
+  std::cout << "cl_gpu_executor::AllocateStream()" << std::endl;
   return false;
   // return AsCUDAStream(stream)->Init();
 }
 
 void CLExecutor::DeallocateStream(Stream *stream) {
+  std::cout << "cl_gpu_executor::DeallocateStream()" << std::endl;
   // CUDAStream *cl_stream = AsCUDAStream(stream);
   // if (!cl_stream->IsIdle()) {
   //   LOG(ERROR) << "Deallocating stream with pending work";
@@ -703,15 +738,18 @@ void CLExecutor::DeallocateStream(Stream *stream) {
 }
 
 bool CLExecutor::AllocateTimer(Timer *timer) {
+  std::cout << "cl_gpu_executor::AllocateTimer()" << std::endl;
   return false;
   // return AsCUDATimer(timer)->Init();
 }
 
 void CLExecutor::DeallocateTimer(Timer *timer) {
+  std::cout << "cl_gpu_executor::DeallocateTimer()" << std::endl;
   // AsCUDATimer(timer)->Destroy();
 }
 
 bool CLExecutor::CreateStreamDependency(Stream *dependent, Stream *other) {
+  std::cout << "cl_gpu_executor::CreateStreamDependency()" << std::endl;
   return false;
   // CUevent other_completed_event = *AsCUDAStream(other)->completed_event();
   // bool ok = CLDriver::RecordEvent(context_, other_completed_event,
@@ -728,21 +766,25 @@ bool CLExecutor::CreateStreamDependency(Stream *dependent, Stream *other) {
 }
 
 bool CLExecutor::StartTimer(Stream *stream, Timer *timer) {
+  std::cout << "cl_gpu_executor::StartTimer()" << std::endl;
   return false;
   // return AsCUDATimer(timer)->Start(AsCUDAStream(stream));
 }
 
 bool CLExecutor::StopTimer(Stream *stream, Timer *timer) {
+  std::cout << "cl_gpu_executor::StopTimer()" << std::endl;
   return false;
   // return AsCUDATimer(timer)->Stop(AsCUDAStream(stream));
 }
 
 bool CLExecutor::BlockHostUntilDone(Stream *stream) {
+  std::cout << "cl_gpu_executor::BlockHostUntilDone()" << std::endl;
   return false;
   // return CLDriver::SynchronizeStream(context_, AsCUDAStreamValue(stream));
 }
 
 blas::BlasSupport *CLExecutor::CreateBlas() {
+  std::cout << "cl_gpu_executor::CreateBlas()" << std::endl;
   // PluginRegistry *registry = PluginRegistry::Instance();
   // port::StatusOr<PluginRegistry::BlasFactory> status =
   //     registry->GetFactory<PluginRegistry::BlasFactory>(kClPlatformId,
@@ -757,6 +799,7 @@ blas::BlasSupport *CLExecutor::CreateBlas() {
 }
 
 dnn::DnnSupport *CLExecutor::CreateDnn() {
+  std::cout << "cl_gpu_executor::Creatednn()" << std::endl;
   // PluginRegistry *registry = PluginRegistry::Instance();
   // port::StatusOr<PluginRegistry::DnnFactory> status =
   //     registry->GetFactory<PluginRegistry::DnnFactory>(kClPlatformId,
@@ -771,6 +814,7 @@ dnn::DnnSupport *CLExecutor::CreateDnn() {
 }
 
 fft::FftSupport *CLExecutor::CreateFft() {
+  std::cout << "cl_gpu_executor::CreateFft()" << std::endl;
   // PluginRegistry *registry = PluginRegistry::Instance();
   // port::StatusOr<PluginRegistry::FftFactory> status =
   //     registry->GetFactory<PluginRegistry::FftFactory>(kClPlatformId,
@@ -785,6 +829,7 @@ fft::FftSupport *CLExecutor::CreateFft() {
 }
 
 rng::RngSupport *CLExecutor::CreateRng() {
+  std::cout << "cl_gpu_executor::CreateRng()" << std::endl;
   // PluginRegistry *registry = PluginRegistry::Instance();
   // port::StatusOr<PluginRegistry::RngFactory> status =
   //     registry->GetFactory<PluginRegistry::RngFactory>(kClPlatformId,
@@ -972,7 +1017,7 @@ ClContext* CLExecutor::cl_context() {
 static int TryToReadNumaNode(const string &pci_bus_id, int device_ordinal) {
 // #if defined(__APPLE__)
   //LOG(INFO) << "OS X does not support NUMA - returning NUMA node zero";
-  return -1;
+  return 0;
 // #else
 //   VLOG(2) << "trying to read NUMA node for device ordinal: " << device_ordinal;
 //   static const int kUnknownNumaNode = -1;

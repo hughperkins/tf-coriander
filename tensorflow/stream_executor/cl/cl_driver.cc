@@ -819,7 +819,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                                      uint8 value, size_t size) {
   ScopedActivateContext activation{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuMemsetD8_v2(location, value, size);
+  res = cuMemsetD8_v2(location, value, size);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to memset memory: " << ToString(res);
     return false;
@@ -833,7 +833,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                                       size_t uint32_count) {
   ScopedActivateContext activation{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuMemsetD32_v2(location, value, uint32_count);
+  res = cuMemsetD32_v2(location, value, uint32_count);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to memset memory: " << ToString(res);
     return false;
@@ -998,7 +998,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
   ScopedActivateContext activated{context};
   CUdeviceptr result = 0;
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuMemAlloc_v2(&result, bytes);
+  res = cuMemAlloc_v2(&result, bytes);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to allocate "
                << port::HumanReadableNumBytes::ToString(bytes) << " (" << bytes
@@ -1016,7 +1016,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
   ScopedActivateContext activation{context};
   CUdeviceptr pointer = port::bit_cast<CUdeviceptr>(location);
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuMemFree_v2(pointer);
+  res = cuMemFree_v2(pointer);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to free device memory at " << location
                << "; result: " << ToString(res);
