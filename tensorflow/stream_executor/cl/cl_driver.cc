@@ -48,7 +48,7 @@ bool FLAGS_gpuexec_cuda_device_0_only = false;
 
 // Debugging: on each push and pop of a cuda context, verify the current context
 // matches the expected one.
-constexpr bool kVerifyClContext = false;
+constexpr bool kVerifyClContext = true;
 
 namespace perftools {
 namespace gputools {
@@ -405,7 +405,7 @@ ScopedActivateContext::ScopedActivateContext(ClContext* cuda_context) {
   to_restore_ = (tls->depth == 1 ? nullptr : tls->context);
 
   // Set the context and update thread local.
-  // CHECK_EQ(CUDA_SUCCESS, cuCtxSetCurrent(cuda_context->context()));
+  CHECK_EQ(CUDA_SUCCESS, cuCtxSetCurrent(cuda_context->context()));
   tls->id = cuda_context->id();
   tls->context = cuda_context;
 }
@@ -430,7 +430,7 @@ ScopedActivateContext::~ScopedActivateContext() {
   }
 
   // Set context and update thread local.
-  // CHECK_EQ(CUDA_SUCCESS, cuCtxSetCurrent(to_restore_->context()));
+  CHECK_EQ(CUDA_SUCCESS, cuCtxSetCurrent(to_restore_->context()));
   tls->id = to_restore_->id();
   tls->context = to_restore_;
 }
