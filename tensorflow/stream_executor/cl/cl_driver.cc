@@ -543,8 +543,8 @@ static port::Status InternalInit() {
   static const size_t kCharLimit = 64;
   port::InlinedVector<char, 4> chars(kCharLimit);
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res =
-  //     cuDeviceGetName(chars.begin(), kCharLimit - 1, device);
+  res =
+     cuDeviceGetName(chars.begin(), kCharLimit - 1, device);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to get device name for " << device << ": "
                << ToString(res);
@@ -1498,7 +1498,7 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
                                             CUdevice_attribute attribute) {
   int value = -1;
   CUresult result = CUDA_ERROR_UNKNOWN;
-  // CUresult result = cuDeviceGetAttribute(&value, attribute, device);
+  result = cuDeviceGetAttribute(&value, attribute, device);
   if (result != CUDA_SUCCESS) {
     return port::Status{
         port::error::NOT_FOUND,
@@ -1554,8 +1554,8 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
                                             CUdevice device) {
   int value;
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuDeviceGetAttribute(
-  //     &value, CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_X, device);
+  res = cuDeviceGetAttribute(
+       &value, CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_X, device);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query max grid dim x: " << ToString(res);
     return false;
@@ -1563,8 +1563,8 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
   *x = value;
 
   // CUresult res = CUDA_ERROR_UNKNOWN;
-  // res = cuDeviceGetAttribute(
-  //     &value, CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Y, device);
+  res = cuDeviceGetAttribute(
+       &value, CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Y, device);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query max grid dim y: " << ToString(res);
     return false;
@@ -1572,8 +1572,8 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
   *y = value;
 
   // CUresult res = CUDA_ERROR_UNKNOWN;
-  // res = cuDeviceGetAttribute(
-  //     &value, CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Z, device);
+  res = cuDeviceGetAttribute(
+       &value, CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Z, device);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query max grid dim z: " << ToString(res);
     return false;
@@ -1596,8 +1596,8 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
 /* static */ bool CLDriver::GetDeviceProperties(CUdevprop *device_properties,
                                                   int device_ordinal) {
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res =
-  //     cuDeviceGetProperties(device_properties, device_ordinal);
+  res =
+      cuDeviceGetProperties(device_properties, device_ordinal);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query device properties: " << ToString(res);
     return false;
@@ -1609,8 +1609,8 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
 /* static */ bool CLDriver::IsEccEnabled(CUdevice device, bool *result) {
   int value = -1;
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuDeviceGetAttribute(
-  //     &value, CU_DEVICE_ATTRIBUTE_ECC_ENABLED, device);
+  res = cuDeviceGetAttribute(
+      &value, CU_DEVICE_ATTRIBUTE_ECC_ENABLED, device);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query ECC status: " << ToString(res);
     return false;
@@ -1642,7 +1642,7 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
                                                    uint64 *result) {
   size_t value = -1;
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuDeviceTotalMem_v2(&value, device);
+  res = cuDeviceTotalMem_v2(&value, device);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query total available memory: " << ToString(res);
     return false;
@@ -1658,8 +1658,8 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
   port::InlinedVector<char, 4> chars(kBufferSize);
   chars[kBufferSize - 1] = '\0';
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res =
-  //     cuDeviceGetPCIBusId(chars.begin(), kBufferSize - 1, device);
+  res =
+      cuDeviceGetPCIBusId(chars.begin(), kBufferSize - 1, device);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query PCI bus id for device: " << ToString(res);
     return pci_bus_id;

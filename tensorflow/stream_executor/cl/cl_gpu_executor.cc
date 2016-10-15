@@ -969,8 +969,8 @@ ClContext* CLExecutor::cl_context() {
 // turn to gsys' topology modeling.
 static int TryToReadNumaNode(const string &pci_bus_id, int device_ordinal) {
 // #if defined(__APPLE__)
-  LOG(INFO) << "OS X does not support NUMA - returning NUMA node zero";
-  return 0;
+  //LOG(INFO) << "OS X does not support NUMA - returning NUMA node zero";
+  return -1;
 // #else
 //   VLOG(2) << "trying to read NUMA node for device ordinal: " << device_ordinal;
 //   static const int kUnknownNumaNode = -1;
@@ -1049,7 +1049,6 @@ static const UnqueryableDeviceParams kAllUnqueryableDeviceParams[] = {
 
 DeviceDescription *CLExecutor::PopulateDeviceDescription() const {
   internal::DeviceDescriptionBuilder builder;
-
   {
     int driver_version = 0;
     (void)CLDriver::GetDriverVersion(&driver_version);
@@ -1073,6 +1072,7 @@ DeviceDescription *CLExecutor::PopulateDeviceDescription() const {
 
   CUdevprop prop;
   if (CLDriver::GetDeviceProperties(&prop, device_ordinal_)) {
+    std::cout << "getdeviceproperties succeeded" << std::endl;
     builder.set_threads_per_block_limit(prop.maxThreadsPerBlock);
 
     ThreadDim thread_dim_limit;
@@ -1131,6 +1131,7 @@ DeviceDescription *CLExecutor::PopulateDeviceDescription() const {
 
   // builder.set_device_vendor("NVIDIA Corporation");
   // builder.set_cl_compute_capability(cc_major_, cc_minor_);
+  std::cout << "get max shared memory per core" << std::endl;
   builder.set_shared_memory_per_core(
       CLDriver::GetMaxSharedMemoryPerCore(device_).ValueOrDie());
   builder.set_shared_memory_per_block(
@@ -1143,8 +1144,9 @@ DeviceDescription *CLExecutor::PopulateDeviceDescription() const {
       CLDriver::GetMaxRegistersPerBlock(device_).ValueOrDie());
   builder.set_threads_per_warp(
       CLDriver::GetThreadsPerWarp(device_).ValueOrDie());
-
+  std::cout << "cl_gpu_executor.cc calling builder.Build()" << std::endl;
   auto built = builder.Build();
+  std::cout << "cl_gpu_executor.cc called builder.Build()" << std::endl;
   return built.release();
 }
 

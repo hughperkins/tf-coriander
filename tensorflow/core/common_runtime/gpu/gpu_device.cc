@@ -959,22 +959,27 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
       return StreamExecutorUtil::ConvertStatus(executor.status());
     }
 
+    std::cout << "gpu_device.cc GetValidDeviceIds() calling executor.ValueOrDie" << std::endl;
     auto stream_exec = executor.ValueOrDie();
     int64 free_bytes;
     int64 total_bytes;
+    std::cout << "gpu_device.cc GetValidDeviceIds() checking devicememoryusage" << std::endl;
     if (!stream_exec->DeviceMemoryUsage(&free_bytes, &total_bytes)) {
       // Logs internally on failure.
       free_bytes = 0;
       total_bytes = 0;
     }
+    std::cout << "gpu_device.cc GetValidDeviceIds() getting devicedescipriont" << std::endl;
     const auto& description = stream_exec->GetDeviceDescription();
     int cc_major;
     int cc_minor;
+    std::cout << "gpu_device.cc GetValidDeviceIds() getting computecapability" << std::endl;
     if (!description.cuda_compute_capability(&cc_major, &cc_minor)) {
       // Logs internally on failure.
       cc_major = 0;
       cc_minor = 0;
     }
+    std::cout << "gpu_device.cc GetValidDeviceIds() logging properties" << std::endl;
     LOG(INFO) << "Found device " << i << " with properties: "
               << "\nname: " << description.name() << "\nmajor: " << cc_major
               << " minor: " << cc_minor << " memoryClockRate (GHz) "

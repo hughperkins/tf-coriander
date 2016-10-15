@@ -27,6 +27,8 @@ limitations under the License.
 #include "tensorflow/stream_executor/launch_dim.h"
 #include "tensorflow/stream_executor/platform/port.h"
 
+#include <iostream>
+
 namespace perftools {
 namespace gputools {
 namespace internal {
@@ -334,6 +336,7 @@ class DeviceDescriptionBuilder {
   //
   // Once the description is built, this builder object should be discarded.
   std::unique_ptr<DeviceDescription> Build() {
+    std::cout << "device_description.h DeviceDescriptionBuilder::Build()" << std::endl;
     return std::move(device_description_);
   }
 
