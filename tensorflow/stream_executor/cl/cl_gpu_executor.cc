@@ -177,7 +177,9 @@ port::Status CLExecutor::Init(int device_ordinal,
     return status;
   }
 
-  return CLDriver::GetComputeCapability(&cc_major_, &cc_minor_, device_);
+  status = CLDriver::GetComputeCapability(&cc_major_, &cc_minor_, device_);
+  std::cout << "compute capability major=" << cc_major_ << " minor=" << cc_minor_ << std::endl;
+  return status;
 }
 
 bool CLExecutor::FindOnDiskForComputeCapability(
@@ -861,8 +863,8 @@ port::Status CLExecutor::SetDeviceSharedMemoryConfig(
 }
 
 bool CLExecutor::DeviceMemoryUsage(int64 *free, int64 *total) const {
-  return false;
-  // return CLDriver::GetDeviceMemoryInfo(context_, free, total);
+  //return false;
+  return CLDriver::GetDeviceMemoryInfo(context_, free, total);
 }
 
 bool CLExecutor::GetSymbol(const string& symbol_name, void **mem,
@@ -1094,6 +1096,7 @@ DeviceDescription *CLExecutor::PopulateDeviceDescription() const {
   {
     uint64 device_memory_size = -1;
     (void)CLDriver::GetDeviceTotalMemory(device_, &device_memory_size);
+    std::cout << "gl_gpu_executor.cc getdevicetotalemmory " << device_memory_size << std::endl;
     builder.set_device_memory_size(device_memory_size);
   }
 

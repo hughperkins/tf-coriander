@@ -1627,7 +1627,7 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
   size_t free = 0;
   size_t total = 0;
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuMemGetInfo_v2(&free, &total);
+  res = cuMemGetInfo_v2(&free, &total);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query device memory info: " << ToString(res);
     return false;
@@ -1643,6 +1643,7 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
   size_t value = -1;
   CUresult res = CUDA_ERROR_UNKNOWN;
   res = cuDeviceTotalMem_v2(&value, device);
+  std::cout << "CLDriver::getdevicetotlamemory " << value << std::endl;
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query total available memory: " << ToString(res);
     return false;

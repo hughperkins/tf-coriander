@@ -1044,15 +1044,15 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
     }
     // Only GPUs with no less than the minimum supported compute capability is
     // accepted.
-    if (device_capability < min_supported_capability) {
-      LOG(INFO) << "Ignoring visible gpu device "
-                << "(" << GetShortDeviceDescription(visible_gpu_id, desc)
-                << ") "
-                << "with Cuda compute capability " << device_capability
-                << ". The minimum required Cuda capability is "
-                << min_supported_capability << ".";
-      continue;
-    }
+    // if (device_capability < min_supported_capability) {
+    //   LOG(INFO) << "Ignoring visible gpu device "
+    //             << "(" << GetShortDeviceDescription(visible_gpu_id, desc)
+    //             << ") "
+    //             << "with Cuda compute capability " << device_capability
+    //             << ". The minimum required Cuda capability is "
+    //             << min_supported_capability << ".";
+    //   continue;
+    // }
 
     // Filter out slow GPUs. By default, GPUs with a lower multiprocessor
     // count than the fastest GPU are filtered out, unless they have 8 or more
