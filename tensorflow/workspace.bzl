@@ -87,7 +87,7 @@ cc_library(
   native.new_git_repository(
       name = "cocl",
       remote = "https://github.com/hughperkins/cuda-on-cl",
-      tag = "v2.13.0",
+      tag = "v2.15.0",
       build_file_content = """
 cc_library(
     name = "cocl-lib",
@@ -95,10 +95,7 @@ cc_library(
     [
         "src/hostside_opencl_funcs.cpp",
         "src/hostside_opencl_funcs.h",
-        "src/memory.cpp",
-        "src/streams.cpp",
-        "src/properties.cpp",
-        "src/events.cpp",
+        "src/cocl_*.cpp",
     ]),
     hdrs = glob(
     [

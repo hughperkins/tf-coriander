@@ -622,6 +622,7 @@ bool CLExecutor::Memset32(Stream *stream, DeviceMemoryBase *location,
 
 bool CLExecutor::Memcpy(Stream *stream, void *host_dst,
                           const DeviceMemoryBase &gpu_src, uint64 size) {
+  std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
   return false;
   // return CLDriver::AsynchronousMemcpyD2H(context_, host_dst,
   //                                          AsClDevicePtr(gpu_src), size,

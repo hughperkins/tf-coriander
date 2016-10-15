@@ -1047,7 +1047,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                              void *location) {
   ScopedActivateContext activation{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuMemFreeHost(location);
+  res = cuMemFreeHost(location);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "error deallocating host memory at " << location << ": "
                << ToString(res);
@@ -1091,7 +1091,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
 
   ScopedActivateContext activated{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuEventDestroy_v2(*event);
+  res = cuEventDestroy_v2(*event);
   *event = nullptr;
 
   switch (res) {
@@ -1116,7 +1116,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                                   CUstream stream) {
   ScopedActivateContext activated{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuEventRecord(event, stream);
+  res = cuEventRecord(event, stream);
   switch (res) {
     case CUDA_SUCCESS:
       return port::Status::OK();
@@ -1138,7 +1138,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
     ClContext *context, CUevent event) {
   ScopedActivateContext activated{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuEventQuery(event);
+  res = cuEventQuery(event);
   if (res != CUDA_SUCCESS && res != CUDA_ERROR_NOT_READY) {
     return port::Status{
         port::error::INTERNAL,
@@ -1155,7 +1155,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
   // The stop event must have completed in order for cuEventElapsedTime to
   // work.
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuEventSynchronize(stop);
+  res = cuEventSynchronize(stop);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to synchronize the stop event: " << ToString(res);
     return false;
@@ -1188,7 +1188,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
 /* static */ bool CLDriver::SynchronizeContext(ClContext* context) {
   ScopedActivateContext activation{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuCtxSynchronize();
+  res = cuCtxSynchronize();
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "could not synchronize on CUDA context: " << ToString(res)
                << " :: " << port::CurrentStackTrace();
@@ -1203,7 +1203,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
   ScopedActivateContext activated{context};
   CHECK(stream != nullptr);
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuStreamSynchronize(stream);
+  res = cuStreamSynchronize(stream);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "could not synchronize on CUDA stream: " << ToString(res)
                << " :: " << port::CurrentStackTrace();
