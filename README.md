@@ -36,7 +36,7 @@ sudo apt-get install opencl-headers cmake
 ### Procedure
 
 ```
-bazel --batch run --verbose_failures //tensorflow/hugh
+bazel run --verbose_failures //tensorflow/hugh
 ```
 
 ## Roadmap

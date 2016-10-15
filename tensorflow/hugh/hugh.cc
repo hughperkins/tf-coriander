@@ -5,6 +5,7 @@
 #include "tensorflow/core/common_runtime/graph_runner.h"
 #include "tensorflow/core/public/session_options.h"
 #include "tensorflow/core/common_runtime/device_factory.h"
+#include "tensorflow/core/graph/testlib.h"  // gives test:;graph::Var
 
 #include <iostream>
 #include <vector>
@@ -46,6 +47,15 @@ int main(int argc, char *argv[]) {
     std::cout << "7" << std::endl;
     CHECK(device_) << "Could not create a " << device << " device";
     std::cout << "8" << std::endl;
+
+    // Node* var = test::graph::Var(&g, DT_FLOAT, TensorShape({10}));
+    // return test::graph::Var(g, DT_FLOAT, TensorShape({n}));
+
+    auto var = test::graph::Var(&graph, DT_FLOAT, TensorShape({1}));
+
+    // Graph* g = new Graph(OpRegistry::Global());
+    // auto var = Var(g, 1);
+    // test::graph::Assign(g, var, Zeros(g, 1));
 
     cout << "all done" << endl;
     return 0;

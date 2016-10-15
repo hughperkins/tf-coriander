@@ -15,5 +15,8 @@ cc_binary(
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",
         "//tensorflow/cc:cc_ops",
+        "//tensorflow/core:state_ops_op_lib",   # gives REGISTER_OP("Variable") ?
+        # "//tensorflow/core:user_ops_op_lib",  # gives REGISTER_OP("Variable") ?
+        "//tensorflow/core:testlib",  # for test::graph::Var
     ]
 )

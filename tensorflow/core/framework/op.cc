@@ -26,6 +26,8 @@ limitations under the License.
 #include "tensorflow/core/platform/protobuf.h"
 #include "tensorflow/core/platform/types.h"
 
+#include <iostream>
+
 namespace tensorflow {
 
 // OpRegistry -----------------------------------------------------------------
@@ -48,6 +50,14 @@ OpRegistry::~OpRegistry() {
 }
 
 void OpRegistry::Register(OpRegistrationDataFactory op_data_factory) {
+  // std::cout << "op.cc OpRegistry::Registry()" << std::endl;
+  std::unique_ptr<OpRegistrationData> op_reg_data(new OpRegistrationData);
+  Status s = op_data_factory(op_reg_data.get());
+  if (!s.ok()) {
+    std::cout << "op.cc OpRegistry::REgistry failed to get registrationdata" << std::endl;
+  }
+  std::cout << "op.cc OpRegistry::Register() op name " << op_reg_data->op_def.name() << std::endl;
+
   mutex_lock lock(mu_);
   if (initialized_) {
     TF_QCHECK_OK(RegisterAlreadyLocked(op_data_factory));
@@ -58,6 +68,7 @@ void OpRegistry::Register(OpRegistrationDataFactory op_data_factory) {
 
 Status OpRegistry::LookUp(const string& op_type_name,
                           const OpRegistrationData** op_reg_data) const {
+  std::cout << "op.cc OpRegistry::Lookup " << op_type_name << std::endl;
   *op_reg_data = nullptr;
   const OpRegistrationData* res = nullptr;
 
@@ -222,6 +233,7 @@ OpListOpRegistry::~OpListOpRegistry() {
 
 Status OpListOpRegistry::LookUp(const string& op_type_name,
                                 const OpRegistrationData** op_reg_data) const {
+  // std::cout << "op.cc OpListOpRegistry::Lookup " << op_type_name << std::endl;
   auto iter = index_.find(op_type_name);
   if (iter == index_.end()) {
     *op_reg_data = nullptr;
