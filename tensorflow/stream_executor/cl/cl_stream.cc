@@ -21,12 +21,16 @@ limitations under the License.
 #include "tensorflow/stream_executor/lib/status.h"
 #include "tensorflow/stream_executor/stream.h"
 
+#include <iostream>
+
 namespace perftools {
 namespace gputools {
 namespace cl {
 
 bool CLStream::Init() {
+  std::cout << "CLStream::Init()" << std::endl;
   if (!CLDriver::CreateStream(parent_->cl_context(), &cl_stream_)) {
+    std::cout << "CLStream::Init() failed to create stream" << std::endl;
     return false;
   }
   return CLDriver::CreateEvent(parent_->cl_context(), &completed_event_,
@@ -35,6 +39,7 @@ bool CLStream::Init() {
 }
 
 void CLStream::Destroy() {
+  std::cout << "CLStream::Destroy()" << std::endl;
   if (completed_event_ != nullptr) {
     port::Status status =
         CLDriver::DestroyEvent(parent_->cl_context(), &completed_event_);
@@ -47,15 +52,18 @@ void CLStream::Destroy() {
 }
 
 bool CLStream::IsIdle() const {
+  std::cout << "CLStream::IsIdle()" << std::endl;
   return CLDriver::IsStreamIdle(parent_->cl_context(), cl_stream_);
 }
 
 CLStream *AsCLStream(Stream *stream) {
+  std::cout << "CLStream::AsCLStream()" << std::endl;
   DCHECK(stream != nullptr);
   return static_cast<CLStream *>(stream->implementation());
 }
 
 CUstream AsCLStreamValue(Stream *stream) {
+  std::cout << "CLStream::AsCLStreamValue()" << std::endl;
   DCHECK(stream != nullptr);
   return AsCLStream(stream)->cl_stream();
 }

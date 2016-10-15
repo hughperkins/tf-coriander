@@ -1359,8 +1359,10 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
   switch (flags) {
     case EventFlags::kDefault:
       cuflags = CU_EVENT_DEFAULT;
+      std::cout << "CLDriver::CreateEvent kDefault" << std::endl;
       break;
     case EventFlags::kDisableTiming:
+      std::cout << "CLDriver::CreateEvent kDisableTiming" << std::endl;
       cuflags = CU_EVENT_DISABLE_TIMING;
       break;
     default:
@@ -1369,7 +1371,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
 
   ScopedActivateContext activated{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuEventCreate(result, cuflags);
+  res = cuEventCreate(result, cuflags);
 
   if (res == CUDA_SUCCESS) {
     return port::Status::OK();

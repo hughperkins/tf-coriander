@@ -55,14 +55,14 @@ limitations under the License.
 
 #include <iostream>
 
-#ifdef PLATFORMS_GPUS_CUDA_DYNAMIC_LIBCUDA_DYNAMIC_LIBCUDA_H_
+#ifdef PLATFORMS_GPUS_CL_DYNAMIC_LIBCL_DYNAMIC_LIBCL_H_
 #error \
     "No driver calls in this file, wrap driver functionality in cl_driver.cc."
 #endif
 
-#ifdef __CUDA_RUNTIME_H__
+#ifdef __CL_RUNTIME_H__
 #error \
-    "CUDA runtime being included into CUDA GPU executor; should be driver only."
+    "CL runtime being included into CL GPU executor; should be driver only."
 #endif
 
 extern bool FLAGS_check_gpu_leaks;
@@ -83,8 +83,8 @@ namespace gputools {
 using namespace cl;
 namespace cl {
 
-class CUDAEvent;
-class CUDATimer;
+class CLEvent;
+class CLTimer;
 
 // Hook that can be used to CUBIN-ate PTX before it is loaded into the driver.
 // It has been observed that loading both PTX and cubins into the driver library
@@ -96,21 +96,21 @@ class CUDATimer;
 // variable with extern linkage and populate it from another translation unit.
 std::function<string(const string &)> g_cubinate;
 
-static CUDAEvent *AsCUDAEvent(Event *event) {
-  std::cout << "cl_gpu_executor::AsCUDAEvent()" << std::endl;
+static CLEvent *AsCLEvent(Event *event) {
+  std::cout << "cl_gpu_executor::AsCLEvent()" << std::endl;
   return 0;
   // DCHECK(event != nullptr);
-  // return static_cast<CUDAEvent *>(event->implementation());
+  // return static_cast<CLEvent *>(event->implementation());
 }
 
 
-// Given a platform-independent timer datatype, returns the internal CUDA
+// Given a platform-independent timer datatype, returns the internal CL
 // platform implementation pointer.
-static CUDATimer *AsCUDATimer(Timer *timer) {
-  std::cout << "cl_gpu_executor::AsCUDATimer()" << std::endl;
+static CLTimer *AsCLTimer(Timer *timer) {
+  std::cout << "cl_gpu_executor::AsCLTimer()" << std::endl;
   return 0;
   // DCHECK(timer != nullptr);
-  // return static_cast<CUDATimer *>(timer->implementation());
+  // return static_cast<CLTimer *>(timer->implementation());
 }
 
 // Given const GPU memory, returns a libcl device pointer datatype, suitable
@@ -263,7 +263,7 @@ bool CLExecutor::GetKernel(const MultiKernelLoaderSpec &spec,
   // }
 
   // if (on_disk_spec != nullptr) {
-  //   LOG(WARNING) << "loading CUDA kernel from disk is not supported";
+  //   LOG(WARNING) << "loading CL kernel from disk is not supported";
   //   return false;
   // } else if (spec.has_cl_ptx_in_memory()) {
   //   kernelname = &spec.cl_ptx_in_memory().kernelname();
@@ -323,7 +323,7 @@ bool CLExecutor::GetKernel(const MultiKernelLoaderSpec &spec,
   //     in_memory_modules_[cubin] = module;
   //   }
   // } else {
-  //   LOG(WARNING) << "no method of loading CUDA kernel provided";
+  //   LOG(WARNING) << "no method of loading CL kernel provided";
   //   return false;
   // }
 
@@ -334,7 +334,7 @@ bool CLExecutor::GetKernel(const MultiKernelLoaderSpec &spec,
   // }
 
   // // We have to trust the kernel loader spec arity because there doesn't appear
-  // // to be a way to reflect on the number of expected arguments w/the CUDA API.
+  // // to be a way to reflect on the number of expected arguments w/the CL API.
   // cl_kernel->set_arity(spec.arity());
 
   // KernelMetadata kernel_metadata;
@@ -374,9 +374,9 @@ bool CLExecutor::Launch(Stream *stream, const ThreadDim &thread_dims,
   std::cout << "cl_gpu_executor::Launch()" << std::endl;
   return false;
   // CHECK_EQ(kernel.Arity(), args.size());
-  // CUstream custream = AsCUDAStreamValue(stream);
+  // CUstream custream = AsCLStreamValue(stream);
   // const CLKernel *cl_kernel = AsCLKernel(&kernel);
-  // CUfunction cufunc = cl_kernel->AsCUDAFunctionValue();
+  // CUfunction cufunc = cl_kernel->AsCLFunctionValue();
 
   // std::vector<void *> addrs;
   // addrs.reserve(args.size());
@@ -409,14 +409,14 @@ bool CLExecutor::Launch(Stream *stream, const ThreadDim &thread_dims,
 
   // if (cl_kernel->GetPreferredCacheConfig() !=
   //     KernelCacheConfig::kNoPreference) {
-  //   CLDriver::FuncSetCacheConfig(cufunc, cl_kernel->GetCUDACacheConfig());
+  //   CLDriver::FuncSetCacheConfig(cufunc, cl_kernel->GetCLCacheConfig());
   // }
 
   // if (!CLDriver::LaunchKernel(
   //         GetClContext(stream), cufunc, block_dims.x, block_dims.y,
   //         block_dims.z, thread_dims.x, thread_dims.y, thread_dims.z,
   //         shmem_bytes, custream, addrs.data(), nullptr /* = extra */)) {
-  //   LOG(ERROR) << "failed to launch CUDA kernel with args: " << args.size()
+  //   LOG(ERROR) << "failed to launch CL kernel with args: " << args.size()
   //              << "; thread dim: " << thread_dims.ToString()
   //              << "; block dim: " << block_dims.ToString();
   //   return false;
@@ -503,7 +503,7 @@ void *CLExecutor::AllocateSubBuffer(DeviceMemoryBase *mem,
 
 void CLExecutor::Deallocate(DeviceMemoryBase *mem) {
   std::cout << "cl_gpu_executor::Deallocate()" << std::endl;
-  // CUDA "sub-buffers" are just pointer + offset, so no dealloc is necessary.
+  // CL "sub-buffers" are just pointer + offset, so no dealloc is necessary.
   if (!mem->is_sub_buffer()) {
      CLDriver::DeviceDeallocate(context_, mem->opaque());
   }
@@ -608,7 +608,7 @@ bool CLExecutor::Memset(Stream *stream, DeviceMemoryBase *location,
   //         << " and pattern " << std::hex << pattern;
   // return CLDriver::AsynchronousMemsetUint8(
   //     context_, AsClDevicePtr(location), pattern, size,
-  //     AsCUDAStreamValue(stream));
+  //     AsCLStreamValue(stream));
 }
 
 bool CLExecutor::Memset32(Stream *stream, DeviceMemoryBase *location,
@@ -622,7 +622,7 @@ bool CLExecutor::Memset32(Stream *stream, DeviceMemoryBase *location,
   //       size % 4 == 0);
   // return CLDriver::AsynchronousMemsetUint32(
   //     context_, AsClDevicePtr(location), pattern, size / 4,
-  //     AsCUDAStreamValue(stream));
+  //     AsCLStreamValue(stream));
 }
 
 bool CLExecutor::Memcpy(Stream *stream, void *host_dst,
@@ -630,7 +630,7 @@ bool CLExecutor::Memcpy(Stream *stream, void *host_dst,
   return false;
   // return CLDriver::AsynchronousMemcpyD2H(context_, host_dst,
   //                                          AsClDevicePtr(gpu_src), size,
-  //                                          AsCUDAStreamValue(stream));
+  //                                          AsCLStreamValue(stream));
 }
 
 bool CLExecutor::Memcpy(Stream *stream, DeviceMemoryBase *gpu_dst,
@@ -639,7 +639,7 @@ bool CLExecutor::Memcpy(Stream *stream, DeviceMemoryBase *gpu_dst,
   return false;
   // return CLDriver::AsynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
   //                                          host_src, size,
-  //                                          AsCUDAStreamValue(stream));
+  //                                          AsCLStreamValue(stream));
 }
 
 bool CLExecutor::MemcpyDeviceToDevice(Stream *stream,
@@ -650,7 +650,7 @@ bool CLExecutor::MemcpyDeviceToDevice(Stream *stream,
   return false;
   // return CLDriver::AsynchronousMemcpyD2D(context_, AsClDevicePtr(gpu_dst),
   //                                          AsClDevicePtr(gpu_src), size,
-  //                                          AsCUDAStreamValue(stream));
+  //                                          AsCLStreamValue(stream));
 }
 
 bool CLExecutor::HostCallback(Stream *stream,
@@ -658,7 +658,7 @@ bool CLExecutor::HostCallback(Stream *stream,
   std::cout << "cl_gpu_executor::HostCallback()" << std::endl;
   return false;
   // auto callback_ptr = new std::function<void()>(callback);
-  // return CLDriver::AddStreamCallback(context_, AsCUDAStreamValue(stream),
+  // return CLDriver::AddStreamCallback(context_, AsCLStreamValue(stream),
   //                                      InternalHostCallback, callback_ptr);
 }
 
@@ -674,113 +674,96 @@ bool CLExecutor::HostCallback(Stream *stream,
 
 port::Status CLExecutor::AllocateEvent(Event *event) {
   std::cout << "cl_gpu_executor::AllocateEvent()" << std::endl;
-  // return AsCUDAEvent(event)->Init();
-    return port::Status{
-        port::error::INTERNAL,
-        port::Printf("not implemented")};
+  return AsCLEvent(event)->Init();
   }
 
 port::Status CLExecutor::DeallocateEvent(Event *event) {
   std::cout << "cl_gpu_executor::DeallocateEvent()" << std::endl;
-    return port::Status{
-        port::error::INTERNAL,
-        port::Printf("not implemented")};
-  // return AsCUDAEvent(event)->Destroy();
+  return AsCLEvent(event)->Destroy();
 }
 
 port::Status CLExecutor::RecordEvent(Stream *stream, Event *event) {
   std::cout << "cl_gpu_executor::RecordEvent()" << std::endl;
-    return port::Status{
-        port::error::INTERNAL,
-        port::Printf("not implemented")};
-  // return AsCUDAEvent(event)->Record(AsCUDAStream(stream));
+ return AsCLEvent(event)->Record(AsCLStream(stream));
 }
 
 port::Status CLExecutor::WaitForEvent(Stream *stream, Event *event) {
   std::cout << "cl_gpu_executor::WaitForEvent()" << std::endl;
+  if (CLDriver::WaitStreamOnEvent(context_,
+                                    AsCLStream(stream)->cl_stream(),
+                                    AsCLEvent(event)->cl_event())) {
+    return port::Status::OK();
+  } else {
     return port::Status{
         port::error::INTERNAL,
-        port::Printf("not implemented")};
-  // if (CLDriver::WaitStreamOnEvent(context_,
-  //                                   AsCUDAStream(stream)->cl_stream(),
-  //                                   AsCUDAEvent(event)->cl_event())) {
-  //   return port::Status::OK();
-  // } else {
-  //   return port::Status{
-  //       port::error::INTERNAL,
-  //       port::Printf("error recording waiting for CUDA event on stream %p",
-  //                    stream)};
-  // }
+        port::Printf("error recording waiting for CL event on stream %p",
+                     stream)};
+  }
 }
 
 Event::Status CLExecutor::PollForEventStatus(Event *event) {
   std::cout << "cl_gpu_executor::PollForEventSTatus()" << std::endl;
-     return Event::Status::kError;
-    // return Event::Status{
-    //     Event::error::INTERNAL,
-    //     Event::Printf("not implemented")};
-  // return AsCUDAEvent(event)->PollForStatus();
+  return AsCLEvent(event)->PollForStatus();
 }
 
 bool CLExecutor::AllocateStream(Stream *stream) {
   std::cout << "cl_gpu_executor::AllocateStream()" << std::endl;
-  return false;
-  // return AsCUDAStream(stream)->Init();
+  return AsCLStream(stream)->Init();
 }
 
 void CLExecutor::DeallocateStream(Stream *stream) {
   std::cout << "cl_gpu_executor::DeallocateStream()" << std::endl;
-  // CUDAStream *cl_stream = AsCUDAStream(stream);
-  // if (!cl_stream->IsIdle()) {
-  //   LOG(ERROR) << "Deallocating stream with pending work";
-  // }
-  // cl_stream->Destroy();
+  CLStream *cl_stream = AsCLStream(stream);
+  if (!cl_stream->IsIdle()) {
+    LOG(ERROR) << "Deallocating stream with pending work";
+  }
+  cl_stream->Destroy();
 }
 
 bool CLExecutor::AllocateTimer(Timer *timer) {
   std::cout << "cl_gpu_executor::AllocateTimer()" << std::endl;
   return false;
-  // return AsCUDATimer(timer)->Init();
+  // return AsCLTimer(timer)->Init();
 }
 
 void CLExecutor::DeallocateTimer(Timer *timer) {
   std::cout << "cl_gpu_executor::DeallocateTimer()" << std::endl;
-  // AsCUDATimer(timer)->Destroy();
+  // AsCLTimer(timer)->Destroy();
 }
 
 bool CLExecutor::CreateStreamDependency(Stream *dependent, Stream *other) {
   std::cout << "cl_gpu_executor::CreateStreamDependency()" << std::endl;
-  return false;
-  // CUevent other_completed_event = *AsCUDAStream(other)->completed_event();
-  // bool ok = CLDriver::RecordEvent(context_, other_completed_event,
-  //                                   AsCUDAStreamValue(other))
-  //     .ok();
-  // if (!ok) {
-  //   LOG(ERROR) << "failed to record completion event; "
-  //                 "therefore, failed to create inter-stream dependency";
-  //   return false;
-  // }
+  // return false;
+  CUevent other_completed_event = *AsCLStream(other)->completed_event();
+  bool ok = CLDriver::RecordEvent(context_, other_completed_event,
+                                    AsCLStreamValue(other))
+      .ok();
+  if (!ok) {
+    LOG(ERROR) << "failed to record completion event; "
+                  "therefore, failed to create inter-stream dependency";
+    return false;
+  }
 
-  // return CLDriver::WaitStreamOnEvent(context_, AsCUDAStreamValue(dependent),
-  //                                      other_completed_event);
+  return CLDriver::WaitStreamOnEvent(context_, AsCLStreamValue(dependent),
+                                       other_completed_event);
 }
 
 bool CLExecutor::StartTimer(Stream *stream, Timer *timer) {
   std::cout << "cl_gpu_executor::StartTimer()" << std::endl;
   return false;
-  // return AsCUDATimer(timer)->Start(AsCUDAStream(stream));
+  // return AsCLTimer(timer)->Start(AsCLStream(stream));
 }
 
 bool CLExecutor::StopTimer(Stream *stream, Timer *timer) {
   std::cout << "cl_gpu_executor::StopTimer()" << std::endl;
   return false;
-  // return AsCUDATimer(timer)->Stop(AsCUDAStream(stream));
+  // return AsCLTimer(timer)->Stop(AsCLStream(stream));
 }
 
 bool CLExecutor::BlockHostUntilDone(Stream *stream) {
   std::cout << "cl_gpu_executor::BlockHostUntilDone()" << std::endl;
   return false;
-  // return CLDriver::SynchronizeStream(context_, AsCUDAStreamValue(stream));
+  // return CLDriver::SynchronizeStream(context_, AsCLStreamValue(stream));
 }
 
 blas::BlasSupport *CLExecutor::CreateBlas() {
@@ -978,7 +961,7 @@ bool CLExecutor::SupportsRng() const { return false; }
 std::unique_ptr<internal::EventInterface>
 CLExecutor::CreateEventImplementation() {
   return std::unique_ptr<internal::EventInterface>();
-  // return std::unique_ptr<internal::EventInterface>(new CUDAEvent(this));
+  // return std::unique_ptr<internal::EventInterface>(new CLEvent(this));
 }
 
 std::unique_ptr<internal::KernelInterface>
@@ -990,13 +973,13 @@ CLExecutor::CreateKernelImplementation() {
 std::unique_ptr<internal::StreamInterface>
 CLExecutor::GetStreamImplementation() {
   return std::unique_ptr<internal::StreamInterface>();
-  // return std::unique_ptr<internal::StreamInterface>(new CUDAStream(this));
+  // return std::unique_ptr<internal::StreamInterface>(new CLStream(this));
 }
 
 std::unique_ptr<internal::TimerInterface>
 CLExecutor::GetTimerImplementation() {
   return std::unique_ptr<internal::TimerInterface>();
-  // return std::unique_ptr<internal::TimerInterface>(new CUDATimer(this));
+  // return std::unique_ptr<internal::TimerInterface>(new CLTimer(this));
 }
 
 void *CLExecutor::CudaContextHack() { 

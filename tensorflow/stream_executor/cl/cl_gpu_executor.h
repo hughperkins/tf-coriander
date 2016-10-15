@@ -16,14 +16,14 @@ limitations under the License.
 // The CL implementation is mostly so I can set have rng, cublas etc to false for now
 // Not sure if we need this in the future.  Uncertain on this point :-)
 
-// The CUDA implementation of the StreamExecutorInterface functionality.
-// CUDA inclusions are ideally confined to this implementation file.
+// The CL implementation of the StreamExecutorInterface functionality.
+// CL inclusions are ideally confined to this implementation file.
 //
-// The notions from the StreamExecutor basically correspond to the CUDA streams
+// The notions from the StreamExecutor basically correspond to the CL streams
 // programming model provided by the libcl.so driver APIs, so we don't have
 // to do much more than wrap the calls to the libraries appropriately.
-#ifndef TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_GPU_EXECUTOR_H_
-#define TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_GPU_EXECUTOR_H_
+#ifndef TENSORFLOW_STREAM_EXECUTOR_CL_CL_GPU_EXECUTOR_H_
+#define TENSORFLOW_STREAM_EXECUTOR_CL_CL_GPU_EXECUTOR_H_
 
 #include <map>
 #include <set>
@@ -53,12 +53,12 @@ namespace perftools {
 namespace gputools {
 namespace cl {
 
-// CUDA-platform implementation of the platform-agnostic
+// CL-platform implementation of the platform-agnostic
 // StreamExecutorInferface.
 class CLExecutor : public internal::StreamExecutorInterface {
  public:
   // sub_platform indicates the subplatform used in this executor; it must
-  // be a CUDA type.
+  // be a CL type.
   explicit CLExecutor(const PluginConfig &plugin_config)
       : device_(0),
         context_(nullptr),
@@ -88,7 +88,7 @@ class CLExecutor : public internal::StreamExecutorInterface {
 
   void Deallocate(DeviceMemoryBase *mem) override;
 
-  // CUDA allocation/registration functions are necessary because the driver
+  // CL allocation/registration functions are necessary because the driver
   // internally sets up buffers for DMA operations (and page locks them).
   // There's no external interface for us to otherwise control these DMA
   // settings.
@@ -231,7 +231,7 @@ class CLExecutor : public internal::StreamExecutorInterface {
                                       port::StringPiece canonical_suffix,
                                       string *found_filename) const;
 
-  // Host callback landing routine invoked by CUDA.
+  // Host callback landing routine invoked by CL.
   // data: User-provided callback provided to HostCallback() above, captured
   //       as a std::function<void()>. Allocated/initialized inside
   //       HostCallback() and owned and deleted by this call.
@@ -270,7 +270,7 @@ class CLExecutor : public internal::StreamExecutorInterface {
   // occupancy check on subsequent launches.
   std::set<CUfunction> launched_kernels_ GUARDED_BY(launched_kernels_mu_);
 
-  // Handle for the CUDA device being operated on. Immutable
+  // Handle for the CL device being operated on. Immutable
   // post-initialization.
   CUdevice device_;
 
@@ -297,4 +297,4 @@ class CLExecutor : public internal::StreamExecutorInterface {
 }  // namespace gputools
 }  // namespace perftools
 
-#endif  // TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_GPU_EXECUTOR_H_
+#endif  // TENSORFLOW_STREAM_EXECUTOR_CL_CL_GPU_EXECUTOR_H_
