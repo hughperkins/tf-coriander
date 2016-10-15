@@ -51,26 +51,26 @@ ConstantOp::~ConstantOp() {}
 
 REGISTER_KERNEL_BUILDER(Name("Const").Device(DEVICE_CPU), ConstantOp);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define REGISTER_KERNEL(D, TYPE)                                      \
   REGISTER_KERNEL_BUILDER(                                            \
       Name("Const").Device(DEVICE_##D).TypeConstraint<TYPE>("dtype"), \
       ConstantOp);
-REGISTER_KERNEL(GPU, Eigen::half);
-REGISTER_KERNEL(GPU, bfloat16);
+// REGISTER_KERNEL(GPU, Eigen::half);
+// REGISTER_KERNEL(GPU, bfloat16);
 REGISTER_KERNEL(GPU, float);
-REGISTER_KERNEL(GPU, double);
-REGISTER_KERNEL(GPU, uint8);
-REGISTER_KERNEL(GPU, int8);
-REGISTER_KERNEL(GPU, uint16);
-REGISTER_KERNEL(GPU, int16);
-REGISTER_KERNEL(GPU, int64);
-REGISTER_KERNEL(GPU, complex64);
-REGISTER_KERNEL(GPU, complex128);
-REGISTER_KERNEL(GPU, bool);
+// REGISTER_KERNEL(GPU, double);
+// REGISTER_KERNEL(GPU, uint8);
+// REGISTER_KERNEL(GPU, int8);
+// REGISTER_KERNEL(GPU, uint16);
+// REGISTER_KERNEL(GPU, int16);
+// REGISTER_KERNEL(GPU, int64);
+// REGISTER_KERNEL(GPU, complex64);
+// REGISTER_KERNEL(GPU, complex128);
+// REGISTER_KERNEL(GPU, bool);
 // Currently we do not support string constants on GPU
 #undef REGISTER_KERNEL
-#endif
+// #endif
 
 HostConstantOp::HostConstantOp(OpKernelConstruction* ctx)
     : OpKernel(ctx), tensor_(ctx->output_type(0)) {

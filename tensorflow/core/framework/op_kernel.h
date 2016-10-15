@@ -50,6 +50,8 @@ limitations under the License.
 #include "tensorflow/core/platform/thread_annotations.h"
 #include "tensorflow/core/platform/types.h"
 
+#include <iostream>
+
 namespace Eigen {
 struct ThreadPoolDevice;
 struct GpuDevice;
@@ -1119,6 +1121,7 @@ class OpKernelRegistrar {
                     Factory factory) {
     // Perform the check in the header to allow compile-time optimization
     // to a no-op, allowing the linker to remove the kernel symbols.
+    std::cout << "core/framework/op_kernel.h OpKernelRegistrar::OpKernelRegistrar() kernel_class_name=" << kernel_class_name << std::endl;
     if (kernel_def != nullptr) {
       InitInternal(kernel_def, kernel_class_name, factory);
     }

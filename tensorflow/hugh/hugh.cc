@@ -22,67 +22,44 @@ using namespace tensorflow;
 // void assure_initialized();
 
 int main(int argc, char *argv[]) {
-    cout << "hugh" << endl;
-    // assure_initialized();
-    Graph graph(OpRegistry::Global());
-    // float *gpuFloats;
-    // const int N = 1024;
-    //cudaMalloc((void **)(&gpuFloats), N * sizeof(float));
+    cout << "hugh start" << endl;
 
     // from common_runtime/graph_runner_test.cc
     Scope root = Scope::NewRootScope();
-    std::cout << "1" << std::endl;
     auto c = ops::Const(root, 42.0f);
-    std::cout << "2" << std::endl;
     std::vector<Tensor> outputs;
     std::cout << "3" << std::endl;
     //Status s = GraphRunner::Run(root.graph(), nullptr, Env::Default(), {},
     //                            {c.name()}, &outputs);
-    std::cout << "4" << std::endl;
 
     SessionOptions opts;
-    std::cout << "5" << std::endl;
     // lets try things from core/common_runtime/kernel_benchmark_testlib.cc next?
     // string device = "gpu";  // this kind of from core/kernels/basic_ops_benchmark_test.cc
-    // string t = str_util::Uppercase(device);
-    // std::cout << "6" << std::endl;
     Device* device =
         DeviceFactory::NewDevice("GPU", opts, "/job:localhost/replica:0/task:0");
     std::cout << "7" << std::endl;
     CHECK(device) << "Could not create a " << device << " device";
     std::cout << "8" << std::endl;
 
-    // Node* var = test::graph::Var(&g, DT_FLOAT, TensorShape({10}));
-    // return test::graph::Var(g, DT_FLOAT, TensorShape({n}));
-
-    auto var = test::graph::Var(&graph, DT_FLOAT, TensorShape({1}));
-
+    Graph init_graph(OpRegistry::Global());
+    auto var = test::graph::Var(&init_graph, DT_FLOAT, TensorShape({1}));
     Tensor data(DT_FLOAT, TensorShape({1}));
     data.flat<float>().setZero();
-    auto zeros = test::graph::Constant(&graph, data);
+    auto zeros = test::graph::Constant(&init_graph, data);
 
-    test::graph::Assign(&graph, var, zeros);
+    test::graph::Assign(&init_graph, var, zeros);
 
-    // Graph* g = new Graph(OpRegistry::Global());
-    // auto var = Var(g, 1);
-    // test::graph::Assign(g, var, Zeros(g, 1));
+    Graph exec_graph(OpRegistry::Global());
+    auto var_exec = test::graph::Var(&exec_graph, DT_FLOAT, TensorShape({1}));
+    Tensor data_exec(DT_FLOAT, TensorShape({1}));
+    data_exec.flat<float>().setZero();
+    auto zeros_exec = test::graph::Constant(&exec_graph, data_exec);
 
-    // test::Benchmark("cpu", run, GetOptions(), init).Run(iters);
+    test::graph::Assign(&exec_graph, var_exec, zeros_exec);
 
     // from core/common_runtime/kernel_benchmark_testlib.cc Benchmark::Benchmark():
         // Benchmark::Benchmark(const string& device, Graph* g,
         //                      const SessionOptions* options, Graph* init) {
-      // SessionOptions default_options;
-      // if (!options) {
-      //   options = &default_options;
-      // }
-
-      // testing::StopTiming();
-      // // string t = str_util::Uppercase(device);
-      // // device_ =
-      // //     DeviceFactory::NewDevice(t, *options, "/job:localhost/replica:0/task:0");
-      // CHECK(device_) << "Could not create a " << device << " device";
-
     thread::ThreadPool* pool = new thread::ThreadPool(opts.env, "blocking", 1);
 
     auto runner = [pool](std::function<void()> closure) {
@@ -91,32 +68,31 @@ int main(int argc, char *argv[]) {
 
     Rendezvous *rendez = NewLocalRendezvous();
 
-    const int graph_def_version = graph.versions().producer();
+    const int graph_def_version = exec_graph.versions().producer();
 
     LocalExecutorParams params;
     params.device = device;
     params.function_library = nullptr;
-    //   params.create_kernel = [this, graph_def_version](const NodeDef& ndef,
-    //                                                    OpKernel** kernel) {
-    //     return CreateNonCachedKernel(device_, nullptr, ndef, graph_def_version,
-    //                                  kernel);
-    //   };
-    //   params.delete_kernel = [](OpKernel* kernel) {
-    //     DeleteNonCachedKernel(kernel);
-    //   };
+    Executor* exec = 0;
+    params.create_kernel = [device, graph_def_version]
+            (const NodeDef& ndef, OpKernel** kernel) {
+        return CreateNonCachedKernel(device, nullptr, ndef, graph_def_version,
+                                     kernel);
+    };
+    params.delete_kernel = [](OpKernel* kernel) {
+        DeleteNonCachedKernel(kernel);
+    };
 
-    //   if (init) {
-    //     Executor* init_exec;
-    //     TF_CHECK_OK(NewLocalExecutor(params, init, &init_exec));
-    //     Executor::Args args;
-    //     args.rendezvous = rendez_;
-    //     args.runner = runner;
-    //     TF_CHECK_OK(init_exec->Run(args));
-    //     delete init_exec;
-    //   }
-
-    //   TF_CHECK_OK(NewLocalExecutor(params, g, &exec_));
+    // if (init) {
+        Executor* init_exec;
+        TF_CHECK_OK(NewLocalExecutor(params, &init_graph, &init_exec));
+        Executor::Args args;
+        args.rendezvous = rendez;
+        args.runner = runner;
+        TF_CHECK_OK(init_exec->Run(args));
+        delete init_exec;
     // }
+    TF_CHECK_OK(NewLocalExecutor(params, &exec_graph, &exec));
 
     // from core/common_runtime/kernel_benchmark_testlib.cc Benchmark::Run() :
     // void Benchmark::RunWithArgs(

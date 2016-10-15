@@ -68,7 +68,9 @@ void OpRegistry::Register(OpRegistrationDataFactory op_data_factory) {
 
 Status OpRegistry::LookUp(const string& op_type_name,
                           const OpRegistrationData** op_reg_data) const {
-  std::cout << "op.cc OpRegistry::Lookup " << op_type_name << std::endl;
+  // std::cout << "op.cc OpRegistry::Lookup " << op_type_name << std::endl;
+  // devicetype.type() is a const char *
+
   *op_reg_data = nullptr;
   const OpRegistrationData* res = nullptr;
 

@@ -36,6 +36,8 @@ limitations under the License.
 #include "tensorflow/core/platform/mutex.h"
 #include "tensorflow/core/platform/types.h"
 
+#include <iostream>
+
 namespace tensorflow {
 
 namespace {
@@ -645,6 +647,7 @@ void OpKernelRegistrar::InitInternal(const KernelDef* kernel_def,
     const string key =
         Key(kernel_def->op(), DeviceType(kernel_def->device_type()),
             kernel_def->label());
+    std::cout << "core/framework/op_kernel.cc OpKernelRegistrar::InitInternal() key=" << key << std::endl;
     GlobalKernelRegistryTyped()->insert(std::make_pair(
         key, KernelRegistration(*kernel_def, kernel_class_name, factory)));
   }
@@ -805,9 +808,11 @@ void LogAllRegisteredKernels() {
 
 string KernelsRegisteredForOp(StringPiece op_name) {
   string ret;
+  std::cout << "core/framework/op_kernel.cc KernelsRegisteredForOp() " << op_name << std::endl;
   for (const auto& key_registration : *GlobalKernelRegistryTyped()) {
     const KernelDef& kernel_def(key_registration.second.def);
     if (kernel_def.op() == op_name) {
+      std::cout << "  op kernel_dev.device_type " << kernel_def.device_type() << std::endl;
       strings::StrAppend(&ret, "  device='", kernel_def.device_type(), "'");
       if (!kernel_def.label().empty()) {
         strings::StrAppend(&ret, "; label='", kernel_def.label(), "'");
