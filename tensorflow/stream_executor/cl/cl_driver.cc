@@ -960,9 +960,12 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
   // TODO(leary) can we switch this to CU_STREAM_NON_BLOCKING or will that mess
   // up synchronization with respect to memsets and any other things that have
   // to occur on the default stream?
+  std::cout << "CLDriver::CreateStream" << std::endl;
   ScopedActivateContext activated{context};
+  std::cout << "CLDriver::CreateStream activated context" << std::endl;
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuStreamCreate(out, 0);
+  res = cuStreamCreate(out, 0);
+  std::cout << "CLDriver::CreateStream after cuStreamCreate" << std::endl;
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "could not allocate CUDA stream for context " << context
                << ": " << ToString(res);
@@ -982,7 +985,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
 
   ScopedActivateContext activated{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuStreamDestroy_v2(*stream);
+  res = cuStreamDestroy_v2(*stream);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to destroy CUDA stream for context " << context
                << ": " << ToString(res);

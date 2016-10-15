@@ -23,6 +23,8 @@ limitations under the License.
 #include "tensorflow/stream_executor/platform/thread_annotations.h"
 #include "tensorflow/stream_executor/stream_executor_internal.h"
 
+#include <iostream>
+
 namespace perftools {
 namespace gputools {
 namespace cl {
@@ -41,8 +43,12 @@ class CLStream : public internal::StreamInterface {
   // Note: teardown is handled by a parent's call to DeallocateStream.
   ~CLStream() override {}
 
-  void *CudaStreamHack() override { return cl_stream_; }
+  void *CudaStreamHack() override {
+    std::cout << "cl_stream.h CLStream::CudaStreamHack()" << std::endl;
+    return cl_stream_;
+  }
   void **CudaStreamMemberHack() override {
+    std::cout << "cl_stream.h CLStream::CudaStreamHMemberack()" << std::endl;
     return reinterpret_cast<void **>(&cl_stream_);
   }
 
@@ -67,6 +73,7 @@ class CLStream : public internal::StreamInterface {
   // Precond: this CLStream has been allocated (otherwise passing a nullptr
   // into the NVIDIA library causes difficult-to-understand faults).
   CUstream cl_stream() const {
+    std::cout << "cl_stream.h CLStream::cl_stream()" << std::endl;
     DCHECK(cl_stream_ != nullptr);
     return const_cast<CUstream>(cl_stream_);
   }

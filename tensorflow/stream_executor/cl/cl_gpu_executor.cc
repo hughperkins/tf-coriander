@@ -27,7 +27,7 @@ limitations under the License.
 #include "tensorflow/stream_executor/cl/cl_driver.h"
 #include "tensorflow/stream_executor/cl/cl_event.h"
 #include "tensorflow/stream_executor/cl/cl_platform.h"
-// #include "tensorflow/stream_executor/cl/cl_stream.h"
+#include "tensorflow/stream_executor/cl/cl_stream.h"
 // #include "tensorflow/stream_executor/cl/cl_timer.h"
 #include "tensorflow/stream_executor/dso_loader.h"
 #include "tensorflow/stream_executor/kernel_cache_config.h"
@@ -137,15 +137,13 @@ static ClContext* GetClContext(Stream *stream) {
 
 ClContext* ExtractClContext(CLExecutor *cl_exec) {
   std::cout << "cl_gpu_executor::ExtractClContext()" << std::endl;
-  return 0;
-  // CHECK(cl_exec != nullptr);
-  // return cl_exec->cl_context();
+  CHECK(cl_exec != nullptr);
+  return cl_exec->cl_context();
 }
 
 CLExecutor *ExtractClExecutor(StreamExecutor *stream_exec) {
   std::cout << "cl_gpu_executor::ExtractClExecutor()" << std::endl;
-  return 0;
-  // return static_cast<CLExecutor *>(stream_exec->implementation());
+  return static_cast<CLExecutor *>(stream_exec->implementation());
 }
 
 CLExecutor::~CLExecutor() {
@@ -490,7 +488,6 @@ void CLExecutor::OccupancyCheck(const KernelBase &kernel,
 void *CLExecutor::Allocate(uint64 size) {
   std::cout << "cl_gpu_executor::Allocate()" << std::endl;
   return CLDriver::DeviceAllocate(context_, size);
-  //return 0;
 }
 
 void *CLExecutor::AllocateSubBuffer(DeviceMemoryBase *mem,
@@ -828,16 +825,19 @@ rng::RngSupport *CLExecutor::CreateRng() {
 
 // TODO(rspringer): Remove in b/18544742.
 bool CLExecutor::SupportsDnn() const {
+  std::cout << "CLExecutor::SupportsDnn" << std::endl;
   return false;
 }
 
 bool CLExecutor::CanEnablePeerAccessTo(StreamExecutorInterface *other) {
+  std::cout << "CLExecutor::CanEnablePeerAccessTo" << std::endl;
   return false;
   // CLExecutor *cl_other = static_cast<CLExecutor *>(other);
   // return CLDriver::CanEnablePeerAccess(context_, cl_other->context_);
 }
 
 port::Status CLExecutor::EnablePeerAccessTo(StreamExecutorInterface *other) {
+  std::cout << "CLExecutor::EnablePeerAccessTo" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf("not implemented")};
@@ -846,6 +846,7 @@ port::Status CLExecutor::EnablePeerAccessTo(StreamExecutorInterface *other) {
 }
 
 SharedMemoryConfig CLExecutor::GetDeviceSharedMemoryConfig() {
+  std::cout << "CLExecutor::GetDeviceSharedMemoryConfig" << std::endl;
   // port::StatusOr<CUsharedconfig> cl_config =
   //     CLDriver::ContextGetSharedMemConfig(context_);
   // if (!cl_config.ok()) {
@@ -868,6 +869,7 @@ SharedMemoryConfig CLExecutor::GetDeviceSharedMemoryConfig() {
 
 port::Status CLExecutor::SetDeviceSharedMemoryConfig(
     SharedMemoryConfig config) {
+  std::cout << "CLExecutor::SetDeviceSharedMemoryConfig" << std::endl;
     return port::Status{
         port::error::INTERNAL,
         port::Printf("not implemented")};
@@ -891,12 +893,14 @@ port::Status CLExecutor::SetDeviceSharedMemoryConfig(
 }
 
 bool CLExecutor::DeviceMemoryUsage(int64 *free, int64 *total) const {
+  std::cout << "CLExecutor::DeviceMemoryUsage" << std::endl;
   //return false;
   return CLDriver::GetDeviceMemoryInfo(context_, free, total);
 }
 
 bool CLExecutor::GetSymbol(const string& symbol_name, void **mem,
                              size_t *bytes) {
+  std::cout << "CLExecutor::GetSymbol" << std::endl;
   return false;
   // {  // give limited scope to mutex_lock
   //   mutex_lock lock{disk_modules_mu_};
@@ -925,6 +929,7 @@ bool CLExecutor::GetSymbol(const string& symbol_name, void **mem,
 }
 
 bool CLExecutor::FillBlockDimLimit(BlockDim *block_dim_limit) const {
+  std::cout << "CLExecutor::FillBlockDimLimit" << std::endl;
   // The BlockDim name is a mismatch against these GRID_DIM_* queries because
   // we use BlockDims to express the dimensions of blocks within a grid
   // (as opposed to ThreadDim which expresses the dimensions of threads
@@ -942,6 +947,7 @@ bool CLExecutor::FillBlockDimLimit(BlockDim *block_dim_limit) const {
 
 KernelArg CLExecutor::DeviceMemoryToKernelArg(
     const DeviceMemoryBase &gpu_mem) const {
+  std::cout << "CLExecutor::DeviceMemoryToKernelArg" << std::endl;
   const void* arg = gpu_mem.opaque();
   const uint8 *arg_ptr = reinterpret_cast<const uint8 *>(&arg);
 
@@ -952,44 +958,57 @@ KernelArg CLExecutor::DeviceMemoryToKernelArg(
   return kernel_arg;
 }
 
-bool CLExecutor::SupportsBlas() const { return false; }
+bool CLExecutor::SupportsBlas() const {
+  std::cout << "CLExecutor::SupportsBlas" << std::endl;
+  return false;
+}
 
-bool CLExecutor::SupportsFft() const { return false; }
+bool CLExecutor::SupportsFft() const {
+  std::cout << "CLExecutor::SupportsFft" << std::endl;
+  return false;
+}
 
-bool CLExecutor::SupportsRng() const { return false; }
+bool CLExecutor::SupportsRng() const {
+  std::cout << "CLExecutor::SupportsRng" << std::endl;
+  return false;
+}
 
 std::unique_ptr<internal::EventInterface>
 CLExecutor::CreateEventImplementation() {
-  return std::unique_ptr<internal::EventInterface>();
-  // return std::unique_ptr<internal::EventInterface>(new CLEvent(this));
+  std::cout << "CLExecutor::CreateEventImplementation" << std::endl;
+  return std::unique_ptr<internal::EventInterface>(new CLEvent(this));
 }
 
 std::unique_ptr<internal::KernelInterface>
 CLExecutor::CreateKernelImplementation() {
+  std::cout << "CLExecutor::CreateKernelImplementation" << std::endl;
   return std::unique_ptr<internal::KernelInterface>();
   // return std::unique_ptr<internal::KernelInterface>(new CLKernel());
 }
 
 std::unique_ptr<internal::StreamInterface>
 CLExecutor::GetStreamImplementation() {
-  return std::unique_ptr<internal::StreamInterface>();
-  // return std::unique_ptr<internal::StreamInterface>(new CLStream(this));
+  std::cout << "CLExecutor::GetStreamImplementation" << std::endl;
+  return std::unique_ptr<internal::StreamInterface>(new CLStream(this));
 }
 
 std::unique_ptr<internal::TimerInterface>
 CLExecutor::GetTimerImplementation() {
+  std::cout << "CLExecutor::GetTimerImplementation" << std::endl;
   return std::unique_ptr<internal::TimerInterface>();
   // return std::unique_ptr<internal::TimerInterface>(new CLTimer(this));
 }
 
 void *CLExecutor::CudaContextHack() { 
-  return 0;
-  // return context_;
+  std::cout << "CLExecutor::CudaContextHack" << std::endl;
+  // return 0;
+  return context_;
 }
 
 ClContext* CLExecutor::cl_context() { 
-  return 0;
-  // return context_; 
+  std::cout << "CLExecutor::cl_context" << std::endl;
+  // return 0;
+  return context_; 
 }
 
 // Attemps to read the NUMA node corresponding to the GPU device's PCI bus out
@@ -998,6 +1017,7 @@ ClContext* CLExecutor::cl_context() {
 // For anything more complicated/prod-focused than this, you'll likely want to
 // turn to gsys' topology modeling.
 static int TryToReadNumaNode(const string &pci_bus_id, int device_ordinal) {
+  std::cout << "CLExecutor::TryToReadNumaNode" << std::endl;
 // #if defined(__APPLE__)
   //LOG(INFO) << "OS X does not support NUMA - returning NUMA node zero";
   return 0;
@@ -1078,6 +1098,7 @@ static const UnqueryableDeviceParams kAllUnqueryableDeviceParams[] = {
 };
 
 DeviceDescription *CLExecutor::PopulateDeviceDescription() const {
+  std::cout << "CLExecutor::PopulateDeviceDescription" << std::endl;
   internal::DeviceDescriptionBuilder builder;
   {
     int driver_version = 0;

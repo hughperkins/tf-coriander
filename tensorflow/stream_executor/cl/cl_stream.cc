@@ -33,9 +33,12 @@ bool CLStream::Init() {
     std::cout << "CLStream::Init() failed to create stream" << std::endl;
     return false;
   }
-  return CLDriver::CreateEvent(parent_->cl_context(), &completed_event_,
+  std::cout << "CLStream::Init() creating event..." << std::endl;
+  auto res = CLDriver::CreateEvent(parent_->cl_context(), &completed_event_,
                                  CLDriver::EventFlags::kDisableTiming)
       .ok();
+  std::cout << "CLStream::Init() after call to create event" << std::endl;
+  return res;
 }
 
 void CLStream::Destroy() {
