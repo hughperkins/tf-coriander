@@ -8,6 +8,7 @@
 #include "tensorflow/core/graph/testlib.h"  // gives test:;graph::Var
 #include "tensorflow/core/lib/core/threadpool.h"
 #include "tensorflow/core/framework/rendezvous.h"
+#include "tensorflow/core/common_runtime/executor.h"  // gives LocalExecutorParams
 
 #include <iostream>
 #include <vector>
@@ -42,13 +43,13 @@ int main(int argc, char *argv[]) {
     SessionOptions opts;
     std::cout << "5" << std::endl;
     // lets try things from core/common_runtime/kernel_benchmark_testlib.cc next?
-    string device = "gpu";  // this kind of from core/kernels/basic_ops_benchmark_test.cc
-    string t = str_util::Uppercase(device);
-    std::cout << "6" << std::endl;
-    Device* device_ =
-        DeviceFactory::NewDevice(t, opts, "/job:localhost/replica:0/task:0");
+    // string device = "gpu";  // this kind of from core/kernels/basic_ops_benchmark_test.cc
+    // string t = str_util::Uppercase(device);
+    // std::cout << "6" << std::endl;
+    Device* device =
+        DeviceFactory::NewDevice("GPU", opts, "/job:localhost/replica:0/task:0");
     std::cout << "7" << std::endl;
-    CHECK(device_) << "Could not create a " << device << " device";
+    CHECK(device) << "Could not create a " << device << " device";
     std::cout << "8" << std::endl;
 
     // Node* var = test::graph::Var(&g, DT_FLOAT, TensorShape({10}));
@@ -92,9 +93,9 @@ int main(int argc, char *argv[]) {
 
     const int graph_def_version = graph.versions().producer();
 
-    //   LocalExecutorParams params;
-    //   params.device = device_;
-    //   params.function_library = nullptr;
+    LocalExecutorParams params;
+    params.device = device;
+    params.function_library = nullptr;
     //   params.create_kernel = [this, graph_def_version](const NodeDef& ndef,
     //                                                    OpKernel** kernel) {
     //     return CreateNonCachedKernel(device_, nullptr, ndef, graph_def_version,
