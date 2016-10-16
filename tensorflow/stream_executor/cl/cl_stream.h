@@ -48,7 +48,7 @@ class CLStream : public internal::StreamInterface {
     return cl_stream_;
   }
   void **CudaStreamMemberHack() override {
-    std::cout << "cl_stream.h CLStream::CudaStreamHMemberack()" << std::endl;
+    // std::cout << "cl_stream.h CLStream::CudaStreamMemberHack()" << std::endl;
     return reinterpret_cast<void **>(&cl_stream_);
   }
 
@@ -73,7 +73,7 @@ class CLStream : public internal::StreamInterface {
   // Precond: this CLStream has been allocated (otherwise passing a nullptr
   // into the NVIDIA library causes difficult-to-understand faults).
   CUstream cl_stream() const {
-    std::cout << "cl_stream.h CLStream::cl_stream()" << std::endl;
+    // std::cout << "cl_stream.h CLStream::cl_stream()" << std::endl;
     DCHECK(cl_stream_ != nullptr);
     return const_cast<CUstream>(cl_stream_);
   }

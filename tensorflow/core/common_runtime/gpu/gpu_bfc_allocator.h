@@ -28,6 +28,8 @@ limitations under the License.
 #include "tensorflow/core/platform/types.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
+#include <iostream>
+
 namespace gpu = ::perftools::gputools;
 
 namespace tensorflow {
@@ -52,11 +54,15 @@ class GPUMemAllocator : public SubAllocator {
   // Note: stream_exec cannot be null.
   explicit GPUMemAllocator(perftools::gputools::StreamExecutor* stream_exec)
       : stream_exec_(stream_exec) {
+    std::cout << "core/common_runtime/gpu/gpu_bfc_allocator.h GPUMemAllocator::GPUMemAllocatr()" << std::endl;
     CHECK(stream_exec_ != nullptr);
   }
-  ~GPUMemAllocator() override {}
+  ~GPUMemAllocator() override {
+    std::cout << "core/common_runtime/gpu/gpu_bfc_allocator.h GPUMemAllocator::~GPUMemAllocatr()" << std::endl;
+  }
 
   void* Alloc(size_t alignment, size_t num_bytes) override {
+    std::cout << "core/common_runtime/gpu/gpu_bfc_allocator.h GPUMemAllocator::Alloc() align=" << alignment << " bytes=" << num_bytes << std::endl;
     void* ptr = nullptr;
     if (num_bytes > 0) {
       ptr = stream_exec_->AllocateArray<char>(num_bytes).opaque();
@@ -65,6 +71,7 @@ class GPUMemAllocator : public SubAllocator {
   }
 
   void Free(void* ptr, size_t num_bytes) override {
+    std::cout << "core/common_runtime/gpu/gpu_bfc_allocator.h GPUMemAllocator::Free() bytes=" << num_bytes << std::endl;
     if (ptr != nullptr) {
       gpu::DeviceMemoryBase gpu_ptr(ptr);
       stream_exec_->Deallocate(&gpu_ptr);

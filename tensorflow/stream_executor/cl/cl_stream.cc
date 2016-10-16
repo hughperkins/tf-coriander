@@ -33,11 +33,11 @@ bool CLStream::Init() {
     std::cout << "CLStream::Init() failed to create stream" << std::endl;
     return false;
   }
-  std::cout << "CLStream::Init() creating event..." << std::endl;
+  // std::cout << "CLStream::Init() creating event..." << std::endl;
   auto res = CLDriver::CreateEvent(parent_->cl_context(), &completed_event_,
                                  CLDriver::EventFlags::kDisableTiming)
       .ok();
-  std::cout << "CLStream::Init() after call to create event" << std::endl;
+  // std::cout << "CLStream::Init() after call to create event" << std::endl;
   return res;
 }
 
@@ -60,13 +60,13 @@ bool CLStream::IsIdle() const {
 }
 
 CLStream *AsCLStream(Stream *stream) {
-  std::cout << "CLStream::AsCLStream()" << std::endl;
+  // std::cout << "CLStream::AsCLStream()" << std::endl;
   DCHECK(stream != nullptr);
   return static_cast<CLStream *>(stream->implementation());
 }
 
 CUstream AsCLStreamValue(Stream *stream) {
-  std::cout << "CLStream::AsCLStreamValue()" << std::endl;
+  // std::cout << "CLStream::AsCLStreamValue()" << std::endl;
   DCHECK(stream != nullptr);
   return AsCLStream(stream)->cl_stream();
 }

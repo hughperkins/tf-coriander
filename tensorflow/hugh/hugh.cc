@@ -42,20 +42,20 @@ int main(int argc, char *argv[]) {
     std::cout << "8" << std::endl;
 
     Graph init_graph(OpRegistry::Global());
-    auto var = test::graph::Var(&init_graph, DT_FLOAT, TensorShape({1}));
+    // auto var = test::graph::Var(&init_graph, DT_FLOAT, TensorShape({1}));
     Tensor data(DT_FLOAT, TensorShape({1}));
     data.flat<float>().setZero();
     auto zeros = test::graph::Constant(&init_graph, data);
 
-    test::graph::Assign(&init_graph, var, zeros);
+    // test::graph::Assign(&init_graph, var, zeros);
 
     Graph exec_graph(OpRegistry::Global());
-    auto var_exec = test::graph::Var(&exec_graph, DT_FLOAT, TensorShape({1}));
+    // auto var_exec = test::graph::Var(&exec_graph, DT_FLOAT, TensorShape({1}));
     Tensor data_exec(DT_FLOAT, TensorShape({1}));
     data_exec.flat<float>().setZero();
     auto zeros_exec = test::graph::Constant(&exec_graph, data_exec);
 
-    test::graph::Assign(&exec_graph, var_exec, zeros_exec);
+    // test::graph::Assign(&exec_graph, var_exec, zeros_exec);
 
     // from core/common_runtime/kernel_benchmark_testlib.cc Benchmark::Benchmark():
         // Benchmark::Benchmark(const string& device, Graph* g,
@@ -86,13 +86,18 @@ int main(int argc, char *argv[]) {
     // if (init) {
         Executor* init_exec;
         TF_CHECK_OK(NewLocalExecutor(params, &init_graph, &init_exec));
+        cout << "after first executor" << endl;
         Executor::Args args;
         args.rendezvous = rendez;
         args.runner = runner;
-        TF_CHECK_OK(init_exec->Run(args));
-        delete init_exec;
+        auto initexecrunres = init_exec->Run(args);
+        cout << "after init_exec->Run" << endl;
+        // delete init_exec;
     // }
-    TF_CHECK_OK(NewLocalExecutor(params, &exec_graph, &exec));
+    auto execres = NewLocalExecutor(params, &exec_graph, &exec);
+    cout << "after second newlocalexecutor; got execres" << endl;
+    cout << "execres: " << execres << endl;
+    TF_CHECK_OK(execres);
 
     // from core/common_runtime/kernel_benchmark_testlib.cc Benchmark::Run() :
     // void Benchmark::RunWithArgs(

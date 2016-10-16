@@ -38,13 +38,17 @@ class GPUDevice : public BaseGPUDevice {
   Allocator* GetAllocator(AllocatorAttributes attr) override {
     std::cout << "GpuDevice::GetAllocator" << std::endl;
     if (attr.on_host()) {
+      std::cout << "attr.on_host() is true" << std::endl;
       ProcessState* ps = ProcessState::singleton();
       if (attr.gpu_compatible()) {
+        std::cout << "attr.gpu_compatible() is true" << std::endl;
         return ps->GetCUDAHostAllocator(0);
       } else {
+        std::cout << "attr.gpu_compatible() is false" << std::endl;
         return cpu_allocator_;
       }
     } else {
+      std::cout << "attr.on_host() is false" << std::endl;
       return gpu_allocator_;
     }
   }

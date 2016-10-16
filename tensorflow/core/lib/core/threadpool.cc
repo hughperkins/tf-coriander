@@ -24,6 +24,8 @@ limitations under the License.
 #include "tensorflow/core/platform/tracing.h"
 #include "tensorflow/core/platform/types.h"
 
+#include <iostream>
+
 namespace tensorflow {
 namespace thread {
 
@@ -55,6 +57,7 @@ struct EigenEnvironment {
   }
 
   Task CreateTask(std::function<void()> f) {
+  std::cout << "EigenEnvironment::CreateTask()" << std::endl;
     uint64 id = 0;
     if (port::Tracing::IsActive()) {
       id = port::Tracing::UniqueId();
@@ -69,6 +72,7 @@ struct EigenEnvironment {
   }
 
   void ExecuteTask(const Task& t) {
+  std::cout << "EigenEnvironment::ExecuteTask()" << std::endl;
     WithContext wc(t.f->context);
     if (t.f->trace_id != 0) {
       port::Tracing::ScopedActivity region(
@@ -102,24 +106,31 @@ struct ThreadPool::Impl : Eigen::ThreadPoolTempl<EigenEnvironment> {
 };
 
 ThreadPool::ThreadPool(Env* env, const string& name, int num_threads)
-    : ThreadPool(env, ThreadOptions(), name, num_threads) {}
+    : ThreadPool(env, ThreadOptions(), name, num_threads) {
+  std::cout << "ThreadPool::ThreadPool() num_threads=" << num_threads << std::endl;
+}
 
 ThreadPool::ThreadPool(Env* env, const ThreadOptions& thread_options,
                        const string& name, int num_threads) {
+  std::cout << "ThreadPool::ThreadPool() num_threads=" << num_threads << std::endl;
   CHECK_GE(num_threads, 1);
   impl_.reset(
       new ThreadPool::Impl(env, thread_options, "tf_" + name, num_threads));
 }
 
-ThreadPool::~ThreadPool() {}
+ThreadPool::~ThreadPool() {
+  std::cout << "ThreadPool::~ThreadPool()" << std::endl;
+}
 
 void ThreadPool::Schedule(std::function<void()> fn) {
+  std::cout << "ThreadPool::Schedule()" << std::endl;
   CHECK(fn != nullptr);
   impl_->Schedule(std::move(fn));
 }
 
 void ThreadPool::ParallelFor(int64 total, int64 cost_per_unit,
                              std::function<void(int64, int64)> fn) {
+  std::cout << "ThreadPool::ParallelFor()" << std::endl;
   impl_->ParallelFor(total, cost_per_unit, std::move(fn));
 }
 

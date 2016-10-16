@@ -135,17 +135,18 @@ static ClContext* GetClContext(Stream *stream) {
 }
 
 ClContext* ExtractClContext(CLExecutor *cl_exec) {
-  std::cout << "cl_gpu_executor::ExtractClContext()" << std::endl;
+  // std::cout << "cl_gpu_executor::ExtractClContext()" << std::endl;
   CHECK(cl_exec != nullptr);
   return cl_exec->cl_context();
 }
 
 CLExecutor *ExtractClExecutor(StreamExecutor *stream_exec) {
-  std::cout << "cl_gpu_executor::ExtractClExecutor()" << std::endl;
+  // std::cout << "cl_gpu_executor::ExtractClExecutor()" << std::endl;
   return static_cast<CLExecutor *>(stream_exec->implementation());
 }
 
 CLExecutor::~CLExecutor() {
+  std::cout << "CLExecutor::~CLExecutor()" << std::endl;
   for (auto &it : disk_modules_) {
     CLDriver::UnloadModule(context_, it.second);
   }
@@ -525,8 +526,7 @@ bool CLExecutor::HostMemoryUnregister(void *location) {
 
 bool CLExecutor::SynchronizeAllActivity() {
   std::cout << "cl_gpu_executor::SynchronizeAllActivity()" << std::endl;
-  return false;
-  // return CLDriver::SynchronizeContext(context_);
+  return CLDriver::SynchronizeContext(context_);
 }
 
 bool CLExecutor::SynchronousMemZero(DeviceMemoryBase *location, uint64 size) {
@@ -665,7 +665,7 @@ bool CLExecutor::HostCallback(Stream *stream,
 }
 
 port::Status CLExecutor::AllocateEvent(Event *event) {
-  std::cout << "cl_gpu_executor::AllocateEvent()" << std::endl;
+  // std::cout << "cl_gpu_executor::AllocateEvent()" << std::endl;
   return AsCLEvent(event)->Init();
   }
 
@@ -999,7 +999,7 @@ void *CLExecutor::CudaContextHack() {
 }
 
 ClContext* CLExecutor::cl_context() { 
-  std::cout << "CLExecutor::cl_context" << std::endl;
+  // std::cout << "CLExecutor::cl_context" << std::endl;
   return context_; 
 }
 
