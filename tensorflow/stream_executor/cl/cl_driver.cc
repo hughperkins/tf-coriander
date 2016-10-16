@@ -369,7 +369,7 @@ namespace {
 // Call cuCtxtSynchronize and crash if it doesn't succeed.
 void SynchronizeOrDie() {
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // auto res = cuCtxSynchronize();
+  res = cuCtxSynchronize();
   if (res != CUDA_SUCCESS) {
     LOG(FATAL) << "Synchronize found "
                << ToString(res) << " :: " << port::CurrentStackTrace();
@@ -1176,7 +1176,8 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                                 CUevent event) {
   ScopedActivateContext activation{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuStreamWaitEvent(stream, event, 0 /* = flags */);
+  std::cout << "CLDriver::WaitStreamOnEvent stream=" << stream << " context=" << context << " event=" << event << std::endl;
+  res = cuStreamWaitEvent(stream, event, 0 /* = flags */);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "could not wait stream on event: " << ToString(res);
     return false;
@@ -1236,7 +1237,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                                    uint64 size) {
   ScopedActivateContext activation{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuMemcpyDtoH_v2(host_dst, gpu_src, size);
+  res = cuMemcpyDtoH_v2(host_dst, gpu_src, size);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << port::Printf(
         "failed to synchronous memcpy from device to host: %s; "
@@ -1255,7 +1256,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                                    uint64 size) {
   ScopedActivateContext activation{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuMemcpyHtoD_v2(gpu_dst, host_src, size);
+  res = cuMemcpyHtoD_v2(gpu_dst, host_src, size);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << port::Printf(
         "failed to synchronous memcpy from host to device: %s; GPU dst: %p;"
@@ -1293,7 +1294,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                                     CUstream stream) {
   ScopedActivateContext activation{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuMemcpyDtoHAsync_v2(host_dst, gpu_src, size, stream);
+  res = cuMemcpyDtoHAsync_v2(host_dst, gpu_src, size, stream);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << port::Printf(
         "failed to enqueue async memcpy from device to host: %s; host dst: %p; "
@@ -1314,7 +1315,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                                     CUstream stream) {
   ScopedActivateContext activation{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuMemcpyHtoDAsync_v2(gpu_dst, host_src, size, stream);
+  res = cuMemcpyHtoDAsync_v2(gpu_dst, host_src, size, stream);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << port::Printf(
         "failed to enqueue async memcpy from host to device: %s; GPU dst: %p; "
@@ -1334,7 +1335,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                                     CUstream stream) {
   ScopedActivateContext activation{context};
   CUresult result = CUDA_ERROR_UNKNOWN;
-  // CUresult result =
+  //result =
   //     cuMemcpyDtoDAsync_v2(gpu_dst, gpu_src, size, stream);
   if (result != CUDA_SUCCESS) {
     LOG(ERROR) << port::Printf(
@@ -1390,7 +1391,6 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
 
 /* static */ int CLDriver::GetDeviceCount() {
   int device_count = 0;
-  // CUresult res = CUDA_ERROR_UNKNOWN;
   CUresult res = cuDeviceGetCount(&device_count);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "could not retrieve CUDA device count: " << ToString(res);
@@ -1567,7 +1567,6 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
   }
   *x = value;
 
-  // CUresult res = CUDA_ERROR_UNKNOWN;
   res = cuDeviceGetAttribute(
        &value, CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Y, device);
   if (res != CUDA_SUCCESS) {
@@ -1576,7 +1575,6 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
   }
   *y = value;
 
-  // CUresult res = CUDA_ERROR_UNKNOWN;
   res = cuDeviceGetAttribute(
        &value, CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Z, device);
   if (res != CUDA_SUCCESS) {

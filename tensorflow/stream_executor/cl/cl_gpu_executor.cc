@@ -569,17 +569,15 @@ bool CLExecutor::SynchronousMemcpy(void *host_dst,
                                      const DeviceMemoryBase &gpu_src,
                                      uint64 size) {
   std::cout << "cl_gpu_executor::SynchronousMemcpy()" << std::endl;
-  return false;
-  // return CLDriver::SynchronousMemcpyD2H(context_, host_dst,
-  //                                         AsClDevicePtr(gpu_src), size);
+  return CLDriver::SynchronousMemcpyD2H(context_, host_dst,
+                                        AsClDevicePtr(gpu_src), size);
 }
 
 bool CLExecutor::SynchronousMemcpyDeviceToDevice(
     DeviceMemoryBase *gpu_dst, const DeviceMemoryBase &gpu_src, uint64 size) {
   std::cout << "cl_gpu_executor::SynchronousMemcpyDeviceToDevice()" << std::endl;
-  return false;
-  // return CLDriver::SynchronousMemcpyD2D(context_, AsClDevicePtr(gpu_dst),
-  //                                         AsClDevicePtr(gpu_src), size);
+  return CLDriver::SynchronousMemcpyD2D(context_, AsClDevicePtr(gpu_dst),
+                                        AsClDevicePtr(gpu_src), size);
 }
 
 bool CLExecutor::MemZero(Stream *stream, DeviceMemoryBase *location,
@@ -623,19 +621,17 @@ bool CLExecutor::Memset32(Stream *stream, DeviceMemoryBase *location,
 bool CLExecutor::Memcpy(Stream *stream, void *host_dst,
                           const DeviceMemoryBase &gpu_src, uint64 size) {
   std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
-  return false;
-  // return CLDriver::AsynchronousMemcpyD2H(context_, host_dst,
-  //                                          AsClDevicePtr(gpu_src), size,
-  //                                          AsCLStreamValue(stream));
+  return CLDriver::AsynchronousMemcpyD2H(context_, host_dst,
+                                           AsClDevicePtr(gpu_src), size,
+                                           AsCLStreamValue(stream));
 }
 
 bool CLExecutor::Memcpy(Stream *stream, DeviceMemoryBase *gpu_dst,
                           const void *host_src, uint64 size) {
   std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
-  return false;
-  // return CLDriver::AsynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
-  //                                          host_src, size,
-  //                                          AsCLStreamValue(stream));
+  return CLDriver::AsynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
+                                           host_src, size,
+                                           AsCLStreamValue(stream));
 }
 
 bool CLExecutor::MemcpyDeviceToDevice(Stream *stream,

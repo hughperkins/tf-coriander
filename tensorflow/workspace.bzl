@@ -57,7 +57,7 @@ cc_library(
   native.new_git_repository(
       name = "EasyCL",
       remote = "https://github.com/hughperkins/EasyCL",
-      tag = "v4.0.0",
+      tag = "v4.1.0",
       build_file_content = """
 cc_library(
     name = "easycl-lib",
@@ -87,7 +87,7 @@ cc_library(
   native.new_git_repository(
       name = "cocl",
       remote = "https://github.com/hughperkins/cuda-on-cl",
-      tag = "v2.15.0",
+      tag = "v2.20.0",
       build_file_content = """
 cc_library(
     name = "cocl-lib",
@@ -96,6 +96,7 @@ cc_library(
         "src/hostside_opencl_funcs.cpp",
         "src/hostside_opencl_funcs.h",
         "src/cocl_*.cpp",
+        "src/cocl_*.h",
     ]),
     hdrs = glob(
     [
