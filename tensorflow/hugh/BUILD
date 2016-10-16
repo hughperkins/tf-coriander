@@ -20,6 +20,9 @@ cc_binary(
         "//tensorflow/core:testlib",  # for test::graph::Var
         "//tensorflow/core/kernels:state",  # this triggers registration of Variable kernels
 
+        "//tensorflow/core:ops",  # added this to get "Add" op
+        "//tensorflow/core/kernels:math",  # adding this to try to get "Add" gpu kernel; adds a loootttt to compile time
+
         # all these are from deps for core/kernels:small
         # ":math",
         # ":ops_util",

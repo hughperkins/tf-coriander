@@ -55,6 +55,8 @@ int main(int argc, char *argv[]) {
     data_exec.flat<float>().setZero();
     auto zeros_exec = test::graph::Constant(&exec_graph, data_exec);
 
+    auto afteradd = test::graph::Multi(&exec_graph, "Add", {zeros_exec, zeros_exec});
+
     // test::graph::Assign(&exec_graph, var_exec, zeros_exec);
 
     // from core/common_runtime/kernel_benchmark_testlib.cc Benchmark::Benchmark():
