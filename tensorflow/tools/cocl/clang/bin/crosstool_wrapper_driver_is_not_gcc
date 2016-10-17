@@ -20,7 +20,7 @@
 
 SYNOPSIS:
     crosstool_wrapper_is_not_gcc [options passed in by cc_library()
-                                                                or cc_binary() rule]
+                                  or cc_binary() rule]
 
 DESCRIPTION:
     This script is expected to be called by the cc_library() or cc_binary() bazel
@@ -111,6 +111,7 @@ def GetHostCompilerOptions(argv):
 
     return opts
 
+
 def GetNvccOptions(argv):
     """Collect the -nvcc_options values from argv.
 
@@ -127,7 +128,7 @@ def GetNvccOptions(argv):
     args, _ = parser.parse_known_args(argv)
 
     if args.nvcc_options:
-        return ' '.join(['--'+a for a in sum(args.nvcc_options, [])])
+        return ' '.join(['--' + a for a in sum(args.nvcc_options, [])])
     return ''
 
 
@@ -157,7 +158,8 @@ def InvokeNvcc(argv, log=False):
     std_options = GetOptionValue(argv, 'std')
     # currently only c++11 is supported by Cuda 7.0 std argument
     nvcc_allowed_std_options = ["c++11"]
-    std_options = ''.join([' -std=' + define
+    std_options = ''.join(
+        [' -std=' + define
             for define in std_options if define in nvcc_allowed_std_options])
 
     # The list of source files get passed after the -c option. I don't know of
@@ -170,16 +172,14 @@ def InvokeNvcc(argv, log=False):
         return 1
 
     opt = (' -O2' if (len(opt_option) > 0 and int(opt_option[0]) > 0)
-                 else ' -g -G')
+           else ' -g -G')
 
-    includes = (' -I ' + ' -I '.join(include_options)
-                            if len(include_options) > 0
-                            else '')
+    includes = (' -I ' + ' -I '.join(include_options) if len(include_options) > 0
+                else '')
 
     # Unfortunately, there are other options that have -c prefix too.
     # So allowing only those look like C/C++ files.
-    src_files = [f for f in src_files if
-                             re.search('\.cpp$|\.cc$|\.c$|\.cxx$|\.C$', f)]
+    src_files = [f for f in src_files if re.search('\.cpp$|\.cc$|\.c$|\.cxx$|\.C$', f)]
     srcs = ' '.join(src_files)
     out = ' -o ' + out_file[0]
 
@@ -199,25 +199,27 @@ def InvokeNvcc(argv, log=False):
         # Generate the dependency file
         depfile = depfiles[0]
         cmd = (NVCC_PATH + ' ' + nvccopts +
-                     ' --compiler-options "' + host_compiler_options + '"' +
-                     ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
-                     ' -I .' +
-                     ' -x cu ' + includes + ' ' + srcs + ' -M -o ' + depfile)
-        if log: Log(cmd)
+                           ' --compiler-options "' + host_compiler_options + '"' +
+                           ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
+                           ' -I .' +
+                           ' -x cu ' + includes + ' ' + srcs + ' -M -o ' + depfile)
+        if log:
+            Log(cmd)
         exit_status = os.system(cmd)
         if exit_status != 0:
             return exit_status
 
     cmd = (NVCC_PATH + ' ' + nvccopts +
-                 ' --compiler-options "' + host_compiler_options + ' -fPIC"' +
-                 ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
-                 ' -I .' +
-                 ' -x cu ' + opt + includes + ' -c ' + srcs + out)
+                       ' --compiler-options "' + host_compiler_options + ' -fPIC"' +
+                       ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
+                       ' -I .' +
+                       ' -x cu ' + opt + includes + ' -c ' + srcs + out)
 
     # TODO(zhengxq): for some reason, 'gcc' needs this help to find 'as'.
     # Need to investigate and fix.
     cmd = 'PATH=' + PREFIX_DIR + ' ' + cmd
-    if log: Log(cmd)
+    if log:
+        Log(cmd)
     return os.system(cmd)
 
 
@@ -228,9 +230,11 @@ def main():
     args, leftover = parser.parse_known_args(sys.argv[1:])
 
     if args.x and args.x[0] == 'cuda':
-        if args.cuda_log: Log('-x cuda')
+        if args.cuda_log:
+            Log('-x cuda')
         leftover = [pipes.quote(s) for s in leftover]
-        if args.cuda_log: Log('using nvcc')
+        if args.cuda_log:
+            Log('using nvcc')
         return InvokeNvcc(leftover, log=args.cuda_log)
 
     # Strip our flags before passing through to the CPU compiler for files which
@@ -238,8 +242,7 @@ def main():
     # We not only want to pass -x to the CPU compiler, but also keep it in its
     # relative location in the argv list (the compiler is actually sensitive to
     # this).
-    cpu_compiler_flags = [flag for flag in sys.argv[1:]
-                                                         if not flag.startswith(('--cuda_log'))]
+    cpu_compiler_flags = [flag for flag in sys.argv[1:] if not flag.startswith(('--cuda_log'))]
 
     return subprocess.call([CPU_COMPILER] + cpu_compiler_flags)
 
