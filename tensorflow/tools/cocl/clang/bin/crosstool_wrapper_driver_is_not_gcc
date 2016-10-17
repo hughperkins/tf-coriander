@@ -39,7 +39,7 @@ import re
 import sys
 import pipes
 
-print('cocl crosstools')
+# print('cocl crosstools')
 
 
 # Template values set by cuda_autoconf.
@@ -53,7 +53,7 @@ PREFIX_DIR = os.path.dirname(GCC_HOST_COMPILER_PATH)
 # print('CURRENT_DIR', CURRENT_DIR)
 # COCL_PATH = 'external/cocl/bin/cocl'
 COCL_PATH = '/home/ubuntu/git/cuda-ir-to-opencl/bin/cocl'
-print('COCL_PATH', COCL_PATH)
+# print('COCL_PATH', COCL_PATH)
 
 
 def Log(s):
@@ -200,28 +200,33 @@ def InvokeNvcc(argv, log=False):
     nvccopts += std_options
     nvccopts += m_options
 
+    os.environ['NOCOCLREBUILD'] = '1'
     if depfiles:
-        # Generate the dependency file
+        #     # Generate the dependency file
         depfile = depfiles[0]
-        print('handling dependency file %s' % depfile)
-        cmd = (COCL_PATH + ' ' + nvccopts +
-                           ' --compiler-options "' + host_compiler_options + '"' +
-                           ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
-                           ' -I .' +
-                           ' -x cu ' + includes + ' -M -o ' + depfile + ' ' + srcs)
-        print('cmd', cmd)
-        if log:
-            Log(cmd)
-        exit_status = os.system(cmd)
-        if exit_status != 0:
-            return exit_status
+        print('depfile', depfile)
+        with open(depfile, 'w') as f:
+            f.write('%s:\n' % out)
+    #     print('handling dependency file %s' % depfile)
+    #     cmd = (COCL_PATH + ' ' + nvccopts +
+    #                        ' --compiler-options "' + host_compiler_options + '"' +
+    #                        ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
+    #                        ' -I .' +
+    #                        ' -x cu ' + includes + ' -M -o ' + depfile + ' ' + srcs)
+    #     print('cmd', cmd)
+    #     if log:
+    #         Log(cmd)
+    #     exit_status = os.system(cmd)
+    #     if exit_status != 0:
+    #         return exit_status
 
     print('compiling srcs [%s] to out [%s]' % (str(srcs), str(out)))
     cmd = (COCL_PATH + ' ' + nvccopts +
                        ' --compiler-options "' + host_compiler_options + ' -fPIC"' +
                        ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
-                       ' -I .' +
-                       ' -x cu ' + opt + includes + ' -c ' + out + ' ' + srcs)
+                       ' -I . ' +
+                       # '-fPIC ' +
+                       ' -x cu ' + opt + includes + ' -c ' + out + ' ' + srcs).replace('-pie', '')
     print('cmd', cmd)
 
     # TODO(zhengxq): for some reason, 'gcc' needs this help to find 'as'.
@@ -239,11 +244,12 @@ def main():
     args, leftover = parser.parse_known_args(sys.argv[1:])
     args.cuda_log = True
     print('sys.argv', sys.argv)
-    print('os.environ', os.environ)
-    with open('foobar.flag', 'w') as f:
-        f.write('foo')
+    # print('os.environ', os.environ)
+    # with open('foobar.flag', 'w') as f:
+    #     f.write('foo')
     if args.x and args.x[0] == 'cuda':
         print('building as cuda')
+        print('sys.argv', sys.argv)
         if args.cuda_log:
             Log('-x cuda')
         leftover = [pipes.quote(s) for s in leftover]
@@ -258,7 +264,15 @@ def main():
     # this).
     cpu_compiler_flags = [flag for flag in sys.argv[1:] if not flag.startswith(('--cuda_log'))]
 
-    return subprocess.call([CPU_COMPILER] + cpu_compiler_flags)
+    # remove pie, for now (its a security feature, not sure if llvm supports it, eg see
+    # https://llvm.org/bugs/show_bug.cgi?id=26923
+    # https://stackoverflow.com/questions/2463150/fpie-position-independent-executable-option-gcc-ld/5030518#5030518
+    # )
+    cpu_compiler_flags = [option for option in cpu_compiler_flags if option != '-pie']
+    cpu_compiler_call = [CPU_COMPILER] + cpu_compiler_flags
+    print('cpu_compiler_call', cpu_compiler_call)
+    print('cpu_compiler_call joined', ' '.join(cpu_compiler_call))
+    return subprocess.call(cpu_compiler_call)
 
 if __name__ == '__main__':
     sys.exit(main())
