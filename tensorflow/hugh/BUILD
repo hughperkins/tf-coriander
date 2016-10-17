@@ -51,6 +51,7 @@ cc_binary(
     ],
     deps = [
         "@cocl//:cocl-lib",
+        "@local_usr_lib//:libopencl",
     ],
     copts = [
         '-x', 'cuda',
