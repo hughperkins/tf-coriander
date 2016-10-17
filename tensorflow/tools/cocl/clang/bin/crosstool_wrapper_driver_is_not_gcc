@@ -41,14 +41,19 @@ import pipes
 
 print('cocl crosstools')
 
+
 # Template values set by cuda_autoconf.
 CPU_COMPILER = ('/usr/bin/gcc')
 GCC_HOST_COMPILER_PATH = ('/usr/bin/gcc')
 
 CURRENT_DIR = os.path.dirname(sys.argv[0])
-NVCC_PATH = CURRENT_DIR + '/../../../cuda/bin/nvcc'
+# NVCC_PATH = CURRENT_DIR + '/../../../cuda/bin/nvcc'
 LLVM_HOST_COMPILER_PATH = ('/usr/bin/gcc')
 PREFIX_DIR = os.path.dirname(GCC_HOST_COMPILER_PATH)
+# print('CURRENT_DIR', CURRENT_DIR)
+# COCL_PATH = 'external/cocl/bin/cocl'
+COCL_PATH = '/home/ubuntu/git/cuda-ir-to-opencl/bin/cocl'
+print('COCL_PATH', COCL_PATH)
 
 
 def Log(s):
@@ -198,22 +203,26 @@ def InvokeNvcc(argv, log=False):
     if depfiles:
         # Generate the dependency file
         depfile = depfiles[0]
-        cmd = (NVCC_PATH + ' ' + nvccopts +
+        print('handling dependency file %s' % depfile)
+        cmd = (COCL_PATH + ' ' + nvccopts +
                            ' --compiler-options "' + host_compiler_options + '"' +
                            ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
                            ' -I .' +
-                           ' -x cu ' + includes + ' ' + srcs + ' -M -o ' + depfile)
+                           ' -x cu ' + includes + ' -M -o ' + depfile + ' ' + srcs)
+        print('cmd', cmd)
         if log:
             Log(cmd)
         exit_status = os.system(cmd)
         if exit_status != 0:
             return exit_status
 
-    cmd = (NVCC_PATH + ' ' + nvccopts +
+    print('compiling srcs [%s] to out [%s]' % (str(srcs), str(out)))
+    cmd = (COCL_PATH + ' ' + nvccopts +
                        ' --compiler-options "' + host_compiler_options + ' -fPIC"' +
                        ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
                        ' -I .' +
-                       ' -x cu ' + opt + includes + ' -c ' + srcs + out)
+                       ' -x cu ' + opt + includes + ' -c ' + out + ' ' + srcs)
+    print('cmd', cmd)
 
     # TODO(zhengxq): for some reason, 'gcc' needs this help to find 'as'.
     # Need to investigate and fix.
@@ -226,15 +235,20 @@ def InvokeNvcc(argv, log=False):
 def main():
     parser = ArgumentParser()
     parser.add_argument('-x', nargs=1)
-    parser.add_argument('--cuda_log', action='store_true')
+    # parser.add_argument('--cuda_log', action='store_true')
     args, leftover = parser.parse_known_args(sys.argv[1:])
-
+    args.cuda_log = True
+    print('sys.argv', sys.argv)
+    print('os.environ', os.environ)
+    with open('foobar.flag', 'w') as f:
+        f.write('foo')
     if args.x and args.x[0] == 'cuda':
+        print('building as cuda')
         if args.cuda_log:
             Log('-x cuda')
         leftover = [pipes.quote(s) for s in leftover]
         if args.cuda_log:
-            Log('using nvcc')
+            Log('using cocl')
         return InvokeNvcc(leftover, log=args.cuda_log)
 
     # Strip our flags before passing through to the CPU compiler for files which

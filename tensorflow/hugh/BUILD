@@ -33,3 +33,26 @@ cc_binary(
         # "//tensorflow/core:testlib",
     ]
 )
+
+cc_binary(
+    name = "hughcross",
+    srcs = [
+        'hughcross.cc',
+    ],
+    deps = [
+        "@cocl//:cocl-lib",
+    ],
+)
+
+cc_binary(
+    name = "testcu",
+    srcs = [
+        'testcu.cu.cc',
+    ],
+    deps = [
+        "@cocl//:cocl-lib",
+    ],
+    copts = [
+        '-x', 'cuda',
+    ],
+)
