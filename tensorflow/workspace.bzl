@@ -17,10 +17,17 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
   eigen_version = "97c1ebe6ccc2"
   eigen_sha256 = "58ab9fa44391c850d783fe0867f42a00b5300293b7d73bbbbc8756c2e649fea2"
 
+  # we should probably fix this to work ok on Mac .... (or just use clew?)
   native.new_local_repository(
-    name = "local_usr_lib",
+    name = "usr_lib_x8664linux",
     path = "/usr/lib/x86_64-linux-gnu/",
-    build_file = "opencl.BUILD"
+    build_file = "usr_lib_x8664linux.BUILD"
+  )
+
+  native.new_local_repository(
+    name = "usr_local_lib",
+    path = "/usr/local/lib",
+    build_file = "usr_local_lib.BUILD"
   )
 
   # this should be moved to something more robust/standard sooner or later,
@@ -31,64 +38,64 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
     build_file = "cuda_for_cocl.BUILD"
   )
 
-  native.new_git_repository(
-      name = "clew",
-      remote = "https://github.com/hughperkins/clew",
-      tag = "0.11",
-      build_file_content = """
-cc_library(
-    name = "clew-lib",
-    srcs = glob(
-    [
-        "src/*.c",
-    ]),
-    hdrs = glob(
-    [
-        "include/*.h",
-    ]),
-    copts = [
-      "-Iexternal/clew/include",
-    ],
-    visibility = ["//visibility:public"],
-)
-""",
-  )
+#   native.new_git_repository(
+#       name = "clew",
+#       remote = "https://github.com/hughperkins/clew",
+#       tag = "0.11",
+#       build_file_content = """
+# cc_library(
+#     name = "clew-lib",
+#     srcs = glob(
+#     [
+#         "src/*.c",
+#     ]),
+#     hdrs = glob(
+#     [
+#         "include/*.h",
+#     ]),
+#     copts = [
+#       "-Iexternal/clew/include",
+#     ],
+#     visibility = ["//visibility:public"],
+# )
+# """,
+#   )
 
-  native.new_git_repository(
-      name = "EasyCL",
-      remote = "https://github.com/hughperkins/EasyCL",
-      tag = "v4.1.0",
-      build_file_content = """
-cc_library(
-    name = "easycl-lib",
-    srcs = glob(
-    [
-        "*.cpp",
-        "templates/*.cpp",
-        "util/*.cpp",
-        "thirdparty/lua-5.1.5/src/*.c",
-    ]),
-    hdrs = glob(
-    [
-        "*.h",
-        "util/*.h",
-        "templates/*.h",
-        "thirdparty/lua-5.1.5/src/*.h",
-    ]),
-    copts = [
-      "-I/usr/include",
-      "-Iexternal/EasyCL/thirdparty/lua-5.1.5/src",
-    ],
-    visibility = ["//visibility:public"],
-)
-""",
-  )
+#   native.new_git_repository(
+#       name = "EasyCL",
+#       remote = "https://github.com/hughperkins/EasyCL",
+#       tag = "v4.1.0",
+#       build_file_content = """
+# cc_library(
+#     name = "easycl-lib",
+#     srcs = glob(
+#     [
+#         "*.cpp",
+#         "templates/*.cpp",
+#         "util/*.cpp",
+#         "thirdparty/lua-5.1.5/src/*.c",
+#     ]),
+#     hdrs = glob(
+#     [
+#         "*.h",
+#         "util/*.h",
+#         "templates/*.h",
+#         "thirdparty/lua-5.1.5/src/*.h",
+#     ]),
+#     copts = [
+#       "-I/usr/include",
+#       "-Iexternal/EasyCL/thirdparty/lua-5.1.5/src",
+#     ],
+#     visibility = ["//visibility:public"],
+# )
+# """,
+#   )
 
-  native.new_git_repository(
-      name = "cocl",
-      remote = "https://github.com/hughperkins/cuda-on-cl",
-      tag = "v2.24.0",
-      build_file_content = """
+#   native.new_git_repository(
+#       name = "cocl",
+#       remote = "https://github.com/hughperkins/cuda-on-cl",
+#       tag = "v2.24.0",
+#       build_file_content = """
 
 # cc_library(
 #     name = 'cocl',
@@ -98,41 +105,41 @@ cc_library(
 #     ],
 # )
 
-cc_binary(
-    name = "ir-to-opencl",
-    srcs = [
-        "src/ir-to-opencl.cpp",
-        "src/ir-to-opencl-common.h",
-        "src/ir-to-opencl-common.cpp",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-    ],
-)
+# cc_binary(
+#     name = "ir-to-opencl",
+#     srcs = [
+#         "src/ir-to-opencl.cpp",
+#         "src/ir-to-opencl-common.h",
+#         "src/ir-to-opencl-common.cpp",
+#     ],
+#     visibility = ["//visibility:public"],
+#     deps = [
+#     ],
+# )
 
-cc_library(
-    name = "cocl-lib",
-    srcs = glob(
-    [
-        "src/hostside_opencl_funcs.cpp",
-        "src/hostside_opencl_funcs.h",
-        "src/cocl_*.cpp",
-        "src/cocl_*.h",
-    ]),
-    hdrs = glob(
-    [
-    ]),
-    copts = [
-        "-Iexternal/EasyCL"
-      # "-Iexternal/clew/include",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-        "@EasyCL//:easycl-lib"
-    ]
-)
-""",
-  )
+# cc_library(
+#     name = "cocl-lib",
+#     srcs = glob(
+#     [
+#         "src/hostside_opencl_funcs.cpp",
+#         "src/hostside_opencl_funcs.h",
+#         "src/cocl_*.cpp",
+#         "src/cocl_*.h",
+#     ]),
+#     hdrs = glob(
+#     [
+#     ]),
+#     copts = [
+#         "-Iexternal/EasyCL"
+#       # "-Iexternal/clew/include",
+#     ],
+#     visibility = ["//visibility:public"],
+#     deps = [
+#         "@EasyCL//:easycl-lib"
+#     ]
+# )
+# """,
+#   )
 
   native.new_http_archive(
     name = "eigen_archive",

@@ -10,10 +10,12 @@ cc_binary(
     ],
     deps = [
         "@cuda_for_cocl//:cuda_headers",
-        "@cocl//:cocl-lib",
-        "@clew//:clew-lib",
-        "@EasyCL//:easycl-lib",
-        "@local_usr_lib//:libopencl",
+        "@usr_lib_x8664linux//:libopencl",
+        "@usr_local_lib//:libcocl",
+        # "@cocl//:cocl-lib",
+        # "@clew//:clew-lib",
+        # "@EasyCL//:easycl-lib",
+        # "@local_usr_lib//:libopencl",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",
@@ -44,7 +46,8 @@ cc_binary(
         'hughcross.cc',
     ],
     deps = [
-        "@cocl//:cocl",
+        # "@cocl//:cocl",
+        "@usr_local_lib//:libcocl",
     ],
 )
 
@@ -53,10 +56,16 @@ cc_binary(
     srcs = [
         'testcu.cu.cc',
     ],
+    linkopts = [
+        '-lcocl',
+        '-lOpenCL',
+    ],
     deps = [
-        "@cocl//:cocl-lib",
+        # "@cocl//:cocl-lib",
         # "@cocl//:ir-to-opencl",
-        "@local_usr_lib//:libopencl",
+        # "@local_usr_lib//:libopencl",
+        "@usr_local_lib//:libcocl",
+        "@usr_lib_x8664linux//:libopencl",
     ],
     copts = [
         '-x', 'cuda',
