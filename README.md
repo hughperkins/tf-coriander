@@ -46,7 +46,7 @@ sudo make install
 
 ### Procedure
 
-#### Platform test
+#### Stream executor test
 
 in-progress attempt to run Eigen kernel via tensorflow [tensorflow/stream_executor/cl/test/test.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/stream_executor/cl/test/test.cc) :
 ```
