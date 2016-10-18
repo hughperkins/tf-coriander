@@ -24,7 +24,7 @@ limitations under the License.
 #include "tensorflow/stream_executor/lib/status.h"
 #include "tensorflow/stream_executor/lib/stringprintf.h"
 #include "tensorflow/stream_executor/cl/cl_gpu_executor.h"
-#include "EasyCL.h"
+// #include "EasyCL.h"
 
 // namespace perftools {
 // namespace gputools {
