@@ -55,7 +55,9 @@ int main(int argc, char *argv[]) {
     data_exec.flat<float>().setZero();
     auto zeros_exec = test::graph::Constant(&exec_graph, data_exec);
 
-    auto afteradd = test::graph::Multi(&exec_graph, "Add", {zeros_exec, zeros_exec});
+    if(false) {
+      auto afteradd = test::graph::Multi(&exec_graph, "Add", {zeros_exec, zeros_exec});
+    }
 
     // test::graph::Assign(&exec_graph, var_exec, zeros_exec);
 
@@ -85,6 +87,7 @@ int main(int argc, char *argv[]) {
         DeleteNonCachedKernel(kernel);
     };
 
+    if(false) {
     // if (init) {
         Executor* init_exec;
         TF_CHECK_OK(NewLocalExecutor(params, &init_graph, &init_exec));
@@ -100,6 +103,7 @@ int main(int argc, char *argv[]) {
     cout << "after second newlocalexecutor; got execres" << endl;
     cout << "execres: " << execres << endl;
     TF_CHECK_OK(execres);
+    }
 
     // from core/common_runtime/kernel_benchmark_testlib.cc Benchmark::Run() :
     // void Benchmark::RunWithArgs(

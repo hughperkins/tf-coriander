@@ -5,12 +5,15 @@ cc_binary(
         #"../stream_executor/cl_platform.cc",
         #"../stream_executor/cl_platform.h",
     ],
+    linkopts = [
+        '-lOpenCL'
+    ],
     deps = [
         "@cuda_for_cocl//:cuda_headers",
-        "@local_usr_lib//:libopencl",
         "@cocl//:cocl-lib",
         "@clew//:clew-lib",
         "@EasyCL//:easycl-lib",
+        "@local_usr_lib//:libopencl",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",
@@ -20,8 +23,9 @@ cc_binary(
         "//tensorflow/core:testlib",  # for test::graph::Var
         "//tensorflow/core/kernels:state",  # this triggers registration of Variable kernels
 
-        "//tensorflow/core:ops",  # added this to get "Add" op
-        "//tensorflow/core/kernels:math",  # adding this to try to get "Add" gpu kernel; adds a loootttt to compile time
+        # temporarily disabling following line, so can merge to master
+        # "//tensorflow/core:ops",  # added this to get "Add" op
+        # "//tensorflow/core/kernels:math",  # adding this to try to get "Add" gpu kernel; adds a loootttt to compile time
 
         # all these are from deps for core/kernels:small
         # ":math",

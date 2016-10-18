@@ -242,7 +242,7 @@ def main():
     # parser.add_argument('--cuda_log', action='store_true')
     args, leftover = parser.parse_known_args(sys.argv[1:])
     args.cuda_log = True
-    print('sys.argv', sys.argv)
+    # print('sys.argv', sys.argv)
     # print('os.environ', os.environ)
     # with open('foobar.flag', 'w') as f:
     #     f.write('foo')
@@ -270,8 +270,8 @@ def main():
     # )
     cpu_compiler_flags = [option for option in cpu_compiler_flags if option != '-pie']
     cpu_compiler_call = [CPU_COMPILER] + cpu_compiler_flags
-    print('cpu_compiler_call', cpu_compiler_call)
-    print('cpu_compiler_call joined', ' '.join(cpu_compiler_call))
+    # print('cpu_compiler_call', cpu_compiler_call)
+    # print('cpu_compiler_call joined', ' '.join(cpu_compiler_call))
     return subprocess.call(cpu_compiler_call)
 
 if __name__ == '__main__':
