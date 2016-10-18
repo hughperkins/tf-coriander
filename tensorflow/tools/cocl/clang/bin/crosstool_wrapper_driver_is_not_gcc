@@ -219,9 +219,24 @@ def InvokeNvcc(argv, log=False):
     #     if exit_status != 0:
     #         return exit_status
 
+    print('host_compiler_options', host_compiler_options)
+    tokens = host_compiler_options.split()
+    i = 0
+    add_includes = []
+    while i < len(tokens):
+        if tokens[i] == '-iquote':
+            add_includes.append(tokens[i + 1])
+            i += 1
+        i += 1
+    print('add_includes', add_includes)
+    includes_string = ''
+    for include in add_includes:
+        includes_string += ' -I%s' % include
+
     print('compiling srcs [%s] to out [%s]' % (str(srcs), str(out)))
     cmd = (COCL_PATH + ' ' + nvccopts +
-                       ' --compiler-options "' + host_compiler_options + ' -fPIC"' +
+                       # ' --compiler-options "' + host_compiler_options + ' -fPIC"' +
+                       ' ' + includes_string + ' ' +
                        ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
                        ' -I . ' +
                        # '-fPIC ' +
@@ -242,7 +257,7 @@ def main():
     # parser.add_argument('--cuda_log', action='store_true')
     args, leftover = parser.parse_known_args(sys.argv[1:])
     args.cuda_log = True
-    # print('sys.argv', sys.argv)
+    print('sys.argv', sys.argv)
     # print('os.environ', os.environ)
     # with open('foobar.flag', 'w') as f:
     #     f.write('foo')

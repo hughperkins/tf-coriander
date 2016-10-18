@@ -1301,7 +1301,12 @@ tf_kernel_libraries(
         # "cast_op",
         # "check_numerics_op",
         # "cross_op",
+
         "cwise_op",
+
+        #"cwise_op_add",
+        #"cwise_ops",
+
         # "fft_ops",
         # "matmul_op",
         # "reduction_ops",

@@ -87,6 +87,10 @@ cc_binary(
     srcs = [
         "cl/test/test_eigen.cc",
     ],
+    copts = [
+        # '-Ithird_party/eigen3',
+        '-Iexternal/eigen_archive',
+    ],
     linkopts = [
         '-lOpenCL'
     ],
@@ -101,6 +105,10 @@ cc_binary(
         "//tensorflow/core:testlib",  # for test::graph::Var
         "//tensorflow/core:math_ops_op_lib",
         "//tensorflow/core/kernels:cwise_op",
+        #"//tensorflow/core/kernels:cwise_op_add",
+        #"//tensorflow/core/kernels:cwise_ops",
+
+        "//third_party/eigen3",
     ]
 )
 
