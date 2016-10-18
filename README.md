@@ -27,9 +27,9 @@ bazel --batch run --verbose_failures //tensorflow/hugh:hugh
 
 - Ubuntu 16.04 64-bit (might work on other platforms, but not tested)
   - I hope to target also Mac, and you can help me to tweak some of the `BUILD` rules for Mac if you want
-- normal non-GPU tensorflow prerequisites for building from source
 - NVIDIA® CUDA™ toolkit 7.5, at `/usr/local/cuda-7.5`
-- when you run `./configure`, you can put `n` for cuda, gpu etc
+- normal non-GPU tensorflow prerequisites for building from source
+  - when you run `./configure`, you can put `n` for cuda, gpu etc
 - following needs to be installed, in addition to standard tensorflow non-gpu pre-requisites:
 ```
 sudo apt-get install opencl-headers cmake clang-3.8 llvm-3.8 clinfo
