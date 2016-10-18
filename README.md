@@ -10,7 +10,7 @@ This repo was created from the original Tensorflow repository at:
 
 Please see the main repository for full Tensorflow documentation.  This readme will only focus on the OpenCL porting aspects of Tensorflow.
 
-## Work works
+## What works
 
 - opencl context created.  :-P
 
