@@ -41,12 +41,12 @@ sudo make install
 
 ### Procedure
 
-in-progress attempt to run Eigen kernel via tensorflow:
+in-progress attempt to run Eigen kernel via tensorflow https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/hugh/hugh.cc :
 ```
 bazel run --verbose_failures //tensorflow/hugh:hugh
 ```
 
-Proof of concept of compiling CUDA to OpenCL via bazel (using https://github.com/hughperkins/cuda-on-cl ):
+Proof of concept of compiling CUDA to OpenCL via bazel (using https://github.com/hughperkins/cuda-on-cl ) https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/hugh/testcu.cu.cc :
 ```
 bazel run --verbose_failures //tensorflow/hugh:testcu
 ```
