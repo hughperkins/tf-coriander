@@ -12,14 +12,13 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## What works
 
-- some simple initialization, OpenCL context created ok:
+- OpenCL stream executor working
 
-```
-bazel run --verbose_failures //tensorflow/stream_executor:test_cl
-```
 <img src="doc/img/contextcreated.png?raw=true" width="600" height="400" />
 
 - crosstool for compiling CUDA files into OpenCL working
+
+<img src="doc/img/testcu.png?raw=true" width="600" height="170" />
 
 ## How to run
 
@@ -48,20 +47,17 @@ sudo make install
 
 #### Stream executor test
 
-in-progress attempt to run Eigen kernel via tensorflow [tensorflow/stream_executor/cl/test/test.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/stream_executor/cl/test/test.cc) :
+Stream executor test: [tensorflow/stream_executor/cl/test/test.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/stream_executor/cl/test/test.cc) :
 ```
 bazel run --verbose_failures //tensorflow/stream_executor:test_cl
 ```
 
 #### Crosstool test
 
-Proof of concept of compiling CUDA to OpenCL via bazel (using https://github.com/hughperkins/cuda-on-cl ) [tensorflow/tools/cocl/test/testcu.cu.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/tools/cocl/test/testcu.cu.cc) :
+Crosstool test: [tensorflow/tools/cocl/test/testcu.cu.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/tools/cocl/test/testcu.cu.cc) :
 ```
 bazel run --verbose_failures //tensorflow/tools/cocl:testcu
 ```
-(This runs some simple CUDA things, via OpenCL)
-
-<img src="doc/img/testcu.png?raw=true" width="600" height="170" />
 
 ## Roadmap
 
@@ -75,3 +71,9 @@ bazel run --verbose_failures //tensorflow/tools/cocl:testcu
   - well, I might.  In the future.  My bazel knowledge is a bit elementary for now :-P
 - How can I see your contributions compared to all the mainstream Tensorflow stuff?
   - [this link](https://github.com/hughperkins/tensorflow-cl/compare/master...tensorflow-cl#files_bucket)
+
+## News
+
+- Oct 18:
+  - stream executor up
+  - crosstool working
