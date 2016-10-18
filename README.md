@@ -57,6 +57,8 @@ bazel run --verbose_failures //tensorflow/tools/cocl:testcu
 ```
 (This runs some simple CUDA things, via OpenCL)
 
+<img src="doc/img/testcu.png?raw=true" width="600" height="400" />
+
 ## Roadmap
 
 - use [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) to port the bulk of tensorflow
