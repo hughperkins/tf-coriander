@@ -38,6 +38,7 @@ make -j 4
 sudo make install
 ```
 - you need an OpenCL-enabled GPU installed and OpenCL drivers for that GPU installed.  Currently, supported OpenCL version is 1.2 or better
+  - To check this: run `clinfo`, and check you have at least one 'GPU' device available.  If you do, then you're good :+1:
 
 ### Procedure
 
