@@ -19,7 +19,7 @@ bazel run --verbose_failures //tensorflow/stream_executor:test_cl
 ```
 <img src="doc/img/contextcreated.png?raw=true" width="600" height="400" />
 
-- crosstool for compiling CUDA files using `cocl` working
+- crosstool for compiling CUDA files into OpenCL working
 
 ## How to run
 
