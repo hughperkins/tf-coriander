@@ -440,6 +440,13 @@ def tf_gpu_kernel_library(srcs, copts=[], cuda_copts=[], deps=[], hdrs=[],
                           **kwargs):
   copts = copts + _cuda_copts() + if_cuda(cuda_copts)
 
+  if 'cwise' in ','.join(srcs):
+    print('tf_gpu_kernel_library')
+    print('tf_gpu_kernel_library copts', copts, 'cuda_copts', cuda_copts)
+  copts += ['-x', 'cuda']
+  if 'cwise' in ','.join(srcs):
+    print('tf_gpu_kernel_library name', kwargs['name'])
+    print('tf_gpu_kernel_library copts after add', copts)
   native.cc_library(
       srcs = srcs,
       hdrs = hdrs,
@@ -476,8 +483,10 @@ def tf_cuda_library(deps=None, cuda_deps=None, copts=None, **kwargs):
 
   # print('tf_cuda_library kwargs name=%s' % (kwargs['name']))
   name = kwargs['name']
-  if 'stream_executor' in name or 'gpu' in name:
-    print(kwargs)
+  if 'cwise' in name:
+    print('tf_cuda_library name', name)
+    print('tf_cuda_library kwargs', kwargs)
+    print('tf_cuda_library copts', copts)
   """
   kwargs is eg:
   {"alwayslink": 1, "hdrs": [], "linkstatic": 1, "name": "base64_ops", "srcs": ["base64_ops.cc"]}.
@@ -527,14 +536,21 @@ def tf_kernel_library(name, prefix=None, srcs=None, gpu_srcs=None, hdrs=None,
                               exclude = ["*test*", "*.cu.cc"])
     hdrs = hdrs + native.glob([prefix + "*.h"], exclude = ["*test*", "*.cu.h"])
 
+  if 'cwise' in name:
+    print('tensorflow.bzl tf_kernel_library name=' + name, 'prefix', prefix, 'gpu_srcs?', gpu_srcs != None)
+    print('gpu_srcs', gpu_srcs)
   cuda_deps = ["//tensorflow/core:gpu_lib"]
   if gpu_srcs:
+    if 'cwise' in name:
+      print('  tensorflow.bzl tf_kernel_library calling tf_gpu_kernel_library')
     tf_gpu_kernel_library(
         name = name + "_gpu",
         srcs = gpu_srcs,
         deps = deps,
         **kwargs)
-    cuda_deps.extend([":" + name + "_gpu"])
+    # cuda_deps.extend([":" + name + "_gpu"])
+    print('tf_kernel_library deps', deps)
+    deps += [":" + name + "_gpu"]
   tf_cuda_library(
       name = name,
       srcs = srcs,
