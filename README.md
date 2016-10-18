@@ -25,9 +25,10 @@ bazel --batch run --verbose_failures //tensorflow/hugh:hugh
 
 ### Pre-requisites
 
-- ubuntu 16.04 64-bit (might work on other platforms, but not tested)
-- normal non-gpu tensorflow prerequisites, for building from source
-- NVIDIA® CUDA™ toolkit 7.5, at /usr/local/cuda-7.5
+- Ubuntu 16.04 64-bit (might work on other platforms, but not tested)
+  - I hope to target also Mac, and you can help me to tweak some of the `BUILD` rules for Mac if you want
+- normal non-GPU tensorflow prerequisites for building from source
+- NVIDIA® CUDA™ toolkit 7.5, at `/usr/local/cuda-7.5`
 - when you run `./configure`, you can put `n` for cuda, gpu etc
 - following needs to be installed, in addition to standard tensorflow non-gpu pre-requisites:
 ```
@@ -40,7 +41,7 @@ sudo make install
 - you need an OpenCL-enabled GPU installed and OpenCL drivers for that GPU installed.  Currently, supported OpenCL version is 1.2 or better
   - To check this: run `clinfo`, and check you have at least one device with:
     - `Device Type`: 'GPU', and
-    - `Device OpenCL C Version`: 1.2 or higher
+    - `Device OpenCL C Version`: 1.2, or higher
   - If you do, then you're good :+1:
 
 ### Procedure
