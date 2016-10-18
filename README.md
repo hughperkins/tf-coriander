@@ -12,14 +12,14 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## What works
 
-- opencl context created.  :-P
+- some simple initialization, OpenCL context created ok:
 
 ```
-bazel --batch run --verbose_failures //tensorflow/hugh:hugh
+bazel run --verbose_failures //tensorflow/stream_executor:test_cl
 ```
-<img src="doc/img/clcontextonhd5500.png?raw=true" width="600" height="400" />
+<img src="doc/img/contextcreated.png?raw=true" width="600" height="400" />
 
-- (New!) crosstool for using https://github.com/hughperkins/cuda-on-cl is working (ish) now, use target `//tensorflow/hugh:testcu` to try, see below
+- crosstool for using https://github.com/hughperkins/cuda-on-cl is working (ish) now
 
 ## How to run
 
@@ -46,14 +46,14 @@ sudo make install
 
 ### Procedure
 
-in-progress attempt to run Eigen kernel via tensorflow https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/hugh/hugh.cc :
+in-progress attempt to run Eigen kernel via tensorflow [tensorflow/stream_executor/cl/test/test.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/stream_executor/cl/test/test.cc) :
 ```
-bazel run --verbose_failures //tensorflow/hugh:hugh
+bazel run --verbose_failures //tensorflow/stream_executor:test_cl
 ```
 
-Proof of concept of compiling CUDA to OpenCL via bazel (using https://github.com/hughperkins/cuda-on-cl ) https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/hugh/testcu.cu.cc :
+Proof of concept of compiling CUDA to OpenCL via bazel (using https://github.com/hughperkins/cuda-on-cl ) [tensorflow/tools/cocl/test/testcu.cu.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/tools/cocl/test/testcu.cu.cc) :
 ```
-bazel run --verbose_failures //tensorflow/hugh:testcu
+bazel run --verbose_failures //tensorflow/tools/cocl:testcu
 ```
 (This runs some simple CUDA things, via OpenCL)
 

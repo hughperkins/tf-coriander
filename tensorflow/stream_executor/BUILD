@@ -59,3 +59,39 @@ cc_library(
     ],
     alwayslink = 1,
 )
+
+cc_binary(
+    name = "test_cl",
+    srcs = [
+        "cl/test/test.cc",
+    ],
+    linkopts = [
+        '-lOpenCL'
+    ],
+    deps = [
+        "@cuda_for_cocl//:cuda_headers",
+        "@usr_lib_x8664linux//:libopencl",
+        "@usr_local_lib//:libcocl",
+        "//tensorflow/core:core_cpu",
+        "//tensorflow/core:framework",
+        "//tensorflow/core:gpu_runtime",
+        "//tensorflow/cc:cc_ops",
+        "//tensorflow/core:state_ops_op_lib",   # gives REGISTER_OP("Variable") ?
+        # "//tensorflow/core:user_ops_op_lib",  # gives REGISTER_OP("Variable") ?
+        "//tensorflow/core:testlib",  # for test::graph::Var
+        "//tensorflow/core/kernels:state",  # this triggers registration of Variable kernels
+
+        # temporarily disabling following line, so can merge to master
+        # "//tensorflow/core:ops",  # added this to get "Add" op
+        # "//tensorflow/core/kernels:math",  # adding this to try to get "Add" gpu kernel; adds a loootttt to compile time
+
+        # all these are from deps for core/kernels:small
+        # ":math",
+        # ":ops_util",
+        # "//tensorflow/core:core_cpu",
+        # "//tensorflow/core:framework",
+        # "//tensorflow/core:test",
+        # "//tensorflow/core:test_main",
+        # "//tensorflow/core:testlib",
+    ]
+)

@@ -42,3 +42,21 @@ filegroup(
     name = "empty",
     srcs = [],
 )
+
+cc_binary(
+    name = "testcu",
+    srcs = [
+        'test/testcu.cu.cc',
+    ],
+    linkopts = [
+        '-lcocl',
+        '-lOpenCL',
+    ],
+    deps = [
+        "@usr_local_lib//:libcocl",
+        "@usr_lib_x8664linux//:libopencl",
+    ],
+    copts = [
+        '-x', 'cuda',
+    ],
+)
