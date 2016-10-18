@@ -57,7 +57,7 @@ bazel run --verbose_failures //tensorflow/tools/cocl:testcu
 ```
 (This runs some simple CUDA things, via OpenCL)
 
-<img src="doc/img/testcu.png?raw=true" width="600" height="400" />
+<img src="doc/img/testcu.png?raw=true" width="600" height="170" />
 
 ## Roadmap
 
