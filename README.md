@@ -46,10 +46,14 @@ sudo make install
 
 ### Procedure
 
+#### Platform test
+
 in-progress attempt to run Eigen kernel via tensorflow [tensorflow/stream_executor/cl/test/test.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/stream_executor/cl/test/test.cc) :
 ```
 bazel run --verbose_failures //tensorflow/stream_executor:test_cl
 ```
+
+#### Crosstool test
 
 Proof of concept of compiling CUDA to OpenCL via bazel (using https://github.com/hughperkins/cuda-on-cl ) [tensorflow/tools/cocl/test/testcu.cu.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/tools/cocl/test/testcu.cu.cc) :
 ```
