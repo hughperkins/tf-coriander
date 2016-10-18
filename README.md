@@ -25,7 +25,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 ### Pre-requisites
 
 - Ubuntu 16.04 64-bit (might work on other platforms, but not tested)
-  - I hope to target also Mac, and you can help me to tweak some of the `BUILD` rules for Mac if you want
+  - I hope to target also Mac, and you can help me to tweak some of the `BUILD` rules for Mac if you want (specifically [this one](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/workspace.bzl#L21-L25) )
 - NVIDIA® CUDA™ toolkit 7.5, at `/usr/local/cuda-7.5`
 - normal non-GPU tensorflow prerequisites for building from source
   - when you run `./configure`, you can put `n` for cuda, gpu etc
