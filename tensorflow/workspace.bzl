@@ -87,8 +87,29 @@ cc_library(
   native.new_git_repository(
       name = "cocl",
       remote = "https://github.com/hughperkins/cuda-on-cl",
-      tag = "v2.21.1",
+      tag = "v2.24.0",
       build_file_content = """
+
+# cc_library(
+#     name = 'cocl',
+#     deps = [
+#         ':ir-to-opencl',
+#         ':cocl-lib',
+#     ],
+# )
+
+cc_binary(
+    name = "ir-to-opencl",
+    srcs = [
+        "src/ir-to-opencl.cpp",
+        "src/ir-to-opencl-common.h",
+        "src/ir-to-opencl-common.cpp",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+    ],
+)
+
 cc_library(
     name = "cocl-lib",
     srcs = glob(

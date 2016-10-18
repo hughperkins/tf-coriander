@@ -29,7 +29,11 @@ bazel --batch run --verbose_failures //tensorflow/hugh
 - when you run `./configure`, you can put `n` for cuda, gpu etc
 - following needs to be installed, in addition to standard tensorflow non-gpu pre-requisites:
 ```
-sudo apt-get install opencl-headers cmake
+sudo apt-get install opencl-headers cmake clang-3.8 llvm-3.8
+git clone --recursive https://github.com/hughperkins/cuda-on-cl
+cd cuda-on-cl
+make -j 4 install
+sudo make install
 ```
 - you need an OpenCL-enabled GPU installed and OpenCL drivers for that GPU installed.  Currently, supported OpenCL version is 1.2 or better
 

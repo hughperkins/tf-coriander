@@ -40,7 +40,7 @@ cc_binary(
         'hughcross.cc',
     ],
     deps = [
-        "@cocl//:cocl-lib",
+        "@cocl//:cocl",
     ],
 )
 
@@ -51,6 +51,7 @@ cc_binary(
     ],
     deps = [
         "@cocl//:cocl-lib",
+        # "@cocl//:ir-to-opencl",
         "@local_usr_lib//:libopencl",
     ],
     copts = [
