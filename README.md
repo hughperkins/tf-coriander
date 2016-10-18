@@ -15,9 +15,11 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - opencl context created.  :-P
 
 ```
-bazel --batch run --verbose_failures //tensorflow/hugh
+bazel --batch run --verbose_failures //tensorflow/hugh:hugh
 ```
 <img src="doc/img/clcontextonhd5500.png?raw=true" width="600" height="400" />
+
+- (New!) crosstool for using https://github.com/hughperkins/cuda-on-cl is working (ish) now, use target `//tensorflow/hugh:testcu` to try, see below
 
 ## How to run
 
