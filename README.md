@@ -12,11 +12,11 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## What works
 
-- OpenCL stream executor working
+- OpenCL stream executor working:
 
 <img src="doc/img/contextcreated.png?raw=true" width="600" height="400" />
 
-- crosstool for compiling CUDA files into OpenCL working
+- crosstool working:
 
 <img src="doc/img/testcu.png?raw=true" width="600" height="170" />
 
