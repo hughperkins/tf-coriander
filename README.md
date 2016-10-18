@@ -19,7 +19,7 @@ bazel run --verbose_failures //tensorflow/stream_executor:test_cl
 ```
 <img src="doc/img/contextcreated.png?raw=true" width="600" height="400" />
 
-- crosstool for using https://github.com/hughperkins/cuda-on-cl is working (ish) now
+- crosstool for compiling CUDA files using `cocl` working
 
 ## How to run
 
