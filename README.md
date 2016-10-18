@@ -12,7 +12,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## What works
 
-- OpenCL stream executor working:
+- OpenCL stream executor up:
 
 <img src="doc/img/contextcreated.png?raw=true" width="600" height="400" />
 
