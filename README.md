@@ -89,9 +89,7 @@ bazel run --verbose_failures //tensorflow/tools/cocl:testcu
 
 - Oct 20:
   - removed requirement for CUDA Toolkit
-    - some slight tf-cl regressions for now. ie wont build :-P  Working on it
-  - updated build slightly: adds https://github.com/hughperkins/cuda-on-cl as a submodule (since we're kind of breaking out of `bazel` anyway, might
-  as well use a packaging paradigm I'm familiar with)
+  - updated build slightly: added https://github.com/hughperkins/cuda-on-cl as a submodule
 - Oct 18:
   - stream executor up
   - crosstool working
