@@ -1178,14 +1178,19 @@ DeviceDescription *CLExecutor::PopulateDeviceDescription() const {
   std::cout << "get max shared memory per core" << std::endl;
   builder.set_shared_memory_per_core(
       CLDriver::GetMaxSharedMemoryPerCore(device_).ValueOrDie());
+  std::cout << "deviceprops 1" << std::endl;
   builder.set_shared_memory_per_block(
       CLDriver::GetMaxSharedMemoryPerBlock(device_).ValueOrDie());
+  std::cout << "deviceprops 2" << std::endl;
   builder.set_core_count(
       CLDriver::GetMultiprocessorCount(device_).ValueOrDie());
+  std::cout << "deviceprops 3" << std::endl;
   builder.set_threads_per_core_limit(
       CLDriver::GetMaxThreadsPerMultiprocessor(device_).ValueOrDie());
+  std::cout << "deviceprops 4" << std::endl;
   builder.set_registers_per_block_limit(
       CLDriver::GetMaxRegistersPerBlock(device_).ValueOrDie());
+  std::cout << "deviceprops 5" << std::endl;
   builder.set_threads_per_warp(
       CLDriver::GetThreadsPerWarp(device_).ValueOrDie());
   std::cout << "cl_gpu_executor.cc calling builder.Build()" << std::endl;

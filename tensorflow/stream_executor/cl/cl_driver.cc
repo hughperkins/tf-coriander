@@ -1505,11 +1505,13 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
   CUresult result = CUDA_ERROR_UNKNOWN;
   result = cuDeviceGetAttribute(&value, attribute, device);
   if (result != CUDA_SUCCESS) {
+    std::cout << "failed to get simpleattribute " << attribute << std::endl;
     return port::Status{
         port::error::NOT_FOUND,
         port::StrCat("could not retrieve CUDA device attribute (", attribute,
                      "): ", ToString(result))};
   }
+  std::cout << "got simpleattribute " << attribute << " value=" << value << std::endl;
   T converted = value;
   return converted;
 }
@@ -1528,8 +1530,10 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
 
 /* static */ port::StatusOr<int64> CLDriver::GetMaxSharedMemoryPerBlock(
     CUdevice device) {
-  return GetSimpleAttribute<int64>(
+  auto res = GetSimpleAttribute<int64>(
       device, CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK);
+  // std::cout << "sharedMemoryPerBlock " << sharedMemoryPerBlock << std::endl;
+  return res;
 }
 
 /* static */ port::StatusOr<int64> CLDriver::GetMaxThreadsPerMultiprocessor(
