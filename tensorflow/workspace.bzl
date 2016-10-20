@@ -32,10 +32,12 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
     build_file = "usr_local_lib.BUILD"
   )
 
-  native.new_git_repository(
+  # native.new_git_repository(
+  native.new_local_repository(
       name = "cocl",
-      remote = "https://github.com/hughperkins/cuda-on-cl",
-      tag = "v3.6.1",
+      path = "third_party/cuda-on-cl",
+      # remote = "https://github.com/hughperkins/cuda-on-cl",
+      # tag = "v3.8.0",
       build_file_content = """
 cc_library(
     name = 'cocl-headers',
