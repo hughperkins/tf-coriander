@@ -10,15 +10,10 @@ cc_library(
             "lib/*.cc",
             "platform/default/*.cc",
             "cl/*.cc",
-            # "cuda/cuda_driver.cc",
-            # "cuda/cuda_diagnostics.cc",
-            # "cuda/cuda_activation.cc",
-            # "cl/cl_gpu_executor.cc",
-            # "cuda/cuda_timer.cc",
-            # "cuda/cuda_stream.cc",
         ],
         exclude = [
             "**/*_test.cc",
+            "dso_loader.cc",
         ],
     # ) + if_cuda(
     #     glob([
@@ -34,13 +29,11 @@ cc_library(
         "platform/**/*.h",
     ]),
     data = [
-        "//tensorflow/core:cuda",
         "@usr_local_lib//:libcocl",
         "@usr_lib_x8664linux//:libopencl",
-        # "@local_config_cuda//cuda:cublas",
-        # "@local_config_cuda//cuda:cudnn",
-        # "@local_config_cuda//cuda:cufft",
-        # "@local_config_cuda//cuda:curand",
+    ],
+    copts = [
+        '-Iexternal/cocl/include/cocl'
     ],
     linkopts = [
         "-ldl",
@@ -49,13 +42,12 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@cuda_for_cocl//:cuda_headers",
+        "@cocl//:cocl-headers",
         # "@local_usr_lib//:libopencl",
         # "@cocl//:cocl-lib",
         # "@clew//:clew-lib",
         # "@EasyCL//:easycl-lib",
         "//tensorflow/core:lib",
-        "@local_config_cuda//cuda:cuda_headers",
     ],
     alwayslink = 1,
 )
@@ -69,7 +61,6 @@ cc_binary(
         '-lOpenCL'
     ],
     deps = [
-        "@cuda_for_cocl//:cuda_headers",
         "@usr_lib_x8664linux//:libopencl",
         "@usr_local_lib//:libcocl",
         "//tensorflow/core:core_cpu",
@@ -95,7 +86,6 @@ cc_binary(
         '-lOpenCL'
     ],
     deps = [
-        "@cuda_for_cocl//:cuda_headers",
         "@usr_lib_x8664linux//:libopencl",
         "@usr_local_lib//:libcocl",
         "//tensorflow/core:core_cpu",
