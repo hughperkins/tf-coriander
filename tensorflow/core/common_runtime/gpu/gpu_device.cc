@@ -1035,13 +1035,15 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
     if (!exec_status.ok()) {
       continue;
     }
+    std::cout << "got exeuctor for device " << visible_gpu_id << std::endl;
     gpu::StreamExecutor* se = exec_status.ValueOrDie();
+    std::cout << "executor passed exec_status ok" << std::endl;
     const gpu::DeviceDescription& desc = se->GetDeviceDescription();
-    CudaVersion device_capability;
-    if (!desc.cuda_compute_capability(&device_capability.major_part,
-                                      &device_capability.minor_part)) {
-      continue;
-    }
+    // CudaVersion device_capability;
+    // if (!desc.cuda_compute_capability(&device_capability.major_part,
+    //                                   &device_capability.minor_part)) {
+    //   continue;
+    // }
     // Only GPUs with no less than the minimum supported compute capability is
     // accepted.
     // if (device_capability < min_supported_capability) {
