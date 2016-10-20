@@ -806,29 +806,29 @@ struct CudaVersion {
   int minor_part = -1;
 };
 
-std::vector<CudaVersion> supported_cuda_compute_capabilities = {
-  TF_CUDA_CAPABILITIES,
-};
+// std::vector<CudaVersion> supported_cuda_compute_capabilities = {
+//   TF_CUDA_CAPABILITIES,
+// };
 
-std::vector<CudaVersion> GetSupportedCudaComputeCapabilities() {
-  auto cuda_caps = supported_cuda_compute_capabilities;
-#ifdef TF_EXTRA_CUDA_CAPABILITIES
-// TF_EXTRA_CUDA_CAPABILITIES should be defined a sequence separated by commas,
-// for example:
-//   TF_EXTRA_CUDA_CAPABILITIES=3.0,4.0,5.0
-// Use two-level macro expansion for stringification.
-#define TF_XSTRING(...) #__VA_ARGS__
-#define TF_STRING(s) TF_XSTRING(s)
-  string extra_cuda_caps = TF_STRING(TF_EXTRA_CUDA_CAPABILITIES);
-#undef TF_STRING
-#undef TF_XSTRING
-  auto extra_capabilities = str_util::Split(extra_cuda_caps, ',');
-  for (const auto& capability : extra_capabilities) {
-    cuda_caps.push_back(CudaVersion(capability));
-  }
-#endif
-  return cuda_caps;
-}
+// std::vector<CudaVersion> GetSupportedCudaComputeCapabilities() {
+//   auto cuda_caps = supported_cuda_compute_capabilities;
+// #ifdef TF_EXTRA_CUDA_CAPABILITIES
+// // TF_EXTRA_CUDA_CAPABILITIES should be defined a sequence separated by commas,
+// // for example:
+// //   TF_EXTRA_CUDA_CAPABILITIES=3.0,4.0,5.0
+// // Use two-level macro expansion for stringification.
+// #define TF_XSTRING(...) #__VA_ARGS__
+// #define TF_STRING(s) TF_XSTRING(s)
+//   string extra_cuda_caps = TF_STRING(TF_EXTRA_CUDA_CAPABILITIES);
+// #undef TF_STRING
+// #undef TF_XSTRING
+//   auto extra_capabilities = str_util::Split(extra_cuda_caps, ',');
+//   for (const auto& capability : extra_capabilities) {
+//     cuda_caps.push_back(CudaVersion(capability));
+//   }
+// #endif
+//   return cuda_caps;
+// }
 
 std::unique_ptr<std::map<std::pair<int, int>, bool>> GetPeerAccessMap(
     gpu::Platform* platform, const std::vector<int>& visible_gpu_order) {
@@ -1017,13 +1017,13 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
   }
 
   std::cout << "gpu_device.cc getvaliddeviceids, 5" << std::endl;
-  auto cuda_supported_capabilities = GetSupportedCudaComputeCapabilities();
-  if (cuda_supported_capabilities.empty()) {
-    return errors::FailedPrecondition(
-        "No supported cuda capabilities in binary.");
-  }
-  CudaVersion min_supported_capability = *std::min_element(
-      cuda_supported_capabilities.begin(), cuda_supported_capabilities.end());
+  // auto cuda_supported_capabilities = GetSupportedCudaComputeCapabilities();
+  // if (cuda_supported_capabilities.empty()) {
+  //   return errors::FailedPrecondition(
+  //       "No supported cuda capabilities in binary.");
+  // }
+  // CudaVersion min_supported_capability = *std::min_element(
+  //     cuda_supported_capabilities.begin(), cuda_supported_capabilities.end());
 
   int min_gpu_core_count =
       GetMinGPUMultiprocessorCount(gpu_manager, visible_gpu_order);
