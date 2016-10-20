@@ -20,7 +20,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 <img src="doc/img/testcu.png?raw=true" width="600" height="170" />
 
-## How to run
+## Build
 
 ### Pre-requisites
 
@@ -28,7 +28,13 @@ Please see the main repository for full Tensorflow documentation.  This readme w
   - I hope to target also Mac, and you can help me to tweak some of the `BUILD` rules for Mac if you want (specifically [this one](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/workspace.bzl#L21-L25), used by [usr_lib_x8664linux.BUILD](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/usr_lib_x8664linux.BUILD))
 - normal non-GPU tensorflow prerequisites for building from source
   - when you run `./configure`, you can put `n` for cuda, gpu etc
-- run the following, to install `cocl` pre-requisites, and install `cocl`:
+- you need an OpenCL-enabled GPU installed and OpenCL drivers for that GPU installed.  Currently, supported OpenCL version is 1.2 or better
+  - To check this: run `clinfo`, and check you have at least one device with:
+    - `Device Type`: 'GPU', and
+    - `Device OpenCL C Version`: 1.2, or higher
+  - If you do, then you're good :+1:
+
+### Initial setup:
 ```
 sudo apt-get install opencl-headers cmake clang-3.8 llvm-3.8 clinfo
 git submodule update --init
@@ -37,22 +43,29 @@ make -j 4
 sudo make install
 popd
 ```
-- you need an OpenCL-enabled GPU installed and OpenCL drivers for that GPU installed.  Currently, supported OpenCL version is 1.2 or better
-  - To check this: run `clinfo`, and check you have at least one device with:
-    - `Device Type`: 'GPU', and
-    - `Device OpenCL C Version`: 1.2, or higher
-  - If you do, then you're good :+1:
 
-### Procedure
+### Updating:
 
-#### Stream executor test
+- if you pull down new updates from the `tensorflow-cl` repository, please run the following, to update the [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) installation:
+```
+git submodule update
+pushd third_party/cuda-on-cl
+make -j 4
+sudo make install
+popd
+```
+- note that you dont need to re-run configure.  Yay! :-)
+
+## Run
+
+### Stream executor test
 
 Stream executor test: [tensorflow/stream_executor/cl/test/test.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/stream_executor/cl/test/test.cc) :
 ```
 bazel run --verbose_failures //tensorflow/stream_executor:test_cl
 ```
 
-#### Crosstool test
+### Crosstool test
 
 Crosstool test: [tensorflow/tools/cocl/test/testcu.cu.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/tools/cocl/test/testcu.cu.cc) :
 ```
