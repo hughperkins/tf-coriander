@@ -33,7 +33,7 @@ limitations under the License.
 // #include <cuda_runtime.h>
 #include <cuda.h>
 #include <cuda_device_runtime_api.h>
-#include "tensorflow/stream_executor/cuda/cuda_driver.h"
+#include "tensorflow/stream_executor/cl/cl_driver.h"
 
 #include <iostream>
 

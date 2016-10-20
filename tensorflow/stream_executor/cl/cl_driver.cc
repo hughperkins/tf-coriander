@@ -56,34 +56,34 @@ namespace cl {
 
 // namespace dynload {
 
-// #define PERFTOOLS_GPUTOOLS_LIBCUDA_WRAP(__name)                              \
-//   struct DynLoadShim__##__name {                                             \
-//     static const char *kName;                                                \
-//     using FuncPointerT = std::add_pointer<decltype(::__name)>::type;         \
-//     static void *GetDsoHandle() {                                            \
-//       static auto status = internal::CachedDsoLoader::GetLibcudaDsoHandle(); \
-//       return status.ValueOrDie();                                            \
-//     }                                                                        \
-//     static FuncPointerT LoadOrDie() {                                        \
-//       void *f;                                                               \
-//       port::Status s = port::Env::Default()->GetSymbolFromLibrary(           \
-//           GetDsoHandle(), kName, &f);                                        \
-//       CHECK(s.ok()) << "could not find " << kName                            \
-//                     << " in libcuda DSO; dlerror: " << s.error_message();    \
-//       return reinterpret_cast<FuncPointerT>(f);                              \
-//     }                                                                        \
-//     static FuncPointerT DynLoad() {                                          \
-//       static FuncPointerT f = LoadOrDie();                                   \
-//       return f;                                                              \
-//     }                                                                        \
-//     template <typename... Args>                                              \
-//     CUresult operator()(Args... args) {                                      \
-//       return DynLoad()(args...);                                             \
-//     }                                                                        \
-//   } __name;                                                                  \
+// #define PERFTOOLS_GPUTOOLS_LIBCUDA_WRAP(__name)                              
+//   struct DynLoadShim__##__name {                                             
+//     static const char *kName;                                                
+//     using FuncPointerT = std::add_pointer<decltype(::__name)>::type;         
+//     static void *GetDsoHandle() {                                            
+//       static auto status = internal::CachedDsoLoader::GetLibcudaDsoHandle(); 
+//       return status.ValueOrDie();                                            
+//     }                                                                        
+//     static FuncPointerT LoadOrDie() {                                        
+//       void *f;                                                               
+//       port::Status s = port::Env::Default()->GetSymbolFromLibrary(           
+//           GetDsoHandle(), kName, &f);                                        
+//       CHECK(s.ok()) << "could not find " << kName                            
+//                     << " in libcuda DSO; dlerror: " << s.error_message();    
+//       return reinterpret_cast<FuncPointerT>(f);                              
+//     }                                                                        
+//     static FuncPointerT DynLoad() {                                          
+//       static FuncPointerT f = LoadOrDie();                                   
+//       return f;                                                              
+//     }                                                                        
+//     template <typename... Args>                                              
+//     CUresult operator()(Args... args) {                                      
+//       return DynLoad()(args...);                                             
+//     }                                                                        
+//   } __name;                                                                  
 //   const char *DynLoadShim__##__name::kName = #__name;
 
-// #define PERFTOOLS_GPUTOOLS_LIBCUDA_WRAP(__name) \
+// #define PERFTOOLS_GPUTOOLS_LIBCUDA_WRAP(__name) 
 //   __name
 
 // PERFTOOLS_GPUTOOLS_LIBCUDA_WRAP(cuCtxCreate_v2);

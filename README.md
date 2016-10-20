@@ -26,16 +26,16 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 - Ubuntu 16.04 64-bit (might work on other platforms, but not tested)
   - I hope to target also Mac, and you can help me to tweak some of the `BUILD` rules for Mac if you want (specifically [this one](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/workspace.bzl#L21-L25), used by [usr_lib_x8664linux.BUILD](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/usr_lib_x8664linux.BUILD))
-- NVIDIA® CUDA™ toolkit 7.5, at `/usr/local/cuda-7.5`
 - normal non-GPU tensorflow prerequisites for building from source
   - when you run `./configure`, you can put `n` for cuda, gpu etc
-- following needs to be installed, in addition to standard tensorflow non-gpu pre-requisites:
+- run the following, to install `cocl` pre-requisites, and install `cocl`:
 ```
 sudo apt-get install opencl-headers cmake clang-3.8 llvm-3.8 clinfo
-git clone --recursive https://github.com/hughperkins/cuda-on-cl
-cd cuda-on-cl
+git submodule update --init
+pushd third_party/cuda-on-cl
 make -j 4
 sudo make install
+popd
 ```
 - you need an OpenCL-enabled GPU installed and OpenCL drivers for that GPU installed.  Currently, supported OpenCL version is 1.2 or better
   - To check this: run `clinfo`, and check you have at least one device with:
@@ -74,6 +74,11 @@ bazel run --verbose_failures //tensorflow/tools/cocl:testcu
 
 ## News
 
+- Oct 20:
+  - removed requirement for CUDA Toolkit
+    - some slight tf-cl regressions for now. ie wont build :-P  Working on it
+  - updated build slightly: adds https://github.com/hughperkins/cuda-on-cl as a submodule (since we're kind of breaking out of `bazel` anyway, might
+  as well use a packaging paradigm I'm familiar with)
 - Oct 18:
   - stream executor up
   - crosstool working

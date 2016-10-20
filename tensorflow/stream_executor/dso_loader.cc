@@ -41,8 +41,8 @@ namespace perftools {
 namespace gputools {
 namespace internal {
 
-string GetCudaVersion() { return TF_CUDA_VERSION; }
-string GetCudnnVersion() { return TF_CUDNN_VERSION; }
+// string GetCudaVersion() { return TF_CUDA_VERSION; }
+// string GetCudnnVersion() { return TF_CUDNN_VERSION; }
 
 /* static */ port::Status DsoLoader::GetCublasDsoHandle(void** dso_handle) {
   return GetDsoHandle(FindDsoPath(tensorflow::internal::FormatLibraryFileName(

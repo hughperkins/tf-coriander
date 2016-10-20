@@ -1,0 +1,3 @@
+[submodule "third_party/cuda-on-cl"]
+	path = third_party/cuda-on-cl
+	url = https://github.com/hughperkins/cuda-on-cl
