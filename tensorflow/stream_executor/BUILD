@@ -94,9 +94,78 @@ cc_binary(
         "//tensorflow/cc:const_op",
         "//tensorflow/core:testlib",  # for test::graph::Var
         "//tensorflow/core:math_ops_op_lib",
+        "//tensorflow/core:array_ops_op_lib",  # trying to get Placeholder
         "//tensorflow/core/kernels:cwise_op",
         #"//tensorflow/core/kernels:cwise_op_add",
         #"//tensorflow/core/kernels:cwise_ops",
+
+        "//tensorflow/cc:cc_ops",  # trying to get placeholder
+
+        "//third_party/eigen3",
+    ]
+)
+
+cc_binary(
+    name = "test_cl_trainer",
+    srcs = [
+        "cl/test/example_trainer.cc",
+    ],
+    copts = [
+        # '-Ithird_party/eigen3',
+        '-Iexternal/eigen_archive',
+    ],
+    linkopts = [
+        '-lOpenCL'
+    ],
+    deps = [
+        "@usr_lib_x8664linux//:libopencl",
+        "@usr_local_lib//:libcocl",
+        "//tensorflow/core:core_cpu",
+        "//tensorflow/core:framework",
+        "//tensorflow/core:gpu_runtime",
+        "//tensorflow/cc:const_op",
+        "//tensorflow/core:testlib",  # for test::graph::Var
+        "//tensorflow/core:math_ops_op_lib",
+        "//tensorflow/core:array_ops_op_lib",  # trying to get Placeholder
+        "//tensorflow/core/kernels:cwise_op",
+        #"//tensorflow/core/kernels:cwise_op_add",
+        #"//tensorflow/core/kernels:cwise_ops",
+
+        "//tensorflow/cc:cc_ops",  # trying to get placeholder
+
+        "//third_party/eigen3",
+    ]
+)
+
+cc_binary(
+    name = "test_cl_loadproto",
+    srcs = [
+        "cl/test/loadproto.cc",
+    ],
+    copts = [
+        # '-Ithird_party/eigen3',
+        '-Iexternal/eigen_archive',
+    ],
+    linkopts = [
+        '-lOpenCL'
+    ],
+    deps = [
+        "//tensorflow/core:tensorflow",
+
+        "@usr_lib_x8664linux//:libopencl",
+        "@usr_local_lib//:libcocl",
+        "//tensorflow/core:core_cpu",
+        "//tensorflow/core:framework",
+        "//tensorflow/core:gpu_runtime",
+        "//tensorflow/cc:const_op",
+        "//tensorflow/core:testlib",  # for test::graph::Var
+        "//tensorflow/core:math_ops_op_lib",
+        "//tensorflow/core:array_ops_op_lib",  # trying to get Placeholder
+        "//tensorflow/core/kernels:cwise_op",
+        #"//tensorflow/core/kernels:cwise_op_add",
+        #"//tensorflow/core/kernels:cwise_ops",
+
+        "//tensorflow/cc:cc_ops",  # trying to get placeholder
 
         "//third_party/eigen3",
     ]

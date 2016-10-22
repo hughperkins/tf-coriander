@@ -53,6 +53,7 @@ cc_binary(
         '-lOpenCL',
     ],
     deps = [
+        "@cocl//:cocl-headers",
         "@usr_local_lib//:libcocl",
         "@usr_lib_x8664linux//:libopencl",
     ],
