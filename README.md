@@ -14,11 +14,15 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 - OpenCL stream executor up:
 
-<img src="doc/img/contextcreated.png?raw=true" width="600" height="400" />
+<img src="doc/img/contextcreated.png?raw=true" width="600" />
 
 - crosstool working:
 
-<img src="doc/img/testcu.png?raw=true" width="600" height="170" />
+<img src="doc/img/testcu.png?raw=true" width="600" />
+
+- component-wise addition working:
+
+<img src="doc/img/componentwiseaddition_tensorflow_opencl.png?raw=true" width="600"/>
 
 ## Build
 
@@ -72,6 +76,18 @@ Crosstool test: [tensorflow/tools/cocl/test/testcu.cu.cc](https://github.com/hug
 bazel run --verbose_failures //tensorflow/tools/cocl:testcu
 ```
 
+### Component-wise addition
+
+- uses protobuffers created using [tensorflow/stream_executor/cl/test/create_proto.py](tensorflow/stream_executor/cl/test/create_proto.py)
+- copy to `/tmp` by doing:
+```
+cp tensorflow/stream_exeuctor/cl/test/graph.pb /tmp
+```
+- then, run [tensorflow/stream_executor/cl/test/loadproto.cc](tensorflow/stream_executor/cl/test/loadproto.cc), by doing:
+```
+bazel run --verbose_failures --logging 6 //tensorflow/stream_executor:test_cl_loadproto
+```
+
 ## Roadmap
 
 - use [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) to port the bulk of tensorflow
@@ -87,6 +103,8 @@ bazel run --verbose_failures //tensorflow/tools/cocl:testcu
 
 ## News
 
+- Oct 22:
+  - componentwise addition working, when called from c++
 - Oct 20:
   - removed requirement for CUDA Toolkit
   - updated build slightly: added https://github.com/hughperkins/cuda-on-cl as a submodule
