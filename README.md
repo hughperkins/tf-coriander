@@ -90,7 +90,7 @@ bazel run --verbose_failures --logging 6 //tensorflow/stream_executor:test_cl_lo
 
 ## Design/architecture
 
-- tensorflow code stays 100% NVIDIA® CUDA™
+- tensorflow code stays 100% [NVIDIA® CUDA™](https://www.nvidia.com/object/cuda_home_new.html)
 - [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) compiles the CUDA code into OpenCL
 
 ## Roadmap
