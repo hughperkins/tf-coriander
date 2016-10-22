@@ -24,6 +24,10 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 <img src="doc/img/componentwiseaddition_tensorflow_opencl.png?raw=true" width="600"/>
 
+- Python working :-)
+
+<img src="doc/img/pythonworking.png?raw=true" width="600" />
+
 ## Build
 
 ### Pre-requisites
@@ -88,6 +92,26 @@ cp tensorflow/stream_exeuctor/cl/test/graph.pb /tmp
 bazel run --verbose_failures --logging 6 //tensorflow/stream_executor:test_cl_loadproto
 ```
 
+### Usage from Python :-)
+
+This is hot off the press (as of 23rd October 2016), but works for me :-)
+
+#### Installation/setup
+
+```
+bazel run --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
+# (ignore error message about 'No destination dir provided')
+bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
+if [[ ! -d env3 ]]; then { virtualenv -p python3 env3; } fi
+source env3/bin/activate
+pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
+TFDIR=$(pwd)
+cd
+python -c 'import tensorflow'
+# hopefully no errors :-)
+python $TFDIR/tensorflow/stream_executor/cl/test/test_tf.py
+```
+
 ## Design/architecture
 
 - tensorflow code stays 100% [NVIDIA® CUDA™](https://www.nvidia.com/object/cuda_home_new.html)
@@ -128,6 +152,8 @@ bazel run --verbose_failures --logging 6 //tensorflow/stream_executor:test_cl_lo
     rm -Rf third_party/cuda-on-cl/build
     bazel clean --expunge
     ```
+  - python working (as of commit 5e67304c3c)
+    - you'll need to do `bazel clean`, and rebuild from scratch, if you already did a build prior to this commit
 - Oct 20:
   - removed requirement for CUDA Toolkit
   - updated build slightly: added https://github.com/hughperkins/cuda-on-cl as a submodule
