@@ -239,8 +239,8 @@ def InvokeNvcc(argv, log=False):
                        ' ' + includes_string + ' ' +
                        ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
                        ' -I . ' +
-                       # '-fPIC ' +
-                       ' -x cu ' + opt + includes + ' -c ' + out + ' ' + srcs).replace('-pie', '')
+                       '-fPIC ' +
+                       ' -x cu ' + opt + includes + ' -c ' + out + ' ' + srcs)
     print('cmd', cmd)
 
     # TODO(zhengxq): for some reason, 'gcc' needs this help to find 'as'.
@@ -283,7 +283,7 @@ def main():
     # https://llvm.org/bugs/show_bug.cgi?id=26923
     # https://stackoverflow.com/questions/2463150/fpie-position-independent-executable-option-gcc-ld/5030518#5030518
     # )
-    cpu_compiler_flags = [option for option in cpu_compiler_flags if option != '-pie']
+    # cpu_compiler_flags = [option for option in cpu_compiler_flags if option != '-pie']
     cpu_compiler_call = [CPU_COMPILER] + cpu_compiler_flags
     # print('cpu_compiler_call', cpu_compiler_call)
     # print('cpu_compiler_call joined', ' '.join(cpu_compiler_call))
