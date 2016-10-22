@@ -121,6 +121,13 @@ bazel run --verbose_failures --logging 6 //tensorflow/stream_executor:test_cl_lo
 
 - Oct 22:
   - componentwise addition working, when called from c++
+  - commit `0db9cc2e`: re-enabled `-fPIC`, `-pie`
+    - this is a pre-requisite for being able to run from python at some point
+    - but if you built prior to this, you need to deeeeep clean, and rebuild from scratch:
+    ```
+    rm -Rf third_party/cuda-on-cl/build
+    bazel clean --expunge
+    ```
 - Oct 20:
   - removed requirement for CUDA Toolkit
   - updated build slightly: added https://github.com/hughperkins/cuda-on-cl as a submodule
