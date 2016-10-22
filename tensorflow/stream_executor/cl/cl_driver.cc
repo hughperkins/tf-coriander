@@ -1363,10 +1363,10 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
   switch (flags) {
     case EventFlags::kDefault:
       cuflags = CU_EVENT_DEFAULT;
-      std::cout << "CLDriver::CreateEvent kDefault" << std::endl;
+      // std::cout << "CLDriver::CreateEvent kDefault" << std::endl;
       break;
     case EventFlags::kDisableTiming:
-      std::cout << "CLDriver::CreateEvent kDisableTiming" << std::endl;
+      // std::cout << "CLDriver::CreateEvent kDisableTiming" << std::endl;
       cuflags = CU_EVENT_DISABLE_TIMING;
       break;
     default:

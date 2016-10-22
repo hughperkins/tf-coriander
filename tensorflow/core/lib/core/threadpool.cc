@@ -57,7 +57,7 @@ struct EigenEnvironment {
   }
 
   Task CreateTask(std::function<void()> f) {
-  std::cout << "EigenEnvironment::CreateTask()" << std::endl;
+  // std::cout << "EigenEnvironment::CreateTask()" << std::endl;
     uint64 id = 0;
     if (port::Tracing::IsActive()) {
       id = port::Tracing::UniqueId();
@@ -72,7 +72,7 @@ struct EigenEnvironment {
   }
 
   void ExecuteTask(const Task& t) {
-  std::cout << "EigenEnvironment::ExecuteTask()" << std::endl;
+  // std::cout << "EigenEnvironment::ExecuteTask()" << std::endl;
     WithContext wc(t.f->context);
     if (t.f->trace_id != 0) {
       port::Tracing::ScopedActivity region(
@@ -107,12 +107,12 @@ struct ThreadPool::Impl : Eigen::ThreadPoolTempl<EigenEnvironment> {
 
 ThreadPool::ThreadPool(Env* env, const string& name, int num_threads)
     : ThreadPool(env, ThreadOptions(), name, num_threads) {
-  std::cout << "ThreadPool::ThreadPool() num_threads=" << num_threads << std::endl;
+  // std::cout << "ThreadPool::ThreadPool() num_threads=" << num_threads << std::endl;
 }
 
 ThreadPool::ThreadPool(Env* env, const ThreadOptions& thread_options,
                        const string& name, int num_threads) {
-  std::cout << "ThreadPool::ThreadPool() num_threads=" << num_threads << std::endl;
+  // std::cout << "ThreadPool::ThreadPool() num_threads=" << num_threads << std::endl;
   CHECK_GE(num_threads, 1);
   impl_.reset(
       new ThreadPool::Impl(env, thread_options, "tf_" + name, num_threads));
@@ -123,7 +123,7 @@ ThreadPool::~ThreadPool() {
 }
 
 void ThreadPool::Schedule(std::function<void()> fn) {
-  std::cout << "ThreadPool::Schedule()" << std::endl;
+  // std::cout << "ThreadPool::Schedule()" << std::endl;
   CHECK(fn != nullptr);
   impl_->Schedule(std::move(fn));
 }

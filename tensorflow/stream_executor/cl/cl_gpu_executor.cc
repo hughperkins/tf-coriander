@@ -97,7 +97,7 @@ class CLTimer;
 std::function<string(const string &)> g_cubinate;
 
 static CLEvent *AsCLEvent(Event *event) {
-  std::cout << "cl_gpu_executor::AsCLEvent()" << std::endl;
+  // std::cout << "cl_gpu_executor::AsCLEvent()" << std::endl;
   DCHECK(event != nullptr);
   return static_cast<CLEvent *>(event->implementation());
 }
@@ -119,7 +119,7 @@ static CLTimer *AsCLTimer(Timer *timer) {
 // libcl APIs, so the caller should take care to only pass the result of const
 // GPU memory conversions to libcl functions which will honor constness.
 static CUdeviceptr AsClDevicePtr(const DeviceMemoryBase &gpu_mem) {
-  std::cout << "cl_gpu_executor::AsClDevicePtr()" << std::endl;
+  // std::cout << "cl_gpu_executor::AsClDevicePtr()" << std::endl;
   return reinterpret_cast<CUdeviceptr>(gpu_mem.opaque());
 }
 
@@ -620,7 +620,7 @@ bool CLExecutor::Memset32(Stream *stream, DeviceMemoryBase *location,
 
 bool CLExecutor::Memcpy(Stream *stream, void *host_dst,
                           const DeviceMemoryBase &gpu_src, uint64 size) {
-  std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
+  // std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
   return CLDriver::AsynchronousMemcpyD2H(context_, host_dst,
                                            AsClDevicePtr(gpu_src), size,
                                            AsCLStreamValue(stream));
@@ -628,7 +628,7 @@ bool CLExecutor::Memcpy(Stream *stream, void *host_dst,
 
 bool CLExecutor::Memcpy(Stream *stream, DeviceMemoryBase *gpu_dst,
                           const void *host_src, uint64 size) {
-  std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
+  // std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
   return CLDriver::AsynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
                                            host_src, size,
                                            AsCLStreamValue(stream));
@@ -675,7 +675,7 @@ port::Status CLExecutor::DeallocateEvent(Event *event) {
 }
 
 port::Status CLExecutor::RecordEvent(Stream *stream, Event *event) {
-  std::cout << "cl_gpu_executor::RecordEvent()" << std::endl;
+  // std::cout << "cl_gpu_executor::RecordEvent()" << std::endl;
  return AsCLEvent(event)->Record(AsCLStream(stream));
 }
 
@@ -694,7 +694,7 @@ port::Status CLExecutor::WaitForEvent(Stream *stream, Event *event) {
 }
 
 Event::Status CLExecutor::PollForEventStatus(Event *event) {
-  std::cout << "cl_gpu_executor::PollForEventSTatus()" << std::endl;
+  // std::cout << "cl_gpu_executor::PollForEventSTatus()" << std::endl;
   return AsCLEvent(event)->PollForStatus();
 }
 
@@ -724,7 +724,7 @@ void CLExecutor::DeallocateTimer(Timer *timer) {
 }
 
 bool CLExecutor::CreateStreamDependency(Stream *dependent, Stream *other) {
-  std::cout << "cl_gpu_executor::CreateStreamDependency()" << std::endl;
+  // std::cout << "cl_gpu_executor::CreateStreamDependency()" << std::endl;
   CUevent other_completed_event = *AsCLStream(other)->completed_event();
   bool ok = CLDriver::RecordEvent(context_, other_completed_event,
                                     AsCLStreamValue(other))
@@ -969,7 +969,7 @@ bool CLExecutor::SupportsRng() const {
 
 std::unique_ptr<internal::EventInterface>
 CLExecutor::CreateEventImplementation() {
-  std::cout << "CLExecutor::CreateEventImplementation" << std::endl;
+  // std::cout << "CLExecutor::CreateEventImplementation" << std::endl;
   return std::unique_ptr<internal::EventInterface>(new CLEvent(this));
 }
 

@@ -2047,11 +2047,11 @@ void ExecutorImpl::RunAsync(const Args& args, DoneCallback done) {
 
 Status NewLocalExecutor(const LocalExecutorParams& params, const Graph* graph,
                         Executor** executor) {
-  std::cout << "core/common_runtime/executor.cc NewLocalExecutor()" << std::endl;
+  // std::cout << "core/common_runtime/executor.cc NewLocalExecutor()" << std::endl;
   ExecutorImpl* impl = new ExecutorImpl(params, graph);
-  std::cout << "core/common_runtime/executor.cc NewLocalExecutor() got ExecutorImpl" << std::endl;
+  // std::cout << "core/common_runtime/executor.cc NewLocalExecutor() got ExecutorImpl" << std::endl;
   Status s = impl->Initialize();
-  std::cout << "core/common_runtime/executor.cc NewLocalExecutor() after Initialize s.ok()" << s.ok() << std::endl;
+  // std::cout << "core/common_runtime/executor.cc NewLocalExecutor() after Initialize s.ok()" << s.ok() << std::endl;
   if (s.ok()) {
     *executor = impl;
   } else {
