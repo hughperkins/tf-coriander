@@ -1,6 +1,6 @@
 # Tensorflow-cl
 
-Run Tensorflow on OpenCL devices.  UNDER CONSTRUCTION!!!
+Run Tensorflow on OpenCL™ devices.  UNDER CONSTRUCTION!!!
 
 ## Summary
 
@@ -87,6 +87,11 @@ cp tensorflow/stream_exeuctor/cl/test/graph.pb /tmp
 ```
 bazel run --verbose_failures --logging 6 //tensorflow/stream_executor:test_cl_loadproto
 ```
+
+## Design/architecture
+
+- tensorflow code stays 100% NVIDIA® CUDA™
+- [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) compiles the CUDA code into OpenCL
 
 ## Roadmap
 
