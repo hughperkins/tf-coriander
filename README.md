@@ -106,6 +106,17 @@ bazel run --verbose_failures --logging 6 //tensorflow/stream_executor:test_cl_lo
 - How can I see your contributions compared to all the mainstream Tensorflow stuff?
   - [this link](https://github.com/hughperkins/tensorflow-cl/compare/master...tensorflow-cl#files_bucket)
 
+## Related projects
+
+### DNN Libraries
+- [OpenCL Torch](https://github.com/hughperkins/distro-cl)
+- [DeepCL](https://github.com/hughperkins/DeepCL)
+
+### OpenCL middleware
+
+- [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl)
+- [EasyCL](https://github.com/hughperkins/EasyCL)
+
 ## News
 
 - Oct 22:
