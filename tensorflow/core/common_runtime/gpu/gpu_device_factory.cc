@@ -62,7 +62,7 @@ class GPUDeviceFactory : public BaseGPUDeviceFactory {
                                  const string& physical_device_desc,
                                  Allocator* gpu_allocator,
                                  Allocator* cpu_allocator) override {
-    std::cout << "gpu_device_factory.cc CreateGPUDevice()" << std::endl;
+    // std::cout << "gpu_device_factory.cc CreateGPUDevice()" << std::endl;
     return new GPUDevice(options, name, memory_limit, bus_adjacency, gpu_id,
                          physical_device_desc, gpu_allocator, cpu_allocator);
   }
@@ -99,7 +99,7 @@ class GPUCompatibleCPUDeviceFactory : public DeviceFactory {
  public:
   Status CreateDevices(const SessionOptions& options, const string& name_prefix,
                        std::vector<Device*>* devices) override {
-    std::cout << "gpu_device_factory.cc GPUCompatibleCPUDeviceFacotry::CreateDevices()" << std::endl;
+    // std::cout << "gpu_device_factory.cc GPUCompatibleCPUDeviceFacotry::CreateDevices()" << std::endl;
     int n = 1;
     auto iter = options.config.device_count().find("CPU");
     if (iter != options.config.device_count().end()) {

@@ -28,7 +28,7 @@ namespace gputools {
 namespace cl {
 
 bool CLStream::Init() {
-  std::cout << "CLStream::Init()" << std::endl;
+  // std::cout << "CLStream::Init()" << std::endl;
   if (!CLDriver::CreateStream(parent_->cl_context(), &cl_stream_)) {
     std::cout << "CLStream::Init() failed to create stream" << std::endl;
     return false;
@@ -42,7 +42,7 @@ bool CLStream::Init() {
 }
 
 void CLStream::Destroy() {
-  std::cout << "CLStream::Destroy()" << std::endl;
+  // std::cout << "CLStream::Destroy()" << std::endl;
   if (completed_event_ != nullptr) {
     port::Status status =
         CLDriver::DestroyEvent(parent_->cl_context(), &completed_event_);
@@ -55,7 +55,7 @@ void CLStream::Destroy() {
 }
 
 bool CLStream::IsIdle() const {
-  std::cout << "CLStream::IsIdle()" << std::endl;
+  // std::cout << "CLStream::IsIdle()" << std::endl;
   return CLDriver::IsStreamIdle(parent_->cl_context(), cl_stream_);
 }
 

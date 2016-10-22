@@ -2057,7 +2057,7 @@ Status NewLocalExecutor(const LocalExecutorParams& params, const Graph* graph,
   } else {
     delete impl;
   }
-  std::cout << "returning s" << std::endl;
+  // std::cout << "returning s" << std::endl;
   return s;
 }
 

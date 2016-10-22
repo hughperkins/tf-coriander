@@ -64,7 +64,7 @@ class Registrar {
   // Multiple registrations for the same device type with different priorities
   // are allowed. The registration with the highest priority will be used.
   explicit Registrar(const string& device_type, int priority = 0) {
-    std::cout << "device factory Registrar " << device_type << " priority " << 0 << std::endl;
+    // std::cout << "device factory Registrar " << device_type << " priority " << 0 << std::endl;
     DeviceFactory::Register(device_type, new Factory(), priority);
   }
 };

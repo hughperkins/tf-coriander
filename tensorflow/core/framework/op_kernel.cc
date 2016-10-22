@@ -812,7 +812,7 @@ string KernelsRegisteredForOp(StringPiece op_name) {
   for (const auto& key_registration : *GlobalKernelRegistryTyped()) {
     const KernelDef& kernel_def(key_registration.second.def);
     if (kernel_def.op() == op_name) {
-      std::cout << "  op " << op_name << " kernel_dev.device_type " << kernel_def.device_type() << std::endl;
+      // std::cout << "  op " << op_name << " kernel_dev.device_type " << kernel_def.device_type() << std::endl;
       strings::StrAppend(&ret, "  device='", kernel_def.device_type(), "'");
       if (!kernel_def.label().empty()) {
         strings::StrAppend(&ret, "; label='", kernel_def.label(), "'");

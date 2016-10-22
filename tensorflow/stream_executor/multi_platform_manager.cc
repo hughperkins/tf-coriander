@@ -28,7 +28,7 @@ namespace gputools {
 
 /* static */ port::Status MultiPlatformManager::RegisterPlatform(
     std::unique_ptr<Platform> platform) {
-  std::cout << "stream_executor/multi_platform_manager/MultiPlatformManager::RegisterPatform " << platform->Name() << std::endl;
+  // std::cout << "stream_executor/multi_platform_manager/MultiPlatformManager::RegisterPatform " << platform->Name() << std::endl;
   CHECK(platform != nullptr);
   string key = port::Lowercase(platform->Name());
   mutex_lock lock(platforms_mutex_);

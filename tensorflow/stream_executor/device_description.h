@@ -336,7 +336,7 @@ class DeviceDescriptionBuilder {
   //
   // Once the description is built, this builder object should be discarded.
   std::unique_ptr<DeviceDescription> Build() {
-    std::cout << "device_description.h DeviceDescriptionBuilder::Build()" << std::endl;
+    // std::cout << "device_description.h DeviceDescriptionBuilder::Build()" << std::endl;
     return std::move(device_description_);
   }
 

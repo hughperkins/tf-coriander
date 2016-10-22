@@ -33,13 +33,13 @@ namespace gpu = ::perftools::gputools;
 namespace tensorflow {
 
 Status ValidateGPUMachineManager() {
-  std::cout << "ValidateGPUMachineManager" << std::endl;
+  // std::cout << "ValidateGPUMachineManager" << std::endl;
   auto result = gpu::MultiPlatformManager::PlatformWithName("CL");
   if (!result.ok()) {
     return StreamExecutorUtil::ConvertStatus(result.status());
   }
 
-  std::cout << "ValidateGPUMachineManager found Platform with name CL" << std::endl;
+  // std::cout << "ValidateGPUMachineManager found Platform with name CL" << std::endl;
   return Status::OK();
 }
 

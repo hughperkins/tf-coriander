@@ -203,7 +203,7 @@ def InvokeNvcc(argv, log=False):
     if depfiles:
         #     # Generate the dependency file
         depfile = depfiles[0]
-        print('depfile', depfile)
+        # print('depfile', depfile)
         with open(depfile, 'w') as f:
             f.write('%s:\n' % out)
     #     print('handling dependency file %s' % depfile)
@@ -219,7 +219,7 @@ def InvokeNvcc(argv, log=False):
     #     if exit_status != 0:
     #         return exit_status
 
-    print('host_compiler_options', host_compiler_options)
+    # print('host_compiler_options', host_compiler_options)
     tokens = host_compiler_options.split()
     i = 0
     add_includes = []
@@ -228,12 +228,12 @@ def InvokeNvcc(argv, log=False):
             add_includes.append(tokens[i + 1])
             i += 1
         i += 1
-    print('add_includes', add_includes)
+    # print('add_includes', add_includes)
     includes_string = ''
     for include in add_includes:
         includes_string += ' -I%s' % include
 
-    print('compiling srcs [%s] to out [%s]' % (str(srcs), str(out)))
+    # print('compiling srcs [%s] to out [%s]' % (str(srcs), str(out)))
     cmd = (COCL_PATH + ' ' + nvccopts +
                        # ' --compiler-options "' + host_compiler_options + ' -fPIC"' +
                        ' ' + includes_string + ' ' +
@@ -241,7 +241,7 @@ def InvokeNvcc(argv, log=False):
                        ' -I . ' +
                        '-fPIC ' +
                        ' -x cu ' + opt + includes + ' -c ' + out + ' ' + srcs)
-    print('cmd', cmd)
+    # print('cmd', cmd)
 
     # TODO(zhengxq): for some reason, 'gcc' needs this help to find 'as'.
     # Need to investigate and fix.
@@ -257,14 +257,14 @@ def main():
     # parser.add_argument('--cuda_log', action='store_true')
     args, leftover = parser.parse_known_args(sys.argv[1:])
     args.cuda_log = True
-    print('sys.argv', sys.argv)
+    # print('sys.argv', sys.argv)
     # print('os.environ', os.environ)
     # with open('foobar.flag', 'w') as f:
     #     f.write('foo')
     if args.x and args.x[0] == 'cuda':
         # os.environ['PATH'] = os.environ['PATH'] + ':/usr/local/bin'
-        print('building as cuda')
-        print('sys.argv', sys.argv)
+        # print('building as cuda')
+        # print('sys.argv', sys.argv)
         if args.cuda_log:
             Log('-x cuda')
         leftover = [pipes.quote(s) for s in leftover]

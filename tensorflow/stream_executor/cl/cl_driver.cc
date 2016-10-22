@@ -604,12 +604,12 @@ bool DeviceOptionsToContextFlags(DeviceOptions device_options, int *flags) {
   CHECK_EQ(CUDA_SUCCESS, cuCtxSetCurrent(former_context));
 
   if (res == CUDA_SUCCESS) {
-    std::cout << "CLDriver::CreateContext cuCtxSetCurrent  succeeded ok" << std::endl;
+    // std::cout << "CLDriver::CreateContext cuCtxSetCurrent  succeeded ok" << std::endl;
     *context = CreatedContexts::Add(new_context);
     CHECK(*context != nullptr)
         << "success in this call must entail non-null result";
     VLOG(2) << "created context " << context << " for this thread";
-    std::cout << "CLDriver::CreateContext cuCtxSetCurrent  succeeded ok => returning ok" << std::endl;
+    // std::cout << "CLDriver::CreateContext cuCtxSetCurrent  succeeded ok => returning ok" << std::endl;
     return port::Status::OK();
   }
 
@@ -960,12 +960,12 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
   // TODO(leary) can we switch this to CU_STREAM_NON_BLOCKING or will that mess
   // up synchronization with respect to memsets and any other things that have
   // to occur on the default stream?
-  std::cout << "CLDriver::CreateStream" << std::endl;
+  // std::cout << "CLDriver::CreateStream" << std::endl;
   ScopedActivateContext activated{context};
-  std::cout << "CLDriver::CreateStream activated context" << std::endl;
+  // std::cout << "CLDriver::CreateStream activated context" << std::endl;
   CUresult res = CUDA_ERROR_UNKNOWN;
   res = cuStreamCreate(out, 0);
-  std::cout << "CLDriver::CreateStream after cuStreamCreate" << std::endl;
+  // std::cout << "CLDriver::CreateStream after cuStreamCreate" << std::endl;
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "could not allocate CUDA stream for context " << context
                << ": " << ToString(res);
@@ -1176,7 +1176,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
                                                 CUevent event) {
   ScopedActivateContext activation{context};
   CUresult res = CUDA_ERROR_UNKNOWN;
-  std::cout << "CLDriver::WaitStreamOnEvent stream=" << stream << " context=" << context << " event=" << event << std::endl;
+  // std::cout << "CLDriver::WaitStreamOnEvent stream=" << stream << " context=" << context << " event=" << event << std::endl;
   res = cuStreamWaitEvent(stream, event, 0 /* = flags */);
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "could not wait stream on event: " << ToString(res);
@@ -1511,7 +1511,7 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
         port::StrCat("could not retrieve CUDA device attribute (", attribute,
                      "): ", ToString(result))};
   }
-  std::cout << "got simpleattribute " << attribute << " value=" << value << std::endl;
+  // std::cout << "got simpleattribute " << attribute << " value=" << value << std::endl;
   T converted = value;
   return converted;
 }
@@ -1650,7 +1650,7 @@ static port::StatusOr<T> GetSimpleAttribute(CUdevice device,
   size_t value = -1;
   CUresult res = CUDA_ERROR_UNKNOWN;
   res = cuDeviceTotalMem_v2(&value, device);
-  std::cout << "CLDriver::getdevicetotlamemory " << value << std::endl;
+  // std::cout << "CLDriver::getdevicetotlamemory " << value << std::endl;
   if (res != CUDA_SUCCESS) {
     LOG(ERROR) << "failed to query total available memory: " << ToString(res);
     return false;
