@@ -28,8 +28,15 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## Installation 
 
-- you need the tensorflow non-gpu installation pre-requisites, and also you'll need an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers installed
-- simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.1.0/tensorflow-0.11.0rc0-py3-none-any.whl , and install using pip
+- For now, Ubuntu 16.04 is supported.  In the future, I plan to support Mac OS X too
+- You need:
+  - the tensorflow non-gpu installation pre-requisites,
+   - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
+   - python 3
+- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.1.0/tensorflow-0.11.0rc0-py3-none-any.whl , and install using pip
+```
+pip install --upgrade https://github.com/hughperkins/tensorflow-cl/releases/download/v0.1.0/tensorflow-0.11.0rc0-py3-none-any.whl
+```
 
 If you want, you can [build from source](doc/build-form-source.md)
 
