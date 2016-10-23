@@ -33,7 +33,8 @@ Please see the main repository for full Tensorflow documentation.  This readme w
   - the tensorflow non-gpu installation pre-requisites,
    - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
    - python 3
-- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.1.0/tensorflow-0.11.0rc0-py3-none-any.whl , and install using pip
+- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.1.0/tensorflow-0.11.0rc0-py3-none-any.whl , and
+- Install using pip:
 ```
 pip install --upgrade https://github.com/hughperkins/tensorflow-cl/releases/download/v0.1.0/tensorflow-0.11.0rc0-py3-none-any.whl
 ```
