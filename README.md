@@ -26,7 +26,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 - Python working :-)
 
-<img src="doc/img/pythonworking.png?raw=true" width="600" />
+<img src="doc/img/tf_test2.png?raw=true" width="600" />
 
 ## Build
 
@@ -43,8 +43,10 @@ Please see the main repository for full Tensorflow documentation.  This readme w
   - If you do, then you're good :+1:
 
 ### Initial setup:
+
 ```
-sudo apt-get install opencl-headers cmake clang-3.8 llvm-3.8 clinfo
+sudo apt-get install opencl-headers cmake clang-3.8 llvm-3.8 clinfo git gcc g++ python3-numpy python3-dev python3-wheel zlib1g-dev
+sudo apt-get install git gcc g++ python3-numpy python3-dev python3-wheel zlib1g-dev
 git submodule update --init
 pushd third_party/cuda-on-cl
 make -j 4
@@ -98,6 +100,8 @@ This is hot off the press (as of 23rd October 2016), but works for me :-)
 
 #### Installation/setup
 
+Example code: [tensorflow/stream_executor/cl/test/test_tf2.py](tensorflow/stream_executor/cl/test/test_tf2.py)
+
 ```
 bazel run --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
 # (ignore error message about 'No destination dir provided')
@@ -109,7 +113,7 @@ TFDIR=$(pwd)
 cd
 python -c 'import tensorflow'
 # hopefully no errors :-)
-python $TFDIR/tensorflow/stream_executor/cl/test/test_tf.py
+python $TFDIR/tensorflow/stream_executor/cl/test/test_tf2.py
 ```
 
 ## Design/architecture
@@ -143,6 +147,9 @@ python $TFDIR/tensorflow/stream_executor/cl/test/test_tf.py
 
 ## News
 
+- Oct 23:
+  - can use component wise addition from Python now :-)
+  - fixed critical bug involving `float4`s, that meant that tensors larger than, say, 3 :-P, could not be added correctly
 - Oct 22:
   - componentwise addition working, when called from c++
   - commit `0db9cc2e`: re-enabled `-fPIC`, `-pie`
