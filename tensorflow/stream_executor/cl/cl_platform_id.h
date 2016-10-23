@@ -13,24 +13,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_PLATFORM_ID_H_
-#define TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_PLATFORM_ID_H_
+#ifndef TENSORFLOW_STREAM_EXECUTOR_CL_CL_PLATFORM_ID_H_
+#define TENSORFLOW_STREAM_EXECUTOR_CL_CL_PLATFORM_ID_H_
 
 #include "tensorflow/stream_executor/platform.h"
 
 namespace perftools {
 namespace gputools {
-namespace cuda {
+namespace cl {
 
 // Opaque and unique identifier for the cuda platform.
 // This is needed so that plugins can refer to/identify this platform without
 // instantiating a CudaPlatform object.
 // This is broken out here to avoid a circular dependency between CudaPlatform
 // and CudaExecutor.
-extern const Platform::Id kCudaPlatformId;
+extern const Platform::Id kClPlatformId;
 
 }  // namespace cuda
 }  // namespace gputools
 }  // namespace perftools
 
-#endif  // TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_PLATFORM_ID_H_
+#endif  // TENSORFLOW_STREAM_EXECUTOR_CL_CL_PLATFORM_ID_H_

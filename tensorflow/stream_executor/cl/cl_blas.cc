@@ -18,8 +18,8 @@ limitations under the License.
 // cl.h). This ensures that Eigen's Half.h does not attempt to make its own
 // __half typedef if CL has already defined one (and conversely, that we do
 // not include <cl_fp16.h> after Half.h has made its typedef).
-#include "cl/include/cl.h"
-#include "cl/include/cublas_v2.h"
+#include "cuda.h"
+// #include "cl/include/cublas_v2.h"
 
 // #if CL_VERSION >= 7050
 // #define EIGEN_HAS_CL_FP16
@@ -62,219 +62,219 @@ PLUGIN_REGISTRY_DEFINE_PLUGIN_ID(kCuBlasPlugin);
 
 // namespace dynload {
 
-// #define PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)                              \
-//   struct DynLoadShim__##__name {                                            \
-//     static const char *kName;                                               \
-//     using FuncPointerT = std::add_pointer<decltype(::__name)>::type;        \
-//     static void *GetDsoHandle() {                                           \
-//       static auto status = internal::CachedDsoLoader::GetCublasDsoHandle(); \
-//       return status.ValueOrDie();                                           \
-//     }                                                                       \
-//     static FuncPointerT LoadOrDie() {                                       \
-//       void *f;                                                              \
-//       port::Status s = port::Env::Default()->GetSymbolFromLibrary(          \
-//           GetDsoHandle(), kName, &f);                                       \
-//       CHECK(s.ok()) << "could not find " << kName                           \
-//                     << " in CLBlast DSO; dlerror: " << s.error_message();    \
-//       return reinterpret_cast<FuncPointerT>(f);                             \
-//     }                                                                       \
-//     static FuncPointerT DynLoad() {                                         \
-//       static FuncPointerT f = LoadOrDie();                                  \
-//       return f;                                                             \
-//     }                                                                       \
-//     template <typename... Args>                                             \
-//     cublasStatus_t operator()(CLExecutor *parent, Args... args) {         \
-//       cl::ScopedActivateExecutorContext sac{parent};                      \
-//       return DynLoad()(args...);                                            \
-//     }                                                                       \
-//   } __name;                                                                 \
+// #define PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)                              
+//   struct DynLoadShim__##__name {                                            
+//     static const char *kName;                                               
+//     using FuncPointerT = std::add_pointer<decltype(::__name)>::type;        
+//     static void *GetDsoHandle() {                                           
+//       static auto status = internal::CachedDsoLoader::GetCublasDsoHandle(); 
+//       return status.ValueOrDie();                                           
+//     }                                                                       
+//     static FuncPointerT LoadOrDie() {                                       
+//       void *f;                                                              
+//       port::Status s = port::Env::Default()->GetSymbolFromLibrary(          
+//           GetDsoHandle(), kName, &f);                                       
+//       CHECK(s.ok()) << "could not find " << kName                           
+//                     << " in CLBlast DSO; dlerror: " << s.error_message();   
+//       return reinterpret_cast<FuncPointerT>(f);                             
+//     }                                                                       
+//     static FuncPointerT DynLoad() {                                         
+//       static FuncPointerT f = LoadOrDie();                                  
+//       return f;                                                             
+//     }                                                                       
+//     template <typename... Args>                                             
+//     cublasStatus_t operator()(CLExecutor *parent, Args... args) {         
+//       cl::ScopedActivateExecutorContext sac{parent};                      
+//       return DynLoad()(args...);                                            
+//     }                                                                       
+//   } __name;                                                                 
 //   const char *DynLoadShim__##__name::kName = #__name;
 
-// #define PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(__name) \
+// #define PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(__name) 
 //   PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)
 
-// #define CUBLAS_BLAS_ROUTINE_EACH(__macro) \
-//   __macro(cublasSnrm2)                    \
-//   __macro(cublasDnrm2)                    \
-//   __macro(cublasScnrm2)                   \
-//   __macro(cublasDznrm2)                   \
-//   __macro(cublasSdot)                     \
-//   __macro(cublasDdot)                     \
-//   __macro(cublasCdotu)                    \
-//   __macro(cublasCdotc)                    \
-//   __macro(cublasZdotu)                    \
-//   __macro(cublasZdotc)                    \
-//   __macro(cublasSscal)                    \
-//   __macro(cublasDscal)                    \
-//   __macro(cublasCscal)                    \
-//   __macro(cublasCsscal)                   \
-//   __macro(cublasZscal)                    \
-//   __macro(cublasZdscal)                   \
-//   __macro(cublasSaxpy)                    \
-//   __macro(cublasDaxpy)                    \
-//   __macro(cublasCaxpy)                    \
-//   __macro(cublasZaxpy)                    \
-//   __macro(cublasScopy)                    \
-//   __macro(cublasDcopy)                    \
-//   __macro(cublasCcopy)                    \
-//   __macro(cublasZcopy)                    \
-//   __macro(cublasSswap)                    \
-//   __macro(cublasDswap)                    \
-//   __macro(cublasCswap)                    \
-//   __macro(cublasZswap)                    \
-//   __macro(cublasIsamax)                   \
-//   __macro(cublasIdamax)                   \
-//   __macro(cublasIcamax)                   \
-//   __macro(cublasIzamax)                   \
-//   __macro(cublasIsamin)                   \
-//   __macro(cublasIdamin)                   \
-//   __macro(cublasIcamin)                   \
-//   __macro(cublasIzamin)                   \
-//   __macro(cublasSasum)                    \
-//   __macro(cublasDasum)                    \
-//   __macro(cublasScasum)                   \
-//   __macro(cublasDzasum)                   \
-//   __macro(cublasSrot)                     \
-//   __macro(cublasDrot)                     \
-//   __macro(cublasCrot)                     \
-//   __macro(cublasCsrot)                    \
-//   __macro(cublasZrot)                     \
-//   __macro(cublasZdrot)                    \
-//   __macro(cublasSrotg)                    \
-//   __macro(cublasDrotg)                    \
-//   __macro(cublasCrotg)                    \
-//   __macro(cublasZrotg)                    \
-//   __macro(cublasSrotm)                    \
-//   __macro(cublasDrotm)                    \
-//   __macro(cublasSrotmg)                   \
-//   __macro(cublasDrotmg)                   \
-//   __macro(cublasSgemv)                    \
-//   __macro(cublasDgemv)                    \
-//   __macro(cublasCgemv)                    \
-//   __macro(cublasZgemv)                    \
-//   __macro(cublasSgbmv)                    \
-//   __macro(cublasDgbmv)                    \
-//   __macro(cublasCgbmv)                    \
-//   __macro(cublasZgbmv)                    \
-//   __macro(cublasStrmv)                    \
-//   __macro(cublasDtrmv)                    \
-//   __macro(cublasCtrmv)                    \
-//   __macro(cublasZtrmv)                    \
-//   __macro(cublasStbmv)                    \
-//   __macro(cublasDtbmv)                    \
-//   __macro(cublasCtbmv)                    \
-//   __macro(cublasZtbmv)                    \
-//   __macro(cublasStpmv)                    \
-//   __macro(cublasDtpmv)                    \
-//   __macro(cublasCtpmv)                    \
-//   __macro(cublasZtpmv)                    \
-//   __macro(cublasStrsv)                    \
-//   __macro(cublasDtrsv)                    \
-//   __macro(cublasCtrsv)                    \
-//   __macro(cublasZtrsv)                    \
-//   __macro(cublasStpsv)                    \
-//   __macro(cublasDtpsv)                    \
-//   __macro(cublasCtpsv)                    \
-//   __macro(cublasZtpsv)                    \
-//   __macro(cublasStbsv)                    \
-//   __macro(cublasDtbsv)                    \
-//   __macro(cublasCtbsv)                    \
-//   __macro(cublasZtbsv)                    \
-//   __macro(cublasSsymv)                    \
-//   __macro(cublasDsymv)                    \
-//   __macro(cublasCsymv)                    \
-//   __macro(cublasZsymv)                    \
-//   __macro(cublasChemv)                    \
-//   __macro(cublasZhemv)                    \
-//   __macro(cublasSsbmv)                    \
-//   __macro(cublasDsbmv)                    \
-//   __macro(cublasChbmv)                    \
-//   __macro(cublasZhbmv)                    \
-//   __macro(cublasSspmv)                    \
-//   __macro(cublasDspmv)                    \
-//   __macro(cublasChpmv)                    \
-//   __macro(cublasZhpmv)                    \
-//   __macro(cublasSger)                     \
-//   __macro(cublasDger)                     \
-//   __macro(cublasCgeru)                    \
-//   __macro(cublasCgerc)                    \
-//   __macro(cublasZgeru)                    \
-//   __macro(cublasZgerc)                    \
-//   __macro(cublasSsyr)                     \
-//   __macro(cublasDsyr)                     \
-//   __macro(cublasCsyr)                     \
-//   __macro(cublasZsyr)                     \
-//   __macro(cublasCher)                     \
-//   __macro(cublasZher)                     \
-//   __macro(cublasSspr)                     \
-//   __macro(cublasDspr)                     \
-//   __macro(cublasChpr)                     \
-//   __macro(cublasZhpr)                     \
-//   __macro(cublasSsyr2)                    \
-//   __macro(cublasDsyr2)                    \
-//   __macro(cublasCsyr2)                    \
-//   __macro(cublasZsyr2)                    \
-//   __macro(cublasCher2)                    \
-//   __macro(cublasZher2)                    \
-//   __macro(cublasSspr2)                    \
-//   __macro(cublasDspr2)                    \
-//   __macro(cublasChpr2)                    \
-//   __macro(cublasZhpr2)                    \
-//   __macro(cublasSgemm)                    \
-//   __macro(cublasDgemm)                    \
-//   __macro(cublasCgemm)                    \
-//   __macro(cublasZgemm)                    \
-//   __macro(cublasSsyrk)                    \
-//   __macro(cublasDsyrk)                    \
-//   __macro(cublasCsyrk)                    \
-//   __macro(cublasZsyrk)                    \
-//   __macro(cublasCherk)                    \
-//   __macro(cublasZherk)                    \
-//   __macro(cublasSsyr2k)                   \
-//   __macro(cublasDsyr2k)                   \
-//   __macro(cublasCsyr2k)                   \
-//   __macro(cublasZsyr2k)                   \
-//   __macro(cublasCher2k)                   \
-//   __macro(cublasZher2k)                   \
-//   __macro(cublasSsyrkx)                   \
-//   __macro(cublasDsyrkx)                   \
-//   __macro(cublasCsyrkx)                   \
-//   __macro(cublasZsyrkx)                   \
-//   __macro(cublasCherkx)                   \
-//   __macro(cublasZherkx)                   \
-//   __macro(cublasSsymm)                    \
-//   __macro(cublasDsymm)                    \
-//   __macro(cublasCsymm)                    \
-//   __macro(cublasZsymm)                    \
-//   __macro(cublasChemm)                    \
-//   __macro(cublasZhemm)                    \
-//   __macro(cublasStrsm)                    \
-//   __macro(cublasDtrsm)                    \
-//   __macro(cublasCtrsm)                    \
-//   __macro(cublasZtrsm)                    \
-//   __macro(cublasStrmm)                    \
-//   __macro(cublasDtrmm)                    \
-//   __macro(cublasCtrmm)                    \
-//   __macro(cublasZtrmm)                    \
-//   __macro(cublasSgeam)                    \
-//   __macro(cublasDgeam)                    \
-//   __macro(cublasCgeam)                    \
-//   __macro(cublasZgeam)                    \
-//   __macro(cublasSdgmm)                    \
-//   __macro(cublasDdgmm)                    \
-//   __macro(cublasCdgmm)                    \
+// #define CUBLAS_BLAS_ROUTINE_EACH(__macro) 
+//   __macro(cublasSnrm2)                    
+//   __macro(cublasDnrm2)                    
+//   __macro(cublasScnrm2)                   
+//   __macro(cublasDznrm2)                   
+//   __macro(cublasSdot)                     
+//   __macro(cublasDdot)                     
+//   __macro(cublasCdotu)                    
+//   __macro(cublasCdotc)                    
+//   __macro(cublasZdotu)                    
+//   __macro(cublasZdotc)                    
+//   __macro(cublasSscal)                    
+//   __macro(cublasDscal)                    
+//   __macro(cublasCscal)                    
+//   __macro(cublasCsscal)                   
+//   __macro(cublasZscal)                    
+//   __macro(cublasZdscal)                   
+//   __macro(cublasSaxpy)                    
+//   __macro(cublasDaxpy)                    
+//   __macro(cublasCaxpy)                    
+//   __macro(cublasZaxpy)                    
+//   __macro(cublasScopy)                    
+//   __macro(cublasDcopy)                    
+//   __macro(cublasCcopy)                    
+//   __macro(cublasZcopy)                    
+//   __macro(cublasSswap)                    
+//   __macro(cublasDswap)                    
+//   __macro(cublasCswap)                    
+//   __macro(cublasZswap)                    
+//   __macro(cublasIsamax)                   
+//   __macro(cublasIdamax)                   
+//   __macro(cublasIcamax)                   
+//   __macro(cublasIzamax)                   
+//   __macro(cublasIsamin)                   
+//   __macro(cublasIdamin)                   
+//   __macro(cublasIcamin)                   
+//   __macro(cublasIzamin)                   
+//   __macro(cublasSasum)                    
+//   __macro(cublasDasum)                    
+//   __macro(cublasScasum)                   
+//   __macro(cublasDzasum)                   
+//   __macro(cublasSrot)                     
+//   __macro(cublasDrot)                     
+//   __macro(cublasCrot)                     
+//   __macro(cublasCsrot)                    
+//   __macro(cublasZrot)                     
+//   __macro(cublasZdrot)                    
+//   __macro(cublasSrotg)                    
+//   __macro(cublasDrotg)                    
+//   __macro(cublasCrotg)                    
+//   __macro(cublasZrotg)                    
+//   __macro(cublasSrotm)                    
+//   __macro(cublasDrotm)                    
+//   __macro(cublasSrotmg)                   
+//   __macro(cublasDrotmg)                   
+//   __macro(cublasSgemv)                    
+//   __macro(cublasDgemv)                    
+//   __macro(cublasCgemv)                    
+//   __macro(cublasZgemv)                    
+//   __macro(cublasSgbmv)                    
+//   __macro(cublasDgbmv)                    
+//   __macro(cublasCgbmv)                    
+//   __macro(cublasZgbmv)                    
+//   __macro(cublasStrmv)                    
+//   __macro(cublasDtrmv)                    
+//   __macro(cublasCtrmv)                    
+//   __macro(cublasZtrmv)                    
+//   __macro(cublasStbmv)                    
+//   __macro(cublasDtbmv)                    
+//   __macro(cublasCtbmv)                    
+//   __macro(cublasZtbmv)                    
+//   __macro(cublasStpmv)                    
+//   __macro(cublasDtpmv)                    
+//   __macro(cublasCtpmv)                    
+//   __macro(cublasZtpmv)                    
+//   __macro(cublasStrsv)                    
+//   __macro(cublasDtrsv)                    
+//   __macro(cublasCtrsv)                    
+//   __macro(cublasZtrsv)                    
+//   __macro(cublasStpsv)                    
+//   __macro(cublasDtpsv)                    
+//   __macro(cublasCtpsv)                    
+//   __macro(cublasZtpsv)                    
+//   __macro(cublasStbsv)                    
+//   __macro(cublasDtbsv)                    
+//   __macro(cublasCtbsv)                    
+//   __macro(cublasZtbsv)                    
+//   __macro(cublasSsymv)                    
+//   __macro(cublasDsymv)                    
+//   __macro(cublasCsymv)                    
+//   __macro(cublasZsymv)                    
+//   __macro(cublasChemv)                    
+//   __macro(cublasZhemv)                    
+//   __macro(cublasSsbmv)                    
+//   __macro(cublasDsbmv)                    
+//   __macro(cublasChbmv)                    
+//   __macro(cublasZhbmv)                    
+//   __macro(cublasSspmv)                    
+//   __macro(cublasDspmv)                    
+//   __macro(cublasChpmv)                    
+//   __macro(cublasZhpmv)                    
+//   __macro(cublasSger)                     
+//   __macro(cublasDger)                     
+//   __macro(cublasCgeru)                    
+//   __macro(cublasCgerc)                    
+//   __macro(cublasZgeru)                    
+//   __macro(cublasZgerc)                    
+//   __macro(cublasSsyr)                     
+//   __macro(cublasDsyr)                     
+//   __macro(cublasCsyr)                     
+//   __macro(cublasZsyr)                     
+//   __macro(cublasCher)                     
+//   __macro(cublasZher)                     
+//   __macro(cublasSspr)                     
+//   __macro(cublasDspr)                     
+//   __macro(cublasChpr)                     
+//   __macro(cublasZhpr)                     
+//   __macro(cublasSsyr2)                    
+//   __macro(cublasDsyr2)                    
+//   __macro(cublasCsyr2)                    
+//   __macro(cublasZsyr2)                    
+//   __macro(cublasCher2)                    
+//   __macro(cublasZher2)                    
+//   __macro(cublasSspr2)                    
+//   __macro(cublasDspr2)                    
+//   __macro(cublasChpr2)                    
+//   __macro(cublasZhpr2)                    
+//   __macro(cublasSgemm)                    
+//   __macro(cublasDgemm)                    
+//   __macro(cublasCgemm)                    
+//   __macro(cublasZgemm)                    
+//   __macro(cublasSsyrk)                    
+//   __macro(cublasDsyrk)                    
+//   __macro(cublasCsyrk)                    
+//   __macro(cublasZsyrk)                    
+//   __macro(cublasCherk)                    
+//   __macro(cublasZherk)                    
+//   __macro(cublasSsyr2k)                   
+//   __macro(cublasDsyr2k)                   
+//   __macro(cublasCsyr2k)                   
+//   __macro(cublasZsyr2k)                   
+//   __macro(cublasCher2k)                   
+//   __macro(cublasZher2k)                   
+//   __macro(cublasSsyrkx)                   
+//   __macro(cublasDsyrkx)                   
+//   __macro(cublasCsyrkx)                   
+//   __macro(cublasZsyrkx)                   
+//   __macro(cublasCherkx)                   
+//   __macro(cublasZherkx)                   
+//   __macro(cublasSsymm)                    
+//   __macro(cublasDsymm)                    
+//   __macro(cublasCsymm)                    
+//   __macro(cublasZsymm)                    
+//   __macro(cublasChemm)                    
+//   __macro(cublasZhemm)                    
+//   __macro(cublasStrsm)                    
+//   __macro(cublasDtrsm)                    
+//   __macro(cublasCtrsm)                    
+//   __macro(cublasZtrsm)                    
+//   __macro(cublasStrmm)                    
+//   __macro(cublasDtrmm)                    
+//   __macro(cublasCtrmm)                    
+//   __macro(cublasZtrmm)                    
+//   __macro(cublasSgeam)                    
+//   __macro(cublasDgeam)                    
+//   __macro(cublasCgeam)                    
+//   __macro(cublasZgeam)                    
+//   __macro(cublasSdgmm)                    
+//   __macro(cublasDdgmm)                    
+//   __macro(cublasCdgmm)                    
 //   __macro(cublasZdgmm)
 
-PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(cublasCreate)
-PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(cublasDestroy)
-PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(cublasSetStream)
-PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(cublasSetPointerMode)
-PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(cublasGetPointerMode)
-PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(cublasSgemmBatched)
-PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(cublasDgemmBatched)
-PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(cublasCgemmBatched)
-PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(cublasZgemmBatched)
-CUBLAS_BLAS_ROUTINE_EACH(PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP)
+// PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(cublasCreate)
+// PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(cublasDestroy)
+// PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(cublasSetStream)
+// PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(cublasSetPointerMode)
+// PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(cublasGetPointerMode)
+// PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(cublasSgemmBatched)
+// PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(cublasDgemmBatched)
+// PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(cublasCgemmBatched)
+// PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(cublasZgemmBatched)
+// CUBLAS_BLAS_ROUTINE_EACH(PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP)
 
 // #if CL_VERSION >= 7050
 // PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(cublasSgemmEx)
@@ -377,15 +377,19 @@ bool CLBlas::Init() {
 }
 
 CLBlas::CLBlas(cl::CLExecutor *parent)
-    : parent_(CHECK_NOTNULL(parent)), blas_(nullptr) {}
+    : parent_(CHECK_NOTNULL(parent)), blas_(nullptr) {
+      std::cout << "CLBlas()" << std::endl;
+    }
 
 CLBlas::~CLBlas() {
+      std::cout << "~CLBlas()" << std::endl;
   if (blas_ != nullptr) {
     cublasDestroy_v2(parent_, blas_);
   }
 }
 
 bool CLBlas::SetStream(Stream *stream) {
+      std::cout << "CLBlas::SetStream()" << std::endl;
   CHECK(stream != nullptr);
   CHECK(AsCLStreamValue(stream) != nullptr);
   CHECK(blas_ != nullptr);
@@ -404,6 +408,7 @@ namespace {
 // Helper functions transforming blas arguments into CLBlast arguments.
 
 cublasOperation_t CLBlasTranspose(blas::Transpose trans) {
+      std::cout << "CLBlas::CLBlasTranspoe()" << std::endl;
   switch (trans) {
     case blas::Transpose::kNoTranspose:
       return CUBLAS_OP_N;
@@ -417,6 +422,7 @@ cublasOperation_t CLBlasTranspose(blas::Transpose trans) {
 }
 
 cublasFillMode_t CLBlasUpperLower(blas::UpperLower uplo) {
+      std::cout << "CLBlas::CLBlasUpperLower()" << std::endl;
   switch (uplo) {
     case blas::UpperLower::kUpper:
       return CUBLAS_FILL_MODE_UPPER;
@@ -428,6 +434,7 @@ cublasFillMode_t CLBlasUpperLower(blas::UpperLower uplo) {
 }
 
 cublasDiagType_t CLBlasDiagonal(blas::Diagonal diag) {
+      std::cout << "CLBlas::CLBlasDiagonal()" << std::endl;
   switch (diag) {
     case blas::Diagonal::kUnit:
       return CUBLAS_DIAG_UNIT;
@@ -439,6 +446,7 @@ cublasDiagType_t CLBlasDiagonal(blas::Diagonal diag) {
 }
 
 cublasSideMode_t CLBlasSide(blas::Side side) {
+      std::cout << "CLBlas::CLBlasSide()" << std::endl;
   switch (side) {
     case blas::Side::kLeft:
       return CUBLAS_SIDE_LEFT;
@@ -454,6 +462,7 @@ cublasSideMode_t CLBlasSide(blas::Side side) {
 template <typename FuncT, typename... Args>
 bool CLBlas::DoBlasInternal(FuncT cublas_func, Stream *stream,
                               bool pointer_mode_host, Args... args) {
+      std::cout << "CLBlas::DoBlasInternal()" << std::endl;
   mutex_lock lock{mu_};
 
   CHECK(blas_ != nullptr);
@@ -556,6 +565,7 @@ bool CLBlas::DoBlasAxpy(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
                           const DeviceMemory<float> &x, int incx,
                           DeviceMemory<float> *y, int incy) {
+      std::cout << "CLBlas::DoBlasCopy()" << std::endl;
   return false;
   // return DoBlasInternal(cublasScopy, stream,
   //                       true  = pointer_mode_host , elem_count,
@@ -1825,6 +1835,7 @@ bool CLBlas::DoBlasGemm(Stream *stream, blas::Transpose transa,
                           float alpha, const DeviceMemory<float> &a, int lda,
                           const DeviceMemory<float> &b, int ldb, float beta,
                           DeviceMemory<float> *c, int ldc) {
+      std::cout << "CLBlas::DoBlasGemm()" << std::endl;
   VLOG(1) << port::Printf(
       "doing CLBlast SGEMM: at=%d bt=%d m=%llu n=%llu "
       "k=%llu alpha=%f a=%p lda=%d b=%p ldb=%d beta=%f "
@@ -1856,7 +1867,7 @@ bool CLBlas::DoBlasGemm(Stream *stream, blas::Transpose transa,
   return DoBlasInternal(
       cublasSgemm, stream, true /* = pointer_mode_host */,
       CLBlasTranspose(transa), CLBlasTranspose(transb), m, n, k, &alpha,
-      CLMemory(a), lda, CLMemory(b), ldb, &beta, CLMemoryMutable(c), ldc);
+      CUDAMemory(a), lda, CUDAMemory(b), ldb, &beta, CUDAMemoryMutable(c), ldc);
 }
 
 bool CLBlas::DoBlasGemm(Stream *stream, blas::Transpose transa,
@@ -1992,6 +2003,7 @@ bool CLBlas::DoBlasGemmBatched(
     const port::ArraySlice<DeviceMemory<float> *> &b_array, int ldb, float beta,
     const port::ArraySlice<DeviceMemory<float> *> &c_array, int ldc,
     int batch_count, ScratchAllocator *scratch_allocator) {
+      std::cout << "CLBlas::DoBlasGemmBatched()" << std::endl;
   return false;
   // SE_RETURN_STATUS_AS_BOOL(DoBlasGemmBatchedInternal(
   //     cublasSgemmBatched, stream, transa, transb, m, n, k, alpha,
@@ -2410,6 +2422,7 @@ bool CLBlas::DoBlasTrsm(Stream *stream, blas::Side side,
 namespace gpu = ::perftools::gputools;
 
 void initialize_cublas() {
+      std::cout << "CLBlas::initialize_cublas()" << std::endl;
   gpu::port::Status status =
       gpu::PluginRegistry::Instance()
           ->RegisterFactory<gpu::PluginRegistry::BlasFactory>(

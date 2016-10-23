@@ -18,6 +18,7 @@ limitations under the License.
 
 #include "tensorflow/stream_executor/cl/cl_platform.h"
 
+#include "tensorflow/stream_executor/cl/cl_platform_id.h"
 #include "tensorflow/stream_executor/lib/error.h"
 #include "tensorflow/stream_executor/lib/initialize.h"
 #include "tensorflow/stream_executor/lib/ptr_util.h"
@@ -42,7 +43,7 @@ namespace gputools {
 
 namespace cl {
 
-PLATFORM_DEFINE_ID(kClPlatformId);
+// PLATFORM_DEFINE_ID(kClPlatformId);
 const std::string name = "CL";
 
 extern "C" {

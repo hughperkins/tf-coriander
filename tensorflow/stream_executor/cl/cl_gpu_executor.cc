@@ -23,6 +23,7 @@ limitations under the License.
 #endif
 #include <unistd.h>
 
+#include "tensorflow/stream_executor/cl/cl_platform_id.h"
 #include "tensorflow/stream_executor/cl/cl_diagnostics.h"
 #include "tensorflow/stream_executor/cl/cl_driver.h"
 #include "tensorflow/stream_executor/cl/cl_event.h"
@@ -759,17 +760,18 @@ bool CLExecutor::BlockHostUntilDone(Stream *stream) {
 
 blas::BlasSupport *CLExecutor::CreateBlas() {
   std::cout << "cl_gpu_executor::CreateBlas()" << std::endl;
-  // PluginRegistry *registry = PluginRegistry::Instance();
-  // port::StatusOr<PluginRegistry::BlasFactory> status =
-  //     registry->GetFactory<PluginRegistry::BlasFactory>(kClPlatformId,
-  //                                                       plugin_config_.blas());
-  // if (!status.ok()) {
-  //   LOG(ERROR) << "Unable to retrieve BLAS factory: "
-  //              << status.status().error_message();
+  PluginRegistry *registry = PluginRegistry::Instance();
+  port::StatusOr<PluginRegistry::BlasFactory> status =
+      registry->GetFactory<PluginRegistry::BlasFactory>(kClPlatformId,
+                                                        plugin_config_.blas());
+  if (!status.ok()) {
+    LOG(ERROR) << "Unable to retrieve BLAS factory: "
+               << status.status().error_message();
     return nullptr;
-  // }
+  }
+  std::cout << "cl_gpu_executor::CreateBlas() => created blas ok :-)" << std::endl;
 
-  // return status.ValueOrDie()(this);
+  return status.ValueOrDie()(this);
 }
 
 dnn::DnnSupport *CLExecutor::CreateDnn() {
@@ -954,7 +956,7 @@ KernelArg CLExecutor::DeviceMemoryToKernelArg(
 
 bool CLExecutor::SupportsBlas() const {
   std::cout << "CLExecutor::SupportsBlas" << std::endl;
-  return false;
+  return true;
 }
 
 bool CLExecutor::SupportsFft() const {
