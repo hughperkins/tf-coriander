@@ -13,12 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-// CUDA-specific support for BLAS functionality -- this wraps the cuBLAS library
-// capabilities, and is only included into CUDA implementation code -- it will
-// not introduce cuda headers into other code.
+// CL-specific support for BLAS functionality -- this wraps the CLBlast library
+// capabilities, and is only included into CL implementation code -- it will
+// not introduce cl headers into other code.
 
-#ifndef TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_BLAS_H_
-#define TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_BLAS_H_
+#ifndef TENSORFLOW_STREAM_EXECUTOR_CL_CLBLAST_H_
+#define TENSORFLOW_STREAM_EXECUTOR_CL_CLBLAST_H_
 
 #include "tensorflow/stream_executor/blas.h"
 #include "tensorflow/stream_executor/lib/stringpiece.h"
@@ -34,52 +34,52 @@ namespace gputools {
 
 class Stream;
 
-namespace cuda {
+namespace cl {
 
-// Opaque and unique identifier for the cuBLAS plugin.
+// Opaque and unique identifier for the CLBlast plugin.
 extern const PluginId kCuBlasPlugin;
 
-class CUDAExecutor;
+class CLExecutor;
 
-// BLAS plugin for CUDA platform via cuBLAS library.
+// BLAS plugin for CL platform via CLBlast library.
 //
 // This satisfies the platform-agnostic BlasSupport interface.
 //
-// Note that the cuBLAS handle that this encapsulates is implicitly tied to the
-// context (and, as a result, the device) that the parent CUDAExecutor is tied
-// to. This simply happens as an artifact of creating the cuBLAS handle when a
-// CUDA context is active.
+// Note that the CLBlast handle that this encapsulates is implicitly tied to the
+// context (and, as a result, the device) that the parent CLExecutor is tied
+// to. This simply happens as an artifact of creating the CLBlast handle when a
+// CL context is active.
 //
 // Thread-safe post-initialization.
-class CUDABlas : public blas::BlasSupport {
+class CLBlas : public blas::BlasSupport {
  public:
-  explicit CUDABlas(CUDAExecutor *parent);
+  explicit CLBlas(CLExecutor *parent);
 
-  // Allocates a cuBLAS handle.
+  // Allocates a CLBlast handle.
   bool Init();
 
-  // Releases the cuBLAS handle, if present.
-  ~CUDABlas() override;
+  // Releases the CLBlast handle, if present.
+  ~CLBlas() override;
 
   TENSORFLOW_STREAM_EXECUTOR_GPU_BLAS_SUPPORT_OVERRIDES
 
  private:
-  // Tells cuBLAS to enqueue the BLAS operation onto a particular Stream.
+  // Tells CLBlast to enqueue the BLAS operation onto a particular Stream.
   //
-  // cuBLAS is stateful, and only be associated with one stream (in order to
+  // CLBlast is stateful, and only be associated with one stream (in order to
   // enqueue dispatch) at a given time. As a result, this generally must be
-  // invoked before calling into cuBLAS.
+  // invoked before calling into CLBlast.
   bool SetStream(Stream *stream) EXCLUSIVE_LOCKS_REQUIRED(mu_);
 
-  // A helper function that calls the real cuBLAS function together with error
+  // A helper function that calls the real CLBlast function together with error
   // handling.
   //
-  // cublas_func:        cuBLAS function pointer.
-  // cublas_name:        cuBLAS function name.
+  // cublas_func:        CLBlast function pointer.
+  // cublas_name:        CLBlast function name.
   // stream:             Stream to enqueue the BLAS operation onto.
   // pointer_mode_host:  Indicate if the pointer to a scalar value is from host
   //                     (true) or device (false).
-  // args:               Arguments of cuBLAS function.
+  // args:               Arguments of CLBlast function.
   template <typename FuncT, typename... Args>
   bool DoBlasInternal(FuncT cublas_func, Stream *stream, bool pointer_mode_host,
                       Args... args);
@@ -95,21 +95,21 @@ class CUDABlas : public blas::BlasSupport {
       const port::ArraySlice<DeviceMemory<T> *> &c_array, int ldc,
       int batch_count, ScratchAllocator *scratch_allocator);
 
-  // mutex that guards the cuBLAS handle for this device.
+  // mutex that guards the CLBlast handle for this device.
   mutex mu_;
 
-  // CUDAExecutor which instantiated this CUDABlas.
+  // CLExecutor which instantiated this CLBlas.
   // Immutable post-initialization.
-  CUDAExecutor *parent_;
+  CLExecutor *parent_;
 
-  // cuBLAS library handle on the device.
+  // CLBlast library handle on the device.
   cublasHandle_t blas_ GUARDED_BY(mu_);
 
-  SE_DISALLOW_COPY_AND_ASSIGN(CUDABlas);
+  SE_DISALLOW_COPY_AND_ASSIGN(CLBlas);
 };
 
-}  // namespace cuda
+}  // namespace cl
 }  // namespace gputools
 }  // namespace perftools
 
-#endif  // TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_BLAS_H_
+#endif  // TENSORFLOW_STREAM_EXECUTOR_CL_CLBLAST_H_
