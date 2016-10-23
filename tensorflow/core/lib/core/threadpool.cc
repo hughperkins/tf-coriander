@@ -119,7 +119,7 @@ ThreadPool::ThreadPool(Env* env, const ThreadOptions& thread_options,
 }
 
 ThreadPool::~ThreadPool() {
-  std::cout << "ThreadPool::~ThreadPool()" << std::endl;
+  // std::cout << "ThreadPool::~ThreadPool()" << std::endl;
 }
 
 void ThreadPool::Schedule(std::function<void()> fn) {
