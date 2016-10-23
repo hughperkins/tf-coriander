@@ -21,6 +21,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - BLAS
 - convolutions
 - Variables
+- reductions
 - gradients
 
 ## Build

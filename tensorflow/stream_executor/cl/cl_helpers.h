@@ -33,7 +33,7 @@ namespace gputools {
 template <typename ElemT>
 class DeviceMemory;
 
-namespace cuda {
+namespace cl {
 
 // Converts a const DeviceMemory reference to its underlying typed pointer in
 // CUDA

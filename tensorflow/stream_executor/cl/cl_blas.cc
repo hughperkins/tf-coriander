@@ -60,40 +60,41 @@ namespace cl {
 
 PLUGIN_REGISTRY_DEFINE_PLUGIN_ID(kCuBlasPlugin);
 
-// namespace dynload {
+namespace dynload {
 
-// #define PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)                              
-//   struct DynLoadShim__##__name {                                            
-//     static const char *kName;                                               
-//     using FuncPointerT = std::add_pointer<decltype(::__name)>::type;        
-//     static void *GetDsoHandle() {                                           
-//       static auto status = internal::CachedDsoLoader::GetCublasDsoHandle(); 
-//       return status.ValueOrDie();                                           
-//     }                                                                       
-//     static FuncPointerT LoadOrDie() {                                       
-//       void *f;                                                              
-//       port::Status s = port::Env::Default()->GetSymbolFromLibrary(          
-//           GetDsoHandle(), kName, &f);                                       
-//       CHECK(s.ok()) << "could not find " << kName                           
-//                     << " in CLBlast DSO; dlerror: " << s.error_message();   
-//       return reinterpret_cast<FuncPointerT>(f);                             
-//     }                                                                       
-//     static FuncPointerT DynLoad() {                                         
-//       static FuncPointerT f = LoadOrDie();                                  
-//       return f;                                                             
-//     }                                                                       
-//     template <typename... Args>                                             
-//     cublasStatus_t operator()(CLExecutor *parent, Args... args) {         
-//       cl::ScopedActivateExecutorContext sac{parent};                      
-//       return DynLoad()(args...);                                            
-//     }                                                                       
-//   } __name;                                                                 
-//   const char *DynLoadShim__##__name::kName = #__name;
+#define PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)                              \
+  struct DynLoadShim__##__name {                                            \
+    static const char *kName;                                               \
+    using FuncPointerT = std::add_pointer<decltype(::__name)>::type;        \
+    static void *GetDsoHandle() {                                           \
+      static auto status = internal::CachedDsoLoader::GetCublasDsoHandle(); \
+      return status.ValueOrDie();                                           \
+    }                                                                       \
+    static FuncPointerT LoadOrDie() {                                       \
+      void *f;                                                              \
+      port::Status s = port::Env::Default()->GetSymbolFromLibrary(          \
+          GetDsoHandle(), kName, &f);                                       \
+      CHECK(s.ok()) << "could not find " << kName                           \
+                    << " in CLBlast DSO; dlerror: " << s.error_message();   \
+      return reinterpret_cast<FuncPointerT>(f);                             \
+    }                                                                       \
+    static FuncPointerT DynLoad() {                                         \
+      static FuncPointerT f = LoadOrDie();                                  \
+      return f;                                                             \
+    }                                                                       \
+    template <typename... Args>                                             \
+    cublasStatus_t operator()(CLExecutor *parent, Args... args) {         \
+      cl::ScopedActivateExecutorContext sac{parent};                      \
+      return DynLoad()(args...);                                            \
+    }                                                                       \
+  } __name;                                                                 \
+  const char *DynLoadShim__##__name::kName = #__name;
 
-// #define PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(__name) 
-//   PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)
+#define PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(__name) \
+  PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)
 
-// #define CUBLAS_BLAS_ROUTINE_EACH(__macro) 
+//#define CUBLAS_BLAS_ROUTINE_EACH(__macro) 
+//   __macro(cublasSgemm)                    
 //   __macro(cublasSnrm2)                    
 //   __macro(cublasDnrm2)                    
 //   __macro(cublasScnrm2)                   
@@ -220,7 +221,6 @@ PLUGIN_REGISTRY_DEFINE_PLUGIN_ID(kCuBlasPlugin);
 //   __macro(cublasDspr2)                    
 //   __macro(cublasChpr2)                    
 //   __macro(cublasZhpr2)                    
-//   __macro(cublasSgemm)                    
 //   __macro(cublasDgemm)                    
 //   __macro(cublasCgemm)                    
 //   __macro(cublasZgemm)                    
@@ -331,13 +331,13 @@ class ScopedCublasPointerMode {
   // logged.
   bool Init(cublasPointerMode_t new_mode) {
     cublasStatus_t ret =
-        cublasGetPointerMode_v2(parent_, handle_, &old_mode_);
+        cublasGetPointerMode_v2(handle_, &old_mode_);
     if (ret != CUBLAS_STATUS_SUCCESS) {
       LOG(ERROR) << "failed to get old cublas pointer mode: " << ToString(ret);
       return ok_ = false;
     }
 
-    ret = cublasSetPointerMode_v2(parent_, handle_, new_mode);
+    ret = cublasSetPointerMode_v2(handle_, new_mode);
     if (ret != CUBLAS_STATUS_SUCCESS) {
       LOG(ERROR) << "failed to set new cublas pointer mode: " << ToString(ret);
       return ok_ = false;
@@ -351,7 +351,7 @@ class ScopedCublasPointerMode {
   ~ScopedCublasPointerMode() {
     if (ok_) {
       cublasStatus_t ret =
-          cublasSetPointerMode_v2(parent_, handle_, old_mode_);
+          cublasSetPointerMode_v2(handle_, old_mode_);
       if (ret != CUBLAS_STATUS_SUCCESS) {
         LOG(ERROR) << "failed to set former cublas pointer mode: "
                    << ToString(ret);
@@ -367,7 +367,7 @@ class ScopedCublasPointerMode {
 };
 
 bool CLBlas::Init() {
-  cublasStatus_t ret = cublasCreate_v2(parent_, &blas_);
+  cublasStatus_t ret = cublasCreate_v2(&blas_);
   if (ret != CUBLAS_STATUS_SUCCESS) {
     LOG(ERROR) << "failed to create cublas handle: " << ToString(ret);
     return false;
@@ -384,7 +384,7 @@ CLBlas::CLBlas(cl::CLExecutor *parent)
 CLBlas::~CLBlas() {
       std::cout << "~CLBlas()" << std::endl;
   if (blas_ != nullptr) {
-    cublasDestroy_v2(parent_, blas_);
+    cublasDestroy_v2(blas_);
   }
 }
 
@@ -394,7 +394,7 @@ bool CLBlas::SetStream(Stream *stream) {
   CHECK(AsCLStreamValue(stream) != nullptr);
   CHECK(blas_ != nullptr);
   cublasStatus_t ret =
-      cublasSetStream_v2(parent_, blas_, AsCLStreamValue(stream));
+      cublasSetStream_v2(blas_, AsCLStreamValue(stream));
   if (ret != CUBLAS_STATUS_SUCCESS) {
     LOG(ERROR) << "failed to set stream for CLBlast calls: " << ToString(ret);
     return false;
@@ -476,14 +476,56 @@ bool CLBlas::DoBlasInternal(FuncT cublas_func, Stream *stream,
     return false;
   }
 
-  cublasStatus_t ret = cublas_func(parent_, blas_, args...);
+  cublasStatus_t ret = cublas_func(blas_, args...);
   if (ret != CUBLAS_STATUS_SUCCESS) {
-    LOG(ERROR) << "failed to run CLBlast routine " << cublas_func.kName << ": "
+    // LOG(ERROR) << "failed to run CLBlast routine " << cublas_func.kName << ": "
+    //            << ToString(ret);
+    LOG(ERROR) << "failed to run CLBlast routine " << ": "
                << ToString(ret);
     return false;
   }
 
   return true;
+}
+
+bool CLBlas::DoBlasGemm(Stream *stream, blas::Transpose transa,
+                          blas::Transpose transb, uint64 m, uint64 n, uint64 k,
+                          float alpha, const DeviceMemory<float> &a, int lda,
+                          const DeviceMemory<float> &b, int ldb, float beta,
+                          DeviceMemory<float> *c, int ldc) {
+      std::cout << "CLBlas::DoBlasGemm()" << std::endl;
+  VLOG(1) << port::Printf(
+      "doing CLBlast SGEMM: at=%d bt=%d m=%llu n=%llu "
+      "k=%llu alpha=%f a=%p lda=%d b=%p ldb=%d beta=%f "
+      "c=%p ldc=%d",
+      static_cast<int>(transa), static_cast<int>(transb), m, n, k, alpha,
+      a.opaque(), lda, b.opaque(), ldb, beta, c->opaque(), ldc);
+  if (transa == blas::Transpose::kNoTranspose) {
+    if (lda < static_cast<int64>(m)) {
+      LOG(WARNING) << "GEMM lda was smaller than m (no transpose case); "
+                      "precondition violation";
+    }
+  } else {
+    if (lda < static_cast<int64>(k)) {
+      LOG(WARNING) << "GEMM lda (" << lda << ") was smaller than k (" << k
+                   << ") (transpose case); precondition violation";
+    }
+  }
+  if (transb == blas::Transpose::kNoTranspose) {
+    if (ldb < static_cast<int64>(k)) {
+      LOG(WARNING) << "GEMM ldb (" << ldb << ") was smaller than k (" << k
+                   << ") (no transpose case); precondition violation";
+    }
+  } else {
+    if (ldb < static_cast<int64>(n)) {
+      LOG(WARNING) << "GEMM ldb was smaller than n (transpose case); "
+                      "precondition violation";
+    }
+  }
+  return DoBlasInternal(
+      cublasSgemm, stream, true /* = pointer_mode_host */,
+      CLBlasTranspose(transa), CLBlasTranspose(transb), m, n, k, &alpha,
+      CUDAMemory(a), lda, CUDAMemory(b), ldb, &beta, CUDAMemoryMutable(c), ldc);
 }
 
 bool CLBlas::DoBlasAsum(Stream *stream, uint64 elem_count,
@@ -831,9 +873,9 @@ bool CLBlas::DoBlasRotmg(Stream *stream, DeviceMemory<double> *d1,
 bool CLBlas::DoBlasScal(Stream *stream, uint64 elem_count, float alpha,
                           DeviceMemory<float> *x, int incx) {
   return false;
-  return DoBlasInternal(cublasSscal, stream,
-                        true  = pointer_mode_host , elem_count, &alpha,
-                        CLMemoryMutable(x), incx);
+  // return DoBlasInternal(cublasSscal, stream,
+  //                       true  = pointer_mode_host , elem_count, &alpha,
+  //                       CUDAMemoryMutable(x), incx);
 }
 
 bool CLBlas::DoBlasScal(Stream *stream, uint64 elem_count, double alpha,
@@ -1734,6 +1776,7 @@ bool CLBlas::DoBlasTrsv(Stream *stream, blas::UpperLower uplo,
                           blas::Transpose trans, blas::Diagonal diag, uint64 n,
                           const DeviceMemory<float> &a, int lda,
                           DeviceMemory<float> *x, int incx) {
+  return false;
   // return DoBlasInternal(cublasStrsv, stream,
   //                       true /* = pointer_mode_host */,
   //                       CLBlasUpperLower(uplo), CLBlasTranspose(trans),
@@ -1828,46 +1871,6 @@ bool CLBlas::DoBlasGemm(
 //              << "(need at least CL 7.5)";
 //   return false;
 // #endif
-}
-
-bool CLBlas::DoBlasGemm(Stream *stream, blas::Transpose transa,
-                          blas::Transpose transb, uint64 m, uint64 n, uint64 k,
-                          float alpha, const DeviceMemory<float> &a, int lda,
-                          const DeviceMemory<float> &b, int ldb, float beta,
-                          DeviceMemory<float> *c, int ldc) {
-      std::cout << "CLBlas::DoBlasGemm()" << std::endl;
-  VLOG(1) << port::Printf(
-      "doing CLBlast SGEMM: at=%d bt=%d m=%llu n=%llu "
-      "k=%llu alpha=%f a=%p lda=%d b=%p ldb=%d beta=%f "
-      "c=%p ldc=%d",
-      static_cast<int>(transa), static_cast<int>(transb), m, n, k, alpha,
-      a.opaque(), lda, b.opaque(), ldb, beta, c->opaque(), ldc);
-  if (transa == blas::Transpose::kNoTranspose) {
-    if (lda < static_cast<int64>(m)) {
-      LOG(WARNING) << "GEMM lda was smaller than m (no transpose case); "
-                      "precondition violation";
-    }
-  } else {
-    if (lda < static_cast<int64>(k)) {
-      LOG(WARNING) << "GEMM lda (" << lda << ") was smaller than k (" << k
-                   << ") (transpose case); precondition violation";
-    }
-  }
-  if (transb == blas::Transpose::kNoTranspose) {
-    if (ldb < static_cast<int64>(k)) {
-      LOG(WARNING) << "GEMM ldb (" << ldb << ") was smaller than k (" << k
-                   << ") (no transpose case); precondition violation";
-    }
-  } else {
-    if (ldb < static_cast<int64>(n)) {
-      LOG(WARNING) << "GEMM ldb was smaller than n (transpose case); "
-                      "precondition violation";
-    }
-  }
-  return DoBlasInternal(
-      cublasSgemm, stream, true /* = pointer_mode_host */,
-      CLBlasTranspose(transa), CLBlasTranspose(transb), m, n, k, &alpha,
-      CUDAMemory(a), lda, CUDAMemory(b), ldb, &beta, CUDAMemoryMutable(c), ldc);
 }
 
 bool CLBlas::DoBlasGemm(Stream *stream, blas::Transpose transa,
