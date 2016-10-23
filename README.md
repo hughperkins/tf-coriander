@@ -18,7 +18,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - comparison operators: `equal_to`, `greater`, `greater_equal`, `less`, `less_equal`
 - BLAS (I think.  Not very tested... screenshot below though:)
 
-<img src="img/doc/clblast_in_tensorflow.png?raw=true" width="600" />
+<img src="doc/img/clblast_in_tensorflow.png?raw=true" width="600" />
 
 ### To do
 - convolutions
