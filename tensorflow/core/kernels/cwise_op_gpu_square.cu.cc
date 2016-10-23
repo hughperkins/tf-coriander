@@ -13,14 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #include "tensorflow/core/kernels/cwise_ops_gpu_common.cu.h"
 
 namespace tensorflow {
 namespace functor {
-DEFINE_UNARY4(square, Eigen::half, float, double, int64);
+// DEFINE_UNARY4(square, Eigen::half, float, double, int64);
+DEFINE_UNARY1(square, float);
 }  // namespace functor
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

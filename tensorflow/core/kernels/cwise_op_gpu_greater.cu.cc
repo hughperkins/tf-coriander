@@ -13,14 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #include "tensorflow/core/kernels/cwise_ops_gpu_common.cu.h"
 
 namespace tensorflow {
 namespace functor {
-DEFINE_BINARY7(greater, Eigen::half, float, double, int64, uint8, int8, int16);
+// DEFINE_BINARY7(greater, Eigen::half, float, double, int64, uint8, int8, int16);
+DEFINE_BINARY1(greater, float);
 }  // namespace functor
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
