@@ -12,21 +12,16 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## What works
 
-- OpenCL stream executor up:
+### What's working
+- per-element binary operators: `sub`, `mul`, `div`, `not_equal`, `minimum`, `maximum`, `pow`, `squared_difference` (test: [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py))
+- per-element unary operator: `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sigmoid`, `sign`, `sin`, `sqrt`, square`, `tan` (test: [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py))
+- comparison operators: `equal_to`, `greater`, `greater_equal`, `less`, `less_equal`
 
-<img src="doc/img/contextcreated.png?raw=true" width="600" />
-
-- crosstool working:
-
-<img src="doc/img/testcu.png?raw=true" width="600" />
-
-- component-wise addition working:
-
-<img src="doc/img/componentwiseaddition_tensorflow_opencl.png?raw=true" width="600"/>
-
-- Python working :-)
-
-<img src="doc/img/tf_test2.png?raw=true" width="600" />
+### To do
+- add BLAS
+- convolutions
+- Variables
+- gradients
 
 ## Build
 
@@ -42,21 +37,53 @@ Please see the main repository for full Tensorflow documentation.  This readme w
     - `Device OpenCL C Version`: 1.2, or higher
   - If you do, then you're good :+1:
 
-### Initial setup:
+### Installation:
 
 ```
-sudo apt-get install opencl-headers cmake clang-3.8 llvm-3.8 clinfo git gcc g++ python3-numpy python3-dev python3-wheel zlib1g-dev
-sudo apt-get install git gcc g++ python3-numpy python3-dev python3-wheel zlib1g-dev
-git submodule update --init
+sudo apt-get install -y opencl-headers cmake clang-3.8 llvm-3.8 clinfo git gcc g++ python3-numpy python3-dev python3-wheel zlib1g-dev
+sudo apt-get install -y git gcc g++ python3-numpy python3-dev python3-wheel zlib1g-dev virtualenv swig python3-setuptools
+sudo apt-get install -y openjdk-8-jdk unzip zip
+mkdir -p ~/git
+cd ~/git
+
+# install bazel
+git clone https://github.com/bazelbuild/bazel.git
+cd bazel
+git checkout 0.3.2
+./compile.sh
+sudo cp output/bazel /usr/local/bin
+
+# download tensorflow, and configure
+git clone --recursive https://github.com/hughperkins/tensorflow-cl
+cd tensorflow-cl
+./configure
+# put python path: /usr/bin/python3
+# 'no' for hadoop, gpu, cloud, etc
+
+# build cuda-on-cl
 pushd third_party/cuda-on-cl
 make -j 4
 sudo make install
 popd
+
+# build tensorflow
+source ~/env3/bin/activate
+bazel run --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
+# (ignore error message about 'No destination dir provided')
+bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
+if [[ ! -d ~/env3 ]]; then { virtualenv -p python3 ~/env3; } fi
+pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
+
+# test/validate
+cd
+python -c 'import tensorflow'
+# hopefully no errors :-)
+python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_tf2.py
 ```
 
 ### Updating:
 
-- if you pull down new updates from the `tensorflow-cl` repository, please run the following, to update the [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) installation:
+- if you pull down new updates from the `tensorflow-cl` repository, you will almost certainly need to update the [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) installation:
 ```
 git submodule update
 pushd third_party/cuda-on-cl
@@ -64,56 +91,28 @@ make -j 4
 sudo make install
 popd
 ```
-- note that you dont need to re-run configure.  Yay! :-)
+- you will probably need to do also `bazel clean`
+- and then, as before:
+```
+source ~/env3/bin/activate
+bazel run --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
+bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
+pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
+```
 
 ## Run
 
-### Stream executor test
-
-Stream executor test: [tensorflow/stream_executor/cl/test/test.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/stream_executor/cl/test/test.cc) :
+- test per-element binary operations [tensorflow/stream_executor/cl/test/test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py):
 ```
-bazel run --verbose_failures //tensorflow/stream_executor:test_cl
-```
-
-### Crosstool test
-
-Crosstool test: [tensorflow/tools/cocl/test/testcu.cu.cc](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/tools/cocl/test/testcu.cu.cc) :
-```
-bazel run --verbose_failures //tensorflow/tools/cocl:testcu
-```
-
-### Component-wise addition
-
-- uses protobuffers created using [tensorflow/stream_executor/cl/test/create_proto.py](tensorflow/stream_executor/cl/test/create_proto.py)
-- copy to `/tmp` by doing:
-```
-cp tensorflow/stream_exeuctor/cl/test/graph.pb /tmp
-```
-- then, run [tensorflow/stream_executor/cl/test/loadproto.cc](tensorflow/stream_executor/cl/test/loadproto.cc), by doing:
-```
-bazel run --verbose_failures --logging 6 //tensorflow/stream_executor:test_cl_loadproto
-```
-
-### Usage from Python :-)
-
-This is hot off the press (as of 23rd October 2016), but works for me :-)
-
-#### Installation/setup
-
-Example code: [tensorflow/stream_executor/cl/test/test_tf2.py](tensorflow/stream_executor/cl/test/test_tf2.py)
-
-```
-bazel run --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
-# (ignore error message about 'No destination dir provided')
-bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
-if [[ ! -d env3 ]]; then { virtualenv -p python3 env3; } fi
-source env3/bin/activate
-pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
-TFDIR=$(pwd)
 cd
-python -c 'import tensorflow'
-# hopefully no errors :-)
-python $TFDIR/tensorflow/stream_executor/cl/test/test_tf2.py
+source ~/env3/bin/activate
+python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_tf3.py
+```
+- test per-element unary operations [tensorflow/stream_executor/cl/test/test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py):
+```
+cd
+source ~/env3/bin/activate
+python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_tf4.py
 ```
 
 ## Design/architecture
@@ -141,7 +140,6 @@ python $TFDIR/tensorflow/stream_executor/cl/test/test_tf2.py
 - [DeepCL](https://github.com/hughperkins/DeepCL)
 
 ### OpenCL middleware
-
 - [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl)
 - [EasyCL](https://github.com/hughperkins/EasyCL)
 
