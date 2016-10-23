@@ -16,7 +16,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - per-element binary operators: `sub`, `mul`, `div`, `not_equal`, `minimum`, `maximum`, `pow`, `squared_difference` (test: [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py))
 - per-element unary operator: `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sigmoid`, `sign`, `sin`, `sqrt`, square`, `tan` (test: [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py))
 - comparison operators: `equal_to`, `greater`, `greater_equal`, `less`, `less_equal`
-- BLAS (I think.  Not very tested... screenshot below though:)
+- BLAS (I think.  Not very tested... screenshot below though, of running [test_blas.py](tensorflow/stream_executor/cl/test/test_blas.py):)
 
 <img src="doc/img/clblast_in_tensorflow.png?raw=true" width="600" />
 
@@ -116,6 +116,12 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_tf3.py
 cd
 source ~/env3/bin/activate
 python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_tf4.py
+```
+- test blas [test_blas.py](tensorflow/stream_executor/cl/test/test_blas.py) :
+```
+cd
+source ~/env3/bin/activate
+python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_blas.py
 ```
 
 ## Design/architecture
