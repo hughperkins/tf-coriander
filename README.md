@@ -16,9 +16,11 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - per-element binary operators: `sub`, `mul`, `div`, `not_equal`, `minimum`, `maximum`, `pow`, `squared_difference` (test: [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py))
 - per-element unary operator: `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sigmoid`, `sign`, `sin`, `sqrt`, square`, `tan` (test: [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py))
 - comparison operators: `equal_to`, `greater`, `greater_equal`, `less`, `less_equal`
+- BLAS (I think.  Not very tested... screenshot below though:)
+
+<img src="img/doc/clblast_in_tensorflow.png?raw=true" width="600" />
 
 ### To do
-- BLAS
 - convolutions
 - Variables
 - reductions
@@ -120,12 +122,7 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_tf4.py
 
 - tensorflow code stays 100% [NVIDIA® CUDA™](https://www.nvidia.com/object/cuda_home_new.html)
 - [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) compiles the CUDA code into OpenCL
-
-## Roadmap
-
-- use [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) to port the bulk of tensorflow
-- use im2col for convolution (for now)
-- use [CLBlast](https://github.com/CNugteren/CLBlast) to provide blas implementation
+- [CLBlast](https://github.com/CNugteren/CLBlast) provides BLAS (matrix multiplications)
 
 ## Related projects
 
@@ -134,8 +131,9 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_tf4.py
 - [DeepCL](https://github.com/hughperkins/DeepCL)
 
 ### OpenCL middleware
-- [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl)
-- [EasyCL](https://github.com/hughperkins/EasyCL)
+- [CLBlast](https://github.com/CNugteren/CLBlast) BLAS for OpenCL
+- [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl)  Compile CUDA apps for OpenCL
+- [EasyCL](https://github.com/hughperkins/EasyCL)   Handles running kernels, passing in arguments etc, on OpenCL
 
 ## News
 
@@ -145,6 +143,7 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_tf4.py
   - added following per-element binary operators: `sub`, `mul`, `div`, `not_equal`, `minimum`, `maximum`, `pow`, `squared_difference` (test: [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py))
   - added following per-element unary operator: `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sigmoid`, `sign`, `sin`, `sqrt`, square`, `tan` (test: [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py))
   - added following comparison operators: `equal_to`, `greater`, `greater_equal`, `less`, `less_equal`
+  - added in BLAS (using Cedric Nugteren's [CLBlast](https://github.com/CNugteren/CLBlast) ).  Not very tested yet.  Test script [test_blas.py](tensorflow/stream_executor/cl/test/test_blas.py)
 - Oct 22:
   - componentwise addition working, when called from c++
   - commit `0db9cc2e`: re-enabled `-fPIC`, `-pie`
