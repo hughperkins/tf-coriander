@@ -150,6 +150,7 @@ python $TFDIR/tensorflow/stream_executor/cl/test/test_tf2.py
 - Oct 23:
   - can use component wise addition from Python now :-)
   - fixed critical bug involving `float4`s, that meant that tensors larger than, say, 3 :-P, could not be added correctly
+  - added following per-element binary operators: `sub`, `mul`, `div`, `not_equal`, `minimum`, `maximum`, `pow`, `squared_difference` (test: [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py))
 - Oct 22:
   - componentwise addition working, when called from c++
   - commit `0db9cc2e`: re-enabled `-fPIC`, `-pie`

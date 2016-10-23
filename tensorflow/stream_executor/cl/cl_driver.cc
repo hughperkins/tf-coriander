@@ -1220,7 +1220,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
   ScopedActivateContext activated{context};
   CHECK(stream != nullptr);
   CUresult res = CUDA_ERROR_UNKNOWN;
-  // CUresult res = cuStreamQuery(stream);
+  res = cuStreamQuery(stream);
   if (res == CUDA_SUCCESS) {
     return true;
   }
