@@ -41,7 +41,7 @@ limitations under the License.
 #include "tensorflow/stream_executor/cl/cl_platform_id.h"
 #include "tensorflow/stream_executor/cl/cl_stream.h"
 #include "tensorflow/stream_executor/device_memory.h"
-#include "tensorflow/stream_executor/dso_loader.h"
+// #include "tensorflow/stream_executor/dso_loader.h"
 #include "tensorflow/stream_executor/lib/env.h"
 #include "tensorflow/stream_executor/lib/initialize.h"
 #include "tensorflow/stream_executor/lib/status.h"
@@ -62,36 +62,36 @@ PLUGIN_REGISTRY_DEFINE_PLUGIN_ID(kCuBlasPlugin);
 
 namespace dynload {
 
-#define PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)                              \
-  struct DynLoadShim__##__name {                                            \
-    static const char *kName;                                               \
-    using FuncPointerT = std::add_pointer<decltype(::__name)>::type;        \
-    static void *GetDsoHandle() {                                           \
-      static auto status = internal::CachedDsoLoader::GetCublasDsoHandle(); \
-      return status.ValueOrDie();                                           \
-    }                                                                       \
-    static FuncPointerT LoadOrDie() {                                       \
-      void *f;                                                              \
-      port::Status s = port::Env::Default()->GetSymbolFromLibrary(          \
-          GetDsoHandle(), kName, &f);                                       \
-      CHECK(s.ok()) << "could not find " << kName                           \
-                    << " in CLBlast DSO; dlerror: " << s.error_message();   \
-      return reinterpret_cast<FuncPointerT>(f);                             \
-    }                                                                       \
-    static FuncPointerT DynLoad() {                                         \
-      static FuncPointerT f = LoadOrDie();                                  \
-      return f;                                                             \
-    }                                                                       \
-    template <typename... Args>                                             \
-    cublasStatus_t operator()(CLExecutor *parent, Args... args) {         \
-      cl::ScopedActivateExecutorContext sac{parent};                      \
-      return DynLoad()(args...);                                            \
-    }                                                                       \
-  } __name;                                                                 \
-  const char *DynLoadShim__##__name::kName = #__name;
+// #define PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)                              \
+//   struct DynLoadShim__##__name {                                            \
+//     static const char *kName;                                               \
+//     using FuncPointerT = std::add_pointer<decltype(::__name)>::type;        \
+//     static void *GetDsoHandle() {                                           \
+//       static auto status = internal::CachedDsoLoader::GetCublasDsoHandle(); \
+//       return status.ValueOrDie();                                           \
+//     }                                                                       \
+//     static FuncPointerT LoadOrDie() {                                       \
+//       void *f;                                                              \
+//       port::Status s = port::Env::Default()->GetSymbolFromLibrary(          \
+//           GetDsoHandle(), kName, &f);                                       \
+//       CHECK(s.ok()) << "could not find " << kName                           \
+//                     << " in CLBlast DSO; dlerror: " << s.error_message();   \
+//       return reinterpret_cast<FuncPointerT>(f);                             \
+//     }                                                                       \
+//     static FuncPointerT DynLoad() {                                         \
+//       static FuncPointerT f = LoadOrDie();                                  \
+//       return f;                                                             \
+//     }                                                                       \
+//     template <typename... Args>                                             \
+//     cublasStatus_t operator()(CLExecutor *parent, Args... args) {         \
+//       cl::ScopedActivateExecutorContext sac{parent};                      \
+//       return DynLoad()(args...);                                            \
+//     }                                                                       \
+//   } __name;                                                                 \
+//   const char *DynLoadShim__##__name::kName = #__name;
 
-#define PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(__name) \
-  PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)
+// #define PERFTOOLS_GPUTOOLS_CUBLAS_V2_WRAP(__name) \
+//   PERFTOOLS_GPUTOOLS_CUBLAS_WRAP(__name)
 
 //#define CUBLAS_BLAS_ROUTINE_EACH(__macro) 
 //   __macro(cublasSgemm)                    
@@ -2457,10 +2457,10 @@ void initialize_cublas() {
   }
 
   // Prime the CLBlast DSO. The loader will log more information.
-  auto statusor = gpu::internal::CachedDsoLoader::GetCublasDsoHandle();
-  if (!statusor.ok()) {
-    LOG(INFO) << "Unable to load CLBlast DSO.";
-  }
+  // auto statusor = gpu::internal::CachedDsoLoader::GetCublasDsoHandle();
+  // if (!statusor.ok()) {
+  //   LOG(INFO) << "Unable to load CLBlast DSO.";
+  // }
 
   gpu::PluginRegistry::Instance()->SetDefaultFactory(gpu::cl::kClPlatformId,
                                                      gpu::PluginKind::kBlas,
