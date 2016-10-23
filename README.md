@@ -128,7 +128,7 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_blas.py
 
 - tensorflow code stays 100% [NVIDIA® CUDA™](https://www.nvidia.com/object/cuda_home_new.html)
 - [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) compiles the CUDA code into OpenCL
-- [CLBlast](https://github.com/CNugteren/CLBlast) provides BLAS (matrix multiplications)
+- Cedric Nugteren's [CLBlast](https://github.com/CNugteren/CLBlast) provides BLAS (matrix multiplications)
 
 ## Related projects
 
