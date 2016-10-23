@@ -18,7 +18,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - comparison operators: `equal_to`, `greater`, `greater_equal`, `less`, `less_equal`
 
 ### To do
-- add BLAS
+- BLAS
 - convolutions
 - Variables
 - gradients
