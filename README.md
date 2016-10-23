@@ -126,13 +126,6 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_tf4.py
 - use im2col for convolution (for now)
 - use [CLBlast](https://github.com/CNugteren/CLBlast) to provide blas implementation
 
-## FAQ
-
-- Why fork the repo?  Why not make a standalone repo, that contains only the opencl bits, and uses tensorflow as a dependency?
-  - well, I might.  In the future.  My bazel knowledge is a bit elementary for now :-P
-- How can I see your contributions compared to all the mainstream Tensorflow stuff?
-  - [this link](https://github.com/hughperkins/tensorflow-cl/compare/master...tensorflow-cl#files_bucket)
-
 ## Related projects
 
 ### DNN Libraries
