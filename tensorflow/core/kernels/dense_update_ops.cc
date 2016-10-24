@@ -92,7 +92,7 @@ TF_CALL_ALL_TYPES(REGISTER_KERNELS);
 TF_CALL_QUANTIZED_TYPES(REGISTER_KERNELS);
 #undef REGISTER_KERNELS
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 // Only register 'Assign' on GPU for the subset of types also supported by
 // 'Variable' (see variable_ops.cc.)
 #define REGISTER_GPU_KERNELS(type)                                 \
@@ -109,7 +109,7 @@ TF_CALL_QUANTIZED_TYPES(REGISTER_KERNELS);
 
 TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPU_KERNELS);
 #undef REGISTER_GPU_KERNELS
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 #define REGISTER_KERNELS(type)                                        \
   REGISTER_KERNEL_BUILDER(                                            \
@@ -122,7 +122,7 @@ TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPU_KERNELS);
 TF_CALL_NUMBER_TYPES(REGISTER_KERNELS);
 #undef REGISTER_KERNELS
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 namespace functor {
 #define DECLARE_GPU_SPEC_FOR_OP(T, OP)                     \
@@ -148,6 +148,6 @@ TF_CALL_GPU_NUMBER_TYPES(DECLARE_GPU_SPEC);
       DenseUpdateOp<GPUDevice, type, DenseUpdateType::SUB>);
 TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPU_KERNELS);
 #undef REGISTER_GPU_KERNELS
-#endif  // end GOOGLE_CUDA
+// #endif  // end GOOGLE_CUDA
 
 }  // namespace tensorflow

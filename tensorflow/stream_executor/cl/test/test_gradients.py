@@ -46,7 +46,7 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
         sess.run(tf.assign(tf_W, W_init))
         print(sess.run((tf_x, tf_y), {tf_x: X, tf_y: y}))
         print(sess.run((tf_W)))
-        # tf_bias = tf.Variable(tf.zeros((2,), dtype=tf.float32), dtype=tf.float32, name='bias')
+        tf_bias = tf.Variable(tf.zeros((2,), dtype=tf.float32), dtype=tf.float32, name='bias')
         # tf_out = tf.matmul(tf_x, tf_W, name="out") + tf_bias
         # tf_loss = tf.square(tf_y - tf_out)
         # optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
