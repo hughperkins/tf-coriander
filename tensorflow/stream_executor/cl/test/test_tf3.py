@@ -31,9 +31,9 @@ funcs = {
     'sub': 'a - b',
     'div': 'a / b',
     'mul': 'a * b',
-    # 'minimum': 'np.minimum(a,b)',
-    # 'maximum': 'np.maximum(a,b)',
-    # 'pow': 'np.power(a,b)',
+    'minimum': 'np.minimum(a,b)',
+    'maximum': 'np.maximum(a,b)',
+    'pow': 'np.power(a,b)',
     'squared_difference': '(a - b) * (a - b)',
     'not_equal': 'np.not_equal(a, b)'
 }
