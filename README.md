@@ -16,7 +16,6 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - per-element binary operators: `add`, `sub`, `mul`, `div`, `pow`, `minimum`, `maximum`, `squared_difference`, as per [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py)
 - per-element unary operators: `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sign`, `sin`, `sqrt`, square`, `tan` (test: [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py))
 
-
 ### To do
 
 - blas
@@ -32,10 +31,10 @@ Please see the main repository for full Tensorflow documentation.  This readme w
   - the tensorflow non-gpu installation pre-requisites,
    - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
    - python 3
-- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.1.0/tensorflow-0.11.0rc0-py3-none-any.whl , and
+- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.4.0/tensorflow-0.11.0rc0-py3-none-any.whl , and
 - Install using pip:
 ```
-pip install --upgrade https://github.com/hughperkins/tensorflow-cl/releases/download/v0.1.0/tensorflow-0.11.0rc0-py3-none-any.whl
+pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
 If you want, you can [build from source](doc/build-form-source.md)
