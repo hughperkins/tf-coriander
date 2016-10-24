@@ -86,8 +86,8 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_blas.py
 
 - Oct 24:
   - hmmm, just discovered some new options, to ensure operations really are on the gpu, and ... many are not :-P, so back to the drawing board a bit
-  - the good news is that component-wise add really is on the gpu
-  - the bad news is that everything else is not :-P
+    - the good news is that component-wise add really is on the gpu
+    - the bad news is that everything else is not :-P
 
 - Oct 23:
   - can use component wise addition from Python now :-)
