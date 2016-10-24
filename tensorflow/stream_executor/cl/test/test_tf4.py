@@ -27,15 +27,15 @@ def test(tf_func, py_func):
 
 funcs = {
     'tanh': 'np.tanh(a)',
-    # 'neg': 'np.negative(a)',
-    # 'exp': 'np.exp(a)',
+    'neg': 'np.negative(a)',
+    'exp': 'np.exp(a)',
     # 'sigmoid': '1/(1+np.exp(-a))',
-    # 'sqrt': 'np.sqrt(a)',
-    # 'log': 'np.log(a)',
-    # 'abs': 'np.abs(a)',
-    # 'floor': 'np.floor(a)',
-    # 'ceil': 'np.ceil(a)',
-    # 'square': 'np.square(a)'
+    'sqrt': 'np.sqrt(a)',
+    'log': 'np.log(a)',
+    'abs': 'np.abs(a)',
+    'floor': 'np.floor(a)',
+    'ceil': 'np.ceil(a)',
+    'square': 'np.square(a)'
 }
 for tf_func, py_func in funcs.items():
     test(tf_func, py_func)

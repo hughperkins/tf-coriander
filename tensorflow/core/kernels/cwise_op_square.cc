@@ -18,9 +18,10 @@ limitations under the License.
 namespace tensorflow {
 REGISTER7(UnaryOp, CPU, "Square", functor::square, float, Eigen::half, double,
           int32, int64, complex64, complex128);
-#if GOOGLE_CUDA
-REGISTER4(UnaryOp, GPU, "Square", functor::square, float, Eigen::half, double,
-          int64);
+// #if GOOGLE_CUDA
+// REGISTER4(UnaryOp, GPU, "Square", functor::square, float, Eigen::half, double,
+//           int64);
+REGISTER(UnaryOp, GPU, "Square", functor::square, float);
 
 // A special GPU kernel for int32.
 // TODO(b/25387198): Also enable int32 in device memory. This kernel
@@ -31,5 +32,5 @@ REGISTER_KERNEL_BUILDER(Name("Square")
                             .HostMemory("y")
                             .TypeConstraint<int32>("T"),
                         UnaryOp<CPUDevice, functor::square<int32>>);
-#endif
+// #endif
 }  // namespace tensorflow

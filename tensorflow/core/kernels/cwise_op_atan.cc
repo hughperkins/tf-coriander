@@ -17,7 +17,8 @@ limitations under the License.
 
 namespace tensorflow {
 REGISTER2(UnaryOp, CPU, "Atan", functor::atan, float, double);
-#if GOOGLE_CUDA
-REGISTER2(UnaryOp, GPU, "Atan", functor::atan, float, double);
-#endif
+// #if GOOGLE_CUDA
+// REGISTER2(UnaryOp, GPU, "Atan", functor::atan, float, double);
+REGISTER(UnaryOp, GPU, "Atan", functor::atan, float);
+// #endif
 }  // namespace tensorflow

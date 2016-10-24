@@ -18,9 +18,10 @@ limitations under the License.
 namespace tensorflow {
 REGISTER6(BinaryOp, CPU, "Equal", functor::equal_to, float, Eigen::half, double,
           uint8, int8, int16);
-#if GOOGLE_CUDA
-REGISTER4(BinaryOp, GPU, "Equal", functor::equal_to, float, Eigen::half, double,
-          uint8);
+// #if GOOGLE_CUDA
+// REGISTER4(BinaryOp, GPU, "Equal", functor::equal_to, float, Eigen::half, double,
+//           uint8);
+REGISTER(BinaryOp, GPU, "Equal", functor::equal_to, float);
 
 // A special GPU kernel for int32.
 // TODO(b/25387198): Also enable int32 in device memory. This kernel
@@ -32,6 +33,6 @@ REGISTER_KERNEL_BUILDER(Name("Equal")
                             .HostMemory("z")
                             .TypeConstraint<int32>("T"),
                         BinaryOp<CPUDevice, functor::equal_to<int32>>);
-#endif
+// #endif
 
 }  // namespace tensorflow

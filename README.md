@@ -13,11 +13,12 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 ## What works
 
 ### What's working
-- per-element `add`, `sub`, `mul`, `div`, `pow`, `minimum`, `maximum`, `squared_difference`, as per [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py)
+- per-element binary operators: `add`, `sub`, `mul`, `div`, `pow`, `minimum`, `maximum`, `squared_difference`, as per [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py)
+- per-element unary operators: `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sign`, `sin`, `sqrt`, square`, `tan` (test: [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py))
+
 
 ### To do
 
-- per-element unary
 - blas
 - convolutions
 - Variables
@@ -89,6 +90,7 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_blas.py
     - the good news is that component-wise add really is on the gpu
     - the bad news is that everything else is not :-P
   - (re-)added following per-element binary operators: `sub`, `mul`, `div`, `pow`, `minimum`, `maximum`, `squared_difference`.  This time, they actually are really running on the gpu :-)  (test: [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py))
+  - (re-)added following per-element unary operators:, which really are running on gpu now :-), [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py): `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sign`, `sin`, `sqrt`, square`, `tan`
 - Oct 23:
   - can use component wise addition from Python now :-)
   - fixed critical bug involving `float4`s, that meant that tensors larger than, say, 3 :-P, could not be added correctly

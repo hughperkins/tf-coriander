@@ -19,16 +19,18 @@ limitations under the License.
 namespace tensorflow {
 REGISTER5(UnaryOp, CPU, "Sigmoid", functor::sigmoid, float, Eigen::half, double,
           complex64, complex128);
-#if GOOGLE_CUDA
-REGISTER3(UnaryOp, GPU, "Sigmoid", functor::sigmoid, float, Eigen::half,
-          double);
-#endif
+// #if GOOGLE_CUDA
+// REGISTER3(UnaryOp, GPU, "Sigmoid", functor::sigmoid, float, Eigen::half,
+//           double);
+REGISTER(UnaryOp, GPU, "Sigmoid", functor::sigmoid, float);
+// #endif
 
 REGISTER5(SimpleBinaryOp, CPU, "SigmoidGrad", functor::sigmoid_grad, float,
           Eigen::half, double, complex64, complex128);
-#if GOOGLE_CUDA
-REGISTER3(SimpleBinaryOp, GPU, "SigmoidGrad", functor::sigmoid_grad, float,
-          Eigen::half, double);
-#endif
+// #if GOOGLE_CUDA
+// REGISTER3(SimpleBinaryOp, GPU, "SigmoidGrad", functor::sigmoid_grad, float,
+//           Eigen::half, double);
+// REGISTER(SimpleBinaryOp, GPU, "SigmoidGrad", functor::sigmoid_grad, float);
+// #endif
 
 }  // namespace tensorflow
