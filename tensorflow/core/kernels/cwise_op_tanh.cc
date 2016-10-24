@@ -19,14 +19,16 @@ limitations under the License.
 namespace tensorflow {
 REGISTER5(UnaryOp, CPU, "Tanh", functor::tanh, float, Eigen::half, double,
           complex64, complex128);
-#if GOOGLE_CUDA
-REGISTER3(UnaryOp, GPU, "Tanh", functor::tanh, float, Eigen::half, double);
-#endif
+// #if GOOGLE_CUDA
+// REGISTER3(UnaryOp, GPU, "Tanh", functor::tanh, float, Eigen::half, double);
+REGISTER(UnaryOp, GPU, "Tanh", functor::tanh, float);
+// #endif
 
 REGISTER5(SimpleBinaryOp, CPU, "TanhGrad", functor::tanh_grad, float,
           Eigen::half, double, complex64, complex128);
-#if GOOGLE_CUDA
-REGISTER3(SimpleBinaryOp, GPU, "TanhGrad", functor::tanh_grad, float,
-          Eigen::half, double);
-#endif
+// #if GOOGLE_CUDA
+// REGISTER3(SimpleBinaryOp, GPU, "TanhGrad", functor::tanh_grad, float,
+//           Eigen::half, double);
+REGISTER(SimpleBinaryOp, GPU, "TanhGrad", functor::tanh_grad, float);
+// #endif
 }  // namespace tensorflow

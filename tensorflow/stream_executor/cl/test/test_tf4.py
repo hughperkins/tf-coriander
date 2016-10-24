@@ -26,7 +26,7 @@ def test(tf_func, py_func):
 
 
 funcs = {
-    # 'tanh': 'np.tanh(a)',
+    'tanh': 'np.tanh(a)',
     # 'neg': 'np.negative(a)',
     # 'exp': 'np.exp(a)',
     # 'sigmoid': '1/(1+np.exp(-a))',
