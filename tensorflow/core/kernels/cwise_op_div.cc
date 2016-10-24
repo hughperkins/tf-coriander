@@ -20,9 +20,10 @@ REGISTER5(BinaryOp, CPU, "Div", functor::div, float, Eigen::half, double,
           complex64, complex128);
 REGISTER5(BinaryOp, CPU, "Div", functor::safe_div, uint8, uint16, int16, int32,
           int64);
-#if GOOGLE_CUDA
-REGISTER9(BinaryOp, GPU, "Div", functor::div, float, Eigen::half, double, uint8,
-          uint16, int16, int64, complex64, complex128);
+// #if GOOGLE_CUDA
+// REGISTER9(BinaryOp, GPU, "Div", functor::div, float, Eigen::half, double, uint8,
+//           uint16, int16, int64, complex64, complex128);
+REGISTER(BinaryOp, GPU, "Div", functor::div, float);
 
 // A special GPU kernel for int32.
 // TODO(b/25387198): Also enable int32 in device memory. This kernel
@@ -34,6 +35,6 @@ REGISTER_KERNEL_BUILDER(Name("Div")
                             .HostMemory("z")
                             .TypeConstraint<int32>("T"),
                         BinaryOp<CPUDevice, functor::safe_div<int32>>);
-#endif
+// #endif
 
 }  // namespace tensorflow

@@ -24,9 +24,10 @@ REGISTER7(BinaryOp, CPU, "Sub", functor::sub, float, Eigen::half, double, int32,
 // int32 version of this op is needed, so explicitly include it.
 REGISTER(BinaryOp, CPU, "Sub", functor::sub, int32);
 #endif  // __ANDROID_TYPES_SLIM__
-#if GOOGLE_CUDA
-REGISTER6(BinaryOp, GPU, "Sub", functor::sub, float, Eigen::half, double, int64,
-          complex64, complex128);
+// #if GOOGLE_CUDA
+// REGISTER6(BinaryOp, GPU, "Sub", functor::sub, float, Eigen::half, double, int64,
+//           complex64, complex128);
+REGISTER(BinaryOp, GPU, "Sub", functor::sub, float);
 
 // A special GPU kernel for int32.
 // TODO(b/25387198): Also enable int32 in device memory. This kernel
@@ -38,6 +39,6 @@ REGISTER_KERNEL_BUILDER(Name("Sub")
                             .HostMemory("z")
                             .TypeConstraint<int32>("T"),
                         BinaryOp<CPUDevice, functor::sub<int32>>);
-#endif
+// #endif
 
 }  // namespace tensorflow

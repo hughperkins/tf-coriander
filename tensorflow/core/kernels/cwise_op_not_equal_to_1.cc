@@ -18,8 +18,9 @@ limitations under the License.
 namespace tensorflow {
 REGISTER6(BinaryOp, CPU, "NotEqual", functor::not_equal_to, float, Eigen::half,
            double, uint8, int8, int16);
-#if GOOGLE_CUDA
-REGISTER4(BinaryOp, GPU, "NotEqual", functor::not_equal_to, float, Eigen::half,
-          double, uint8);
-#endif
+// #if GOOGLE_CUDA
+// REGISTER4(BinaryOp, GPU, "NotEqual", functor::not_equal_to, float, Eigen::half,
+//           double, uint8);
+REGISTER(BinaryOp, GPU, "NotEqual", functor::not_equal_to, float);
+// #endif
 }  // namespace tensorflow
