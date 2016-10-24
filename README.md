@@ -13,11 +13,11 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 ## What works
 
 ### What's working
-- per-element add, sub, mul, div, as per [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py)
+- per-element `add`, `sub`, `mul`, `div`, `pow`, `minimum`, `maximum`, `squared_difference`, as per [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py)
 
 ### To do
 
-- per-element unary/binary
+- per-element unary
 - blas
 - convolutions
 - Variables
@@ -88,7 +88,7 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_blas.py
   - hmmm, just discovered some new options, to ensure operations really are on the gpu, and ... many are not :-P, so back to the drawing board a bit
     - the good news is that component-wise add really is on the gpu
     - the bad news is that everything else is not :-P
-  - (re-)added following per-element binary operators: `sub`, `mul`, `div`.  This time, they actually are really running on the gpu :-)  (test: [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py))
+  - (re-)added following per-element binary operators: `sub`, `mul`, `div`, `pow`, `minimum`, `maximum`, `squared_difference`.  This time, they actually are really running on the gpu :-)  (test: [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py))
 - Oct 23:
   - can use component wise addition from Python now :-)
   - fixed critical bug involving `float4`s, that meant that tensors larger than, say, 3 :-P, could not be added correctly
