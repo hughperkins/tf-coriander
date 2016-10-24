@@ -5,9 +5,10 @@ import numpy as np
 
 def test(tf_func, py_func):
     print('func', tf_func)
-    with tf.Session() as sess:
-        tf_a = tf.placeholder(tf.float32, [None, None], 'a')
-        tf_c = tf.__dict__[tf_func](tf_a, name="c")
+    with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
+        with tf.device('/gpu:0'):
+            tf_a = tf.placeholder(tf.float32, [None, None], 'a')
+            tf_c = tf.__dict__[tf_func](tf_a, name="c")
 
         np.random.seed(123)
         shape = (1, 10)
@@ -25,16 +26,16 @@ def test(tf_func, py_func):
 
 
 funcs = {
-    'tanh': 'np.tanh(a)',
-    'neg': 'np.negative(a)',
-    'exp': 'np.exp(a)',
-    'sigmoid': '1/(1+np.exp(-a))',
-    'sqrt': 'np.sqrt(a)',
-    'log': 'np.log(a)',
-    'abs': 'np.abs(a)',
-    'floor': 'np.floor(a)',
-    'ceil': 'np.ceil(a)',
-    'square': 'np.square(a)'
+    # 'tanh': 'np.tanh(a)',
+    # 'neg': 'np.negative(a)',
+    # 'exp': 'np.exp(a)',
+    # 'sigmoid': '1/(1+np.exp(-a))',
+    # 'sqrt': 'np.sqrt(a)',
+    # 'log': 'np.log(a)',
+    # 'abs': 'np.abs(a)',
+    # 'floor': 'np.floor(a)',
+    # 'ceil': 'np.ceil(a)',
+    # 'square': 'np.square(a)'
 }
 for tf_func, py_func in funcs.items():
     test(tf_func, py_func)

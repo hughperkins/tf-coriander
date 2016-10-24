@@ -3,10 +3,11 @@ from __future__ import print_function
 import tensorflow as tf
 import numpy as np
 
-with tf.Session() as sess:
-    tf_a = tf.placeholder(tf.float32, [None, None], 'a')
-    tf_b = tf.placeholder(tf.float32, [None, None], 'b')
-    tf_c = tf.add(tf_a, tf_b, name="c")
+with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
+    with tf.device('/gpu:0'):
+        tf_a = tf.placeholder(tf.float32, [None, None], 'a')
+        tf_b = tf.placeholder(tf.float32, [None, None], 'b')
+        tf_c = tf.add(tf_a, tf_b, name="c")
 
     np.random.seed(123)
     shape = (5, 13)

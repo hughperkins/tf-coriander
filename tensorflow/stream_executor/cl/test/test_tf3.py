@@ -5,10 +5,11 @@ import numpy as np
 
 def test(tf_func, py_func):
     print('func', tf_func)
-    with tf.Session() as sess:
-        tf_a = tf.placeholder(tf.float32, [None, None], 'a')
-        tf_b = tf.placeholder(tf.float32, [None, None], 'b')
-        tf_c = tf.__dict__[tf_func](tf_a, tf_b, name="c")
+    with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
+        with tf.device('/gpu:0'):
+            tf_a = tf.placeholder(tf.float32, [None, None], 'a')
+            tf_b = tf.placeholder(tf.float32, [None, None], 'b')
+            tf_c = tf.__dict__[tf_func](tf_a, tf_b, name="c")
 
         np.random.seed(123)
         shape = (1, 10)
@@ -28,14 +29,14 @@ def test(tf_func, py_func):
 # for func in ['add', 'div', 'sub', 'max', 'min', 'mul', 'pow', 'squared_difference', 'not_equal_to']:
 funcs = {
     'add': 'a + b',
-    'sub': 'a - b',
-    'div': 'a / b',
-    'mul': 'a * b',
-    'minimum': 'np.minimum(a,b)',
-    'maximum': 'np.maximum(a,b)',
-    'pow': 'np.power(a,b)',
-    'squared_difference': '(a - b) * (a - b)',
-    'not_equal': 'np.not_equal(a, b)'
+    # 'sub': 'a - b',
+    # 'div': 'a / b',
+    # 'mul': 'a * b',
+    # 'minimum': 'np.minimum(a,b)',
+    # 'maximum': 'np.maximum(a,b)',
+    # 'pow': 'np.power(a,b)',
+    # 'squared_difference': '(a - b) * (a - b)',
+    # 'not_equal': 'np.not_equal(a, b)'
 }
 for tf_func, py_func in funcs.items():
     test(tf_func, py_func)

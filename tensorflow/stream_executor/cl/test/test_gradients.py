@@ -35,29 +35,32 @@ for n, ex in enumerate(data):
 print('X', X)
 print('y', y)
 
-with tf.Session() as sess:
-    tf_x = tf.placeholder(tf.float32, [None, 4], 'x')
-    tf_W = tf.Variable(tf.zeros([4, 2]), 'W')
-    tf_bias = tf.Variable(tf.zeros(2,), 'bias')
-    tf_out = tf.matmul(tf_x, tf_W, name="out") + tf_bias
+with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
+    # tf_W_cpu = tf.Variable(tf.zeros([4, 2], dtype=tf.float32), dtype=tf.float32, name='W')
+    with tf.device('/gpu:0'):
+        tf_x = tf.placeholder(tf.float32, [None, 4], 'x')
+        tf_y = tf.placeholder(tf.float32, [None, 2], 'y')
+        # tf_W = tf.Variable(dtype=tf.float32, name='W')
+        tf_W = tf.Variable(tf.zeros([4, 2], dtype=tf.float32), dtype=tf.float32, name='W')
+        W_init = np.random.uniform(size=(4, 2)).astype(np.float32)
+        sess.run(tf.assign(tf_W, W_init))
+        print(sess.run((tf_x, tf_y), {tf_x: X, tf_y: y}))
+        print(sess.run((tf_W)))
+        # tf_bias = tf.Variable(tf.zeros((2,), dtype=tf.float32), dtype=tf.float32, name='bias')
+        # tf_out = tf.matmul(tf_x, tf_W, name="out") + tf_bias
+        # tf_loss = tf.square(tf_y - tf_out)
+        # optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
+        # train_op = optimizer.minimize(tf_loss)
 
-    np.random.seed(123)
+    # np.random.seed(123)
 
-    W_init = np.random.uniform(size=(4, 2)).astype(np.float32)
-    sess.run(tf.assign(tf_W, W_init))
-    # print(sess.run(tf_W))
-    bias_init = np.random.uniform(size=(2,)).astype(np.float32)
-    sess.run(tf.assign(tf_bias, bias_init))
+    # # print(sess.run(tf_W))
+    # bias_init = np.random.uniform(size=(2,)).astype(np.float32)
+    # sess.run(tf.assign(tf_bias, bias_init))
 
-    tf_y = tf.placeholder(tf.float32, [None, 2], 'y')
-    tf_loss = tf.square(tf_y - tf_out)
-
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
-    train_op = optimizer.minimize(tf_loss)
-
-    for epoch in range(4):
-        loss, out, _ = sess.run((tf_loss, tf_out, train_op), {tf_x: X, tf_y: y})
-        if epoch % 1 == 0:
-            print('epoch', epoch)
-            print('loss', loss)
-            print(np.argmax(out, 1))
+    # for epoch in range(4):
+    #     loss, out, _ = sess.run((tf_loss, tf_out, train_op), {tf_x: X, tf_y: y})
+    #     if epoch % 1 == 0:
+    #         print('epoch', epoch)
+    #         print('loss', loss)
+    #         print(np.argmax(out, 1))
