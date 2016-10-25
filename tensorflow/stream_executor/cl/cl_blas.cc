@@ -54,6 +54,8 @@ limitations under the License.
 #include "tensorflow/stream_executor/scratch_allocator.h"
 #include "tensorflow/stream_executor/stream_executor.h"
 
+#include <iostream>
+
 namespace perftools {
 namespace gputools {
 namespace cl {
@@ -927,7 +929,7 @@ bool CLBlas::DoBlasScal(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
                           DeviceMemory<float> *x, int incx,
                           DeviceMemory<float> *y, int incy) {
-  cout << "CLBlas::DoBlasSwap" << endl;
+  // std::cout << "CLBlas::DoBlasSwap" << endl;
   return false;
   // return DoBlasInternal(cublasSswap, stream,
   //                       true  = pointer_mode_host , elem_count,
@@ -937,7 +939,7 @@ bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
                           DeviceMemory<double> *x, int incx,
                           DeviceMemory<double> *y, int incy) {
-  cout << "CLBlas::DoBlasSwap" << endl;
+  // cout << "CLBlas::DoBlasSwap" << endl;
   return false;
   // return DoBlasInternal(cublasDswap, stream,
   //                       true  = pointer_mode_host , elem_count,
@@ -947,7 +949,7 @@ bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
                           DeviceMemory<std::complex<float>> *x, int incx,
                           DeviceMemory<std::complex<float>> *y, int incy) {
-  cout << "CLBlas::DoBlasSwap" << endl;
+  // cout << "CLBlas::DoBlasSwap" << endl;
   return false;
   // return DoBlasInternal(cublasCswap, stream,
   //                       true /* = pointer_mode_host */, elem_count,
@@ -958,7 +960,7 @@ bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
                           DeviceMemory<std::complex<double>> *x, int incx,
                           DeviceMemory<std::complex<double>> *y, int incy) {
-  cout << "CLBlas::DoBlasSwap" << endl;
+  // cout << "CLBlas::DoBlasSwap" << endl;
   return false;
   // return DoBlasInternal(cublasZswap, stream,
   //                       true /* = pointer_mode_host */, elem_count,
