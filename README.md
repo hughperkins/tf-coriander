@@ -16,13 +16,15 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - per-element binary operators: `add`, `sub`, `mul`, `div`, `pow`, `minimum`, `maximum`, `squared_difference`, as per [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py)
 - per-element unary operators: `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sign`, `sin`, `sqrt`, square`, `tan` (test: [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py))
 - Variables can be placed on GPU
+- `matmul` (using [CLBlast](https://github.com/CNugteren/CLBlast))
+
+
 
 ### To do
 
-- blas
+- gradients
 - convolutions
 - reductions
-- gradients
 
 ## Installation 
 
@@ -64,12 +66,7 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_blas.py
 
 - tensorflow code stays 100% [NVIDIA® CUDA™](https://www.nvidia.com/object/cuda_home_new.html)
 - [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) compiles the CUDA code into OpenCL
-
-## Roadmap
-
-- [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) compiles the CUDA code into OpenCL
 - Cedric Nugteren's [CLBlast](https://github.com/CNugteren/CLBlast) provides BLAS (matrix multiplications)
-- im2col for convolution
 
 ## Related projects
 
@@ -84,6 +81,8 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_blas.py
 
 ## News
 
+- Oct 25:
+  - fixed BLAS wrapper, working now, on GPU, test script: [test_blas.py](tensorflow/stream_executor/cl/test/test_blas.py)
 - Oct 24:
   - hmmm, just discovered some new options, to ensure operations really are on the gpu, and ... many are not :-P, so back to the drawing board a bit
     - the good news is that component-wise add really is on the gpu
