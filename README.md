@@ -81,6 +81,7 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_blas.py
 
 - Oct 25:
   - fixed BLAS wrapper, working now, on GPU, test script: [test_blas.py](tensorflow/stream_executor/cl/test/test_blas.py)
+  - int32 constant works on gpu now, [test_ints.py](tensorflow/stream_executor/cl/test/test_ints.py)
 - Oct 24:
   - hmmm, just discovered some new options, to ensure operations really are on the gpu, and ... many are not :-P, so back to the drawing board a bit
     - the good news is that component-wise add really is on the gpu
