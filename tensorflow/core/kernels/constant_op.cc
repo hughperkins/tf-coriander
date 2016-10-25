@@ -91,7 +91,7 @@ void HostConstantOp::Compute(OpKernelContext* ctx) {
   ctx->set_output(0, tensor_);
 }
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 // A special GPU kernel for int32.
 // TODO(b/25387198): Also enable int32 in device memory. This kernel
 // registration requires all int32 inputs and outputs to be in host memory.
@@ -100,7 +100,7 @@ REGISTER_KERNEL_BUILDER(Name("Const")
                             .HostMemory("output")
                             .TypeConstraint<int32>("dtype"),
                         HostConstantOp);
-#endif
+// #endif
 
 typedef Eigen::ThreadPoolDevice CPUDevice;
 typedef Eigen::GpuDevice GPUDevice;
