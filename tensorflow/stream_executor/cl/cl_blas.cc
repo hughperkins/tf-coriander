@@ -533,7 +533,7 @@ bool CLBlas::DoBlasGemm(Stream *stream, blas::Transpose transa,
 bool CLBlas::DoBlasAsum(Stream *stream, uint64 elem_count,
                           const DeviceMemory<float> &x, int incx,
                           DeviceMemory<float> *result) {
-  cout << "CLBlas::DoBlasAsum" << endl;
+  // cout << "CLBlas::DoBlasAsum" << endl;
   return false;
   // return DoBlasInternal(cublasSasum, stream,
   //                       false  = pointer_mode_host , elem_count,
@@ -610,7 +610,7 @@ bool CLBlas::DoBlasAxpy(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
                           const DeviceMemory<float> &x, int incx,
                           DeviceMemory<float> *y, int incy) {
-      std::cout << "CLBlas::DoBlasCopy()" << std::endl;
+      // std::cout << "CLBlas::DoBlasCopy()" << std::endl;
   return false;
   // return DoBlasInternal(cublasScopy, stream,
   //                       true  = pointer_mode_host , elem_count,
@@ -620,7 +620,7 @@ bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
                           const DeviceMemory<double> &x, int incx,
                           DeviceMemory<double> *y, int incy) {
-  cout << "CLBlas::DoBlasCopy" << endl;
+  // cout << "CLBlas::DoBlasCopy" << endl;
   return false;
   // return DoBlasInternal(cublasDcopy, stream,
   //                       true  = pointer_mode_host , elem_count,
@@ -630,7 +630,7 @@ bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
                           const DeviceMemory<std::complex<float>> &x, int incx,
                           DeviceMemory<std::complex<float>> *y, int incy) {
-  cout << "CLBlas::DoBlasCopy" << endl;
+  // cout << "CLBlas::DoBlasCopy" << endl;
   return false;
   // return DoBlasInternal(cublasCcopy, stream,
   //                       true /* = pointer_mode_host */, elem_count,
@@ -641,7 +641,7 @@ bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
                           const DeviceMemory<std::complex<double>> &x, int incx,
                           DeviceMemory<std::complex<double>> *y, int incy) {
-  cout << "CLBlas::DoBlasCopy" << endl;
+  // cout << "CLBlas::DoBlasCopy" << endl;
   return false;
   // return DoBlasInternal(cublasZcopy, stream,
   //                       true /* = pointer_mode_host */, elem_count,
