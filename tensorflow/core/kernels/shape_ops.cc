@@ -63,15 +63,16 @@ REGISTER_KERNEL_BUILDER(Name("Shape")
                             .TypeConstraint<int64>("out_type"),
                         ShapeOp<int64>);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNEL(type)                                \
   REGISTER_KERNEL_BUILDER(Name("Shape")                          \
                               .Device(DEVICE_GPU)                \
                               .HostMemory("output")              \
                               .TypeConstraint<int32>("out_type") \
                               .TypeConstraint<type>("T"),        \
-                          ShapeOp<int32>);                       \
-  REGISTER_KERNEL_BUILDER(Name("Shape")                          \
+                          ShapeOp<int32>);                       
+
+//  REGISTER_KERNEL_BUILDER(Name("Shape")                          \
                               .Device(DEVICE_GPU)                \
                               .HostMemory("output")              \
                               .TypeConstraint<int64>("out_type") \
@@ -91,14 +92,14 @@ REGISTER_KERNEL_BUILDER(Name("Shape")
                             .TypeConstraint<int32>("T")
                             .TypeConstraint<int32>("out_type"),
                         ShapeOp<int32>);
-REGISTER_KERNEL_BUILDER(Name("Shape")
-                            .Device(DEVICE_GPU)
-                            .HostMemory("input")
-                            .HostMemory("output")
-                            .TypeConstraint<int32>("T")
-                            .TypeConstraint<int64>("out_type"),
-                        ShapeOp<int64>);
-#endif
+// REGISTER_KERNEL_BUILDER(Name("Shape")
+//                             .Device(DEVICE_GPU)
+//                             .HostMemory("input")
+//                             .HostMemory("output")
+//                             .TypeConstraint<int32>("T")
+//                             .TypeConstraint<int64>("out_type"),
+//                         ShapeOp<int64>);
+// #endif
 
 template <typename OutType>
 class ShapeNOp : public OpKernel {

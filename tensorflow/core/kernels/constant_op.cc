@@ -157,15 +157,15 @@ class FillOp : public OpKernel {
 TF_CALL_ALL_TYPES(REGISTER_CPU_KERNEL);
 #undef REGISTER_CPU_KERNEL
 
-#if GOOGLE_CUDA
-REGISTER_KERNEL(GPU, Eigen::half);
+// #if GOOGLE_CUDA
+// REGISTER_KERNEL(GPU, Eigen::half);
 REGISTER_KERNEL(GPU, float);
-REGISTER_KERNEL(GPU, double);
-REGISTER_KERNEL(GPU, uint8);
-REGISTER_KERNEL(GPU, int8);
-REGISTER_KERNEL(GPU, uint16);
-REGISTER_KERNEL(GPU, int16);
-REGISTER_KERNEL(GPU, int64);
+// REGISTER_KERNEL(GPU, double);
+// REGISTER_KERNEL(GPU, uint8);
+// REGISTER_KERNEL(GPU, int8);
+// REGISTER_KERNEL(GPU, uint16);
+// REGISTER_KERNEL(GPU, int16);
+// REGISTER_KERNEL(GPU, int64);
 // Currently we do not support filling strings and complex64 on GPU
 
 // A special GPU kernel for int32.
@@ -178,7 +178,7 @@ REGISTER_KERNEL_BUILDER(Name("Fill")
                             .HostMemory("value")
                             .HostMemory("output"),
                         FillOp<CPUDevice, int32>);
-#endif
+// #endif
 
 #undef REGISTER_KERNEL
 
