@@ -37,7 +37,7 @@ class Stream;
 namespace cl {
 
 // Opaque and unique identifier for the CLBlast plugin.
-extern const PluginId kCuBlasPlugin;
+extern const PluginId kClBlasPlugin;
 
 class CLExecutor;
 

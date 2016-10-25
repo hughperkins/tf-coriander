@@ -18,8 +18,8 @@ limitations under the License.
 // These are typically placed here for use by multiple source components (for
 // example, BLAS and executor components).
 
-#ifndef TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_HELPERS_H_
-#define TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_HELPERS_H_
+#ifndef TENSORFLOW_STREAM_EXECUTOR_CL_CL_HELPERS_H_
+#define TENSORFLOW_STREAM_EXECUTOR_CL_CL_HELPERS_H_
 
 #include <stddef.h>
 #include <complex>
@@ -100,8 +100,8 @@ T *CUDAMemoryMutable(DeviceMemory<T> *mem) {
 //   return {val.real(), val.imag()};
 // }
 
-}  // namespace cuda
+}  // namespace cl
 }  // namespace gputools
 }  // namespace perftools
 
-#endif  // TENSORFLOW_STREAM_EXECUTOR_CUDA_CUDA_HELPERS_H_
+#endif  // TENSORFLOW_STREAM_EXECUTOR_CL_CL_HELPERS_H_

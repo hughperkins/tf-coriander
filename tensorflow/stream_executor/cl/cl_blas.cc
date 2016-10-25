@@ -29,7 +29,7 @@ limitations under the License.
 // #define SE_CL_DATA_HALF CL_R_16F
 // #else
 // #define SE_CL_DATA_HALF CUBLAS_DATA_HALF
-// #endif
+// #endif  
 
 #include "tensorflow/stream_executor/cl/cl_blas.h"
 
@@ -58,7 +58,7 @@ namespace perftools {
 namespace gputools {
 namespace cl {
 
-PLUGIN_REGISTRY_DEFINE_PLUGIN_ID(kCuBlasPlugin);
+PLUGIN_REGISTRY_DEFINE_PLUGIN_ID(kClBlasPlugin);
 
 namespace dynload {
 
@@ -326,7 +326,7 @@ class ScopedCublasPointerMode {
       : parent_(parent), handle_(handle), ok_(false) {}
 
   // Attempts the switch to the requested scoped pointer mode, new_mode.
-  //
+  //  
   // Note that when false is returned, an appropriate error has already been
   // logged.
   bool Init(cublasPointerMode_t new_mode) {
@@ -531,6 +531,7 @@ bool CLBlas::DoBlasGemm(Stream *stream, blas::Transpose transa,
 bool CLBlas::DoBlasAsum(Stream *stream, uint64 elem_count,
                           const DeviceMemory<float> &x, int incx,
                           DeviceMemory<float> *result) {
+  cout << "CLBlas::DoBlasAsum" << endl;
   return false;
   // return DoBlasInternal(cublasSasum, stream,
   //                       false  = pointer_mode_host , elem_count,
@@ -617,6 +618,7 @@ bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
                           const DeviceMemory<double> &x, int incx,
                           DeviceMemory<double> *y, int incy) {
+  cout << "CLBlas::DoBlasCopy" << endl;
   return false;
   // return DoBlasInternal(cublasDcopy, stream,
   //                       true  = pointer_mode_host , elem_count,
@@ -626,6 +628,7 @@ bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
                           const DeviceMemory<std::complex<float>> &x, int incx,
                           DeviceMemory<std::complex<float>> *y, int incy) {
+  cout << "CLBlas::DoBlasCopy" << endl;
   return false;
   // return DoBlasInternal(cublasCcopy, stream,
   //                       true /* = pointer_mode_host */, elem_count,
@@ -636,6 +639,7 @@ bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasCopy(Stream *stream, uint64 elem_count,
                           const DeviceMemory<std::complex<double>> &x, int incx,
                           DeviceMemory<std::complex<double>> *y, int incy) {
+  cout << "CLBlas::DoBlasCopy" << endl;
   return false;
   // return DoBlasInternal(cublasZcopy, stream,
   //                       true /* = pointer_mode_host */, elem_count,
@@ -923,6 +927,7 @@ bool CLBlas::DoBlasScal(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
                           DeviceMemory<float> *x, int incx,
                           DeviceMemory<float> *y, int incy) {
+  cout << "CLBlas::DoBlasSwap" << endl;
   return false;
   // return DoBlasInternal(cublasSswap, stream,
   //                       true  = pointer_mode_host , elem_count,
@@ -932,6 +937,7 @@ bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
                           DeviceMemory<double> *x, int incx,
                           DeviceMemory<double> *y, int incy) {
+  cout << "CLBlas::DoBlasSwap" << endl;
   return false;
   // return DoBlasInternal(cublasDswap, stream,
   //                       true  = pointer_mode_host , elem_count,
@@ -941,6 +947,7 @@ bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
                           DeviceMemory<std::complex<float>> *x, int incx,
                           DeviceMemory<std::complex<float>> *y, int incy) {
+  cout << "CLBlas::DoBlasSwap" << endl;
   return false;
   // return DoBlasInternal(cublasCswap, stream,
   //                       true /* = pointer_mode_host */, elem_count,
@@ -951,6 +958,7 @@ bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
 bool CLBlas::DoBlasSwap(Stream *stream, uint64 elem_count,
                           DeviceMemory<std::complex<double>> *x, int incx,
                           DeviceMemory<std::complex<double>> *y, int incy) {
+  cout << "CLBlas::DoBlasSwap" << endl;
   return false;
   // return DoBlasInternal(cublasZswap, stream,
   //                       true /* = pointer_mode_host */, elem_count,
@@ -2424,12 +2432,12 @@ bool CLBlas::DoBlasTrsm(Stream *stream, blas::Side side,
 
 namespace gpu = ::perftools::gputools;
 
-void initialize_cublas() {
-      std::cout << "CLBlas::initialize_cublas()" << std::endl;
+void initialize_clblas() {
+      std::cout << "CLBlas::initialize_clblas()" << std::endl;
   gpu::port::Status status =
       gpu::PluginRegistry::Instance()
           ->RegisterFactory<gpu::PluginRegistry::BlasFactory>(
-              gpu::cl::kClPlatformId, gpu::cl::kCuBlasPlugin, "CLBlast",
+              gpu::cl::kClPlatformId, gpu::cl::kClBlasPlugin, "CLBlast",
               [](gpu::internal::StreamExecutorInterface
                      *parent) -> gpu::blas::BlasSupport * {
                 gpu::cl::CLExecutor *cl_executor =
@@ -2464,11 +2472,11 @@ void initialize_cublas() {
 
   gpu::PluginRegistry::Instance()->SetDefaultFactory(gpu::cl::kClPlatformId,
                                                      gpu::PluginKind::kBlas,
-                                                     gpu::cl::kCuBlasPlugin);
+                                                     gpu::cl::kClBlasPlugin);
 }
 
 }  // namespace gputools
 }  // namespace perftools
 
-REGISTER_MODULE_INITIALIZER(register_cublas,
-                            { perftools::gputools::initialize_cublas(); });
+REGISTER_MODULE_INITIALIZER(register_clblas,
+                            { perftools::gputools::initialize_clblas(); });

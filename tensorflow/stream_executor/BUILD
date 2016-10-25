@@ -43,6 +43,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "@cocl//:cocl-headers",
+        "@cocl_links//:libcocl",
         # "@local_usr_lib//:libopencl",
         # "@cocl//:cocl-lib",
         # "@clew//:clew-lib",

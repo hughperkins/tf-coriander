@@ -246,8 +246,8 @@ def InvokeNvcc(argv, log=False):
     # TODO(zhengxq): for some reason, 'gcc' needs this help to find 'as'.
     # Need to investigate and fix.
     cmd = 'PATH=' + PREFIX_DIR + ':/usr/local/bin ' + cmd
-    if log:
-        Log(cmd)
+    # if log:
+    #     Log(cmd)
     return os.system(cmd)
 
 
@@ -265,11 +265,11 @@ def main():
         # os.environ['PATH'] = os.environ['PATH'] + ':/usr/local/bin'
         # print('building as cuda')
         # print('sys.argv', sys.argv)
-        if args.cuda_log:
-            Log('-x cuda')
+        # if args.cuda_log:
+        #     Log('-x cuda')
         leftover = [pipes.quote(s) for s in leftover]
-        if args.cuda_log:
-            Log('using cocl')
+        # if args.cuda_log:
+        #     Log('using cocl')
         return InvokeNvcc(leftover, log=args.cuda_log)
 
     # Strip our flags before passing through to the CPU compiler for files which

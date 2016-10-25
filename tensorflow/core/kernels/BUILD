@@ -452,6 +452,9 @@ tf_kernel_libraries(
         "unpack_op",
         "where_op",
     ],
+    #copts = [
+    #    '-Iexternal/protobuf/src',  # cant build constantop without this
+    #],
     deps = ARRAY_DEPS,
 )
 
@@ -1281,6 +1284,8 @@ MATH_DEPS = [
     "//tensorflow/core:math_grad",
     "//tensorflow/core:math_ops_op_lib",
     "//third_party/eigen3",
+    "//tensorflow/stream_executor:stream_executor",
+    "//tensorflow/core:stream_executor",
 ]
 
 tf_kernel_libraries(

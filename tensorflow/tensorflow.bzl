@@ -439,7 +439,9 @@ def _cuda_copts():
 def tf_gpu_kernel_library(srcs, copts=[], cuda_copts=[], deps=[], hdrs=[],
                           **kwargs):
   copts = copts + _cuda_copts() + if_cuda(cuda_copts)
-
+  if copts == None:
+    copts = []
+  copts = copts + ['-Iexternal/protobuf/src']
   if 'cwise' in ','.join(srcs):
     print('tf_gpu_kernel_library')
     print('tf_gpu_kernel_library copts', copts, 'cuda_copts', cuda_copts)
@@ -543,6 +545,11 @@ def tf_kernel_library(name, prefix=None, srcs=None, gpu_srcs=None, hdrs=None,
   if gpu_srcs:
     if 'cwise' in name:
       print('  tensorflow.bzl tf_kernel_library calling tf_gpu_kernel_library')
+    #kwargs_copy = {}
+    #for k, v in kwargs.items():
+    #  kwargs_copy[k] = v
+    #kwargs_copy['copts'] = kwargs_copy.get('copts', []).append('-Iexternal/protobuf/src')
+    #kwargs_copy['cuda_opts'] = kwargs_copy.get('cuda_opts', [])
     tf_gpu_kernel_library(
         name = name + "_gpu",
         srcs = gpu_srcs,
