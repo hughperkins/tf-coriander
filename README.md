@@ -18,8 +18,6 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - Variables can be placed on GPU
 - `matmul` (using [CLBlast](https://github.com/CNugteren/CLBlast))
 
-
-
 ### To do
 
 - gradients
