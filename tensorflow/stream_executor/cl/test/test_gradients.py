@@ -36,11 +36,9 @@ print('X', X)
 print('y', y)
 
 with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
-    # tf_W_cpu = tf.Variable(tf.zeros([4, 2], dtype=tf.float32), dtype=tf.float32, name='W')
     with tf.device('/gpu:0'):
         tf_x = tf.placeholder(tf.float32, [None, 4], 'x')
         tf_y = tf.placeholder(tf.float32, [None, 2], 'y')
-        # tf_W = tf.Variable(dtype=tf.float32, name='W')
         tf_W = tf.Variable(tf.zeros([4, 2], dtype=tf.float32), dtype=tf.float32, name='W')
         W_init = np.random.uniform(size=(4, 2)).astype(np.float32)
         sess.run(tf.assign(tf_W, W_init))
@@ -50,11 +48,12 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
         tf_out = tf.matmul(tf_x, tf_W, name="out") + tf_bias
         tf_loss = tf.square(tf_y - tf_out)
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
-        # train_op = optimizer.minimize(tf_loss)
+        train_op = optimizer.minimize(tf_loss)
         bias_init = np.random.uniform(size=(2,)).astype(np.float32)
         sess.run(tf.assign(tf_bias, bias_init))
 
-    # np.random.seed(123)
+    # merged = tf.merge_all_summaries()
+    # train_writer = tf.train.SummaryWriter('/tmp/hugh/sess1', sess.graph)
 
     print(sess.run(tf_W))
 

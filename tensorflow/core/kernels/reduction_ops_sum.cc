@@ -29,7 +29,7 @@ TF_CALL_complex64(REGISTER_CPU_KERNELS);
 TF_CALL_complex128(REGISTER_CPU_KERNELS);
 #undef REGISTER_CPU_KERNELS
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define REGISTER_GPU_KERNELS(type)          \
   REGISTER_KERNEL_BUILDER(                  \
@@ -38,11 +38,11 @@ TF_CALL_complex128(REGISTER_CPU_KERNELS);
           .TypeConstraint<type>("T")        \
           .HostMemory("reduction_indices"), \
       ReductionOp<GPUDevice, type, Eigen::internal::SumReducer<type>>);
-REGISTER_GPU_KERNELS(Eigen::half);
+// REGISTER_GPU_KERNELS(Eigen::half);
 REGISTER_GPU_KERNELS(float);
-REGISTER_GPU_KERNELS(double);
-REGISTER_GPU_KERNELS(complex64);
-REGISTER_GPU_KERNELS(complex128);
+// REGISTER_GPU_KERNELS(double);
+// REGISTER_GPU_KERNELS(complex64);
+// REGISTER_GPU_KERNELS(complex128);
 #undef REGISTER_GPU_KERNELS
 
 // A special GPU kernel for int32.
@@ -57,6 +57,6 @@ REGISTER_KERNEL_BUILDER(
         .HostMemory("reduction_indices"),
     ReductionOp<CPUDevice, int32, Eigen::internal::SumReducer<int32>>);
 
-#endif
+// #endif
 
 }  // namespace tensorflow

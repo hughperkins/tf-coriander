@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -100,16 +100,16 @@ struct ReduceFunctor<GPUDevice, Eigen::internal::MeanReducer<T> > {
   DEFINE_FOR_TYPE_AND_R(T, Eigen::internal::MaxReducer<T>);  \
   DEFINE_FOR_TYPE_AND_R(T, Eigen::internal::ProdReducer<T>)
 
-DEFINE_FOR_ALL_REDUCERS(Eigen::half);
+// DEFINE_FOR_ALL_REDUCERS(Eigen::half);
 DEFINE_FOR_ALL_REDUCERS(int32);
 DEFINE_FOR_ALL_REDUCERS(float);
-DEFINE_FOR_ALL_REDUCERS(double);
+// DEFINE_FOR_ALL_REDUCERS(double);
 #undef DEFINE_FOR_ALL_REDUCERS
 
-DEFINE_FOR_TYPE_AND_R(complex64, Eigen::internal::SumReducer<complex64>);
-DEFINE_FOR_TYPE_AND_R(complex128, Eigen::internal::SumReducer<complex128>);
-DEFINE_FOR_TYPE_AND_R(bool, Eigen::internal::AndReducer);
-DEFINE_FOR_TYPE_AND_R(bool, Eigen::internal::OrReducer);
+// DEFINE_FOR_TYPE_AND_R(complex64, Eigen::internal::SumReducer<complex64>);
+// DEFINE_FOR_TYPE_AND_R(complex128, Eigen::internal::SumReducer<complex128>);
+// DEFINE_FOR_TYPE_AND_R(bool, Eigen::internal::AndReducer);
+// DEFINE_FOR_TYPE_AND_R(bool, Eigen::internal::OrReducer);
 #undef DEFINE_FOR_TYPE_AND_R
 
 #undef DEFINE
@@ -117,4 +117,4 @@ DEFINE_FOR_TYPE_AND_R(bool, Eigen::internal::OrReducer);
 }  // end namespace functor
 }  // end namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

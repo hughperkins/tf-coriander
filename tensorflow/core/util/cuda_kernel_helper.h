@@ -16,7 +16,7 @@ limitations under the License.
 #ifndef TENSORFLOW_CORE_UTIL_CUDA_KERNEL_HELPER_H_
 #define TENSORFLOW_CORE_UTIL_CUDA_KERNEL_HELPER_H_
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #include <algorithm>
 
@@ -90,13 +90,13 @@ using cuda_builtin::__int_as_float;
 
 // For atomicAdd.
 USE_CUDA_ATOMIC(Add, int32);
-USE_CUDA_ATOMIC(Add, uint32);
-USE_CUDA_ATOMIC(Add, uint64);
+// USE_CUDA_ATOMIC(Add, uint32);
+// USE_CUDA_ATOMIC(Add, uint64);
 USE_CUDA_ATOMIC(Add, float);
 
 // For atomicMax.
 USE_CUDA_ATOMIC(Max, int32);
-USE_CUDA_ATOMIC(Max, uint32);
+// USE_CUDA_ATOMIC(Max, uint32);
 #if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 350
 USE_CUDA_ATOMIC(Max, uint64);
 #else
@@ -215,11 +215,11 @@ __global__ void SetZero(const int nthreads, T* bottom_diff) {
 #define WRAPPED_ATOMIC_SUB(T) \
   CUDA_ATOMIC_WRAPPER(Sub, T) { return CudaAtomicAdd(address, -val); }
 
-WRAPPED_ATOMIC_SUB(uint64);
+// WRAPPED_ATOMIC_SUB(uint64);
 WRAPPED_ATOMIC_SUB(int32);
-WRAPPED_ATOMIC_SUB(uint32);
+// WRAPPED_ATOMIC_SUB(uint32);
 WRAPPED_ATOMIC_SUB(float);
-WRAPPED_ATOMIC_SUB(double);
+// WRAPPED_ATOMIC_SUB(double);
 
 #undef WRAPPED_ATOMIC_SUB
 
@@ -338,6 +338,6 @@ EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE T tf_max(const T& x, const T& y) {
 
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 #endif  // TENSORFLOW_CORE_UTIL_CUDA_KERNEL_HELPER_H_
