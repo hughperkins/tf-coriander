@@ -17,12 +17,13 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - per-element unary operators: `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sign`, `sin`, `sqrt`, square`, `tan` (test: [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py))
 - Variables can be placed on GPU
 - `matmul` (using [CLBlast](https://github.com/CNugteren/CLBlast))
+- gradients
+- reductions
+- training works :-)))
 
 ### To do
 
-- gradients
 - convolutions
-- reductions
 
 ## Installation 
 
@@ -60,6 +61,15 @@ source ~/env3/bin/activate
 python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_blas.py
 ```
 
+- training example [test_gradients.py](tensorflow/stream_executor/cl/test/test_gradients.py)
+```
+cd
+source ~/env3/bin/activate
+python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_gradients.py
+```
+
+<img src="doc/image/trainingrunning.png?raw=true" width="600" />
+
 ## Design/architecture
 
 - tensorflow code stays 100% [NVIDIA® CUDA™](https://www.nvidia.com/object/cuda_home_new.html)
@@ -79,6 +89,8 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_blas.py
 
 ## News
 
+- Oct 28:
+  - training working :-)  [test_gradients.py](tensorflow/stream_executor/cl/test/test_gradients.py)
 - Oct 25:
   - fixed BLAS wrapper, working now, on GPU, test script: [test_blas.py](tensorflow/stream_executor/cl/test/test_blas.py)
   - int32 constant works on gpu now, [test_ints.py](tensorflow/stream_executor/cl/test/test_ints.py)
