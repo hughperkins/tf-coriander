@@ -68,7 +68,7 @@ source ~/env3/bin/activate
 python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_gradients.py
 ```
 
-<img src="doc/image/trainingrunning.png?raw=true" width="600" />
+<img src="doc/img/trainingrunning.png?raw=true" width="600" />
 
 ## Design/architecture
 
