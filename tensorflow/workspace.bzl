@@ -14,8 +14,8 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
   # These lines need to be changed when updating Eigen. They are parsed from
   # this file by the cmake and make builds to determine the eigen version and
   # hash.
-  eigen_version = "97c1ebe6ccc2"
-  eigen_sha256 = "58ab9fa44391c850d783fe0867f42a00b5300293b7d73bbbbc8756c2e649fea2"
+  eigen_version = "911c278cedc5"
+  eigen_sha256 = "aa6fd99626aa6c96d2e97a982b1823dbc5d2ebe85264a728921af23e432b665e"
 
   # we should probably fix this to work ok on Mac .... (or just use clew?)
   # this is used to provide CL/cl.h
@@ -66,9 +66,9 @@ cc_library(
 
   native.new_http_archive(
     name = "eigen_archive",
-    url = "http://bitbucket.org/eigen/eigen/get/" + eigen_version + ".tar.gz",
+    url = "http://bitbucket.org/hughperkins/eigen/get/" + eigen_version + ".tar.gz",
     sha256 = eigen_sha256,
-    strip_prefix = "eigen-eigen-" + eigen_version,
+    strip_prefix = "hughperkins-eigen-" + eigen_version,
     build_file = str(Label("//:eigen.BUILD")),
   )
 
