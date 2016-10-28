@@ -57,9 +57,9 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
 
     print(sess.run(tf_W))
 
-    # for epoch in range(4):
-    #     loss, out, _ = sess.run((tf_loss, tf_out, train_op), {tf_x: X, tf_y: y})
-    #     if epoch % 1 == 0:
-    #         print('epoch', epoch)
-    #         print('loss', loss)
-    #         print(np.argmax(out, 1))
+    for epoch in range(4):
+        loss, out, _ = sess.run((tf_loss, tf_out, train_op), {tf_x: X, tf_y: y})
+        if epoch % 1 == 0:
+            print('epoch', epoch)
+            print('loss', loss)
+            print(np.argmax(out, 1))
