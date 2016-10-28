@@ -24,7 +24,7 @@ namespace tensorflow {
 TF_CALL_REAL_NUMBER_TYPES(REGISTER_CPU_KERNELS);
 #undef REGISTER_CPU_KERNELS
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define REGISTER_GPU_KERNELS(type)          \
   REGISTER_KERNEL_BUILDER(                  \
@@ -34,7 +34,7 @@ TF_CALL_REAL_NUMBER_TYPES(REGISTER_CPU_KERNELS);
           .HostMemory("reduction_indices"), \
       ReductionOp<GPUDevice, type, Eigen::internal::MinReducer<type>>);
 REGISTER_GPU_KERNELS(float);
-REGISTER_GPU_KERNELS(double);
+// REGISTER_GPU_KERNELS(double);
 
 // A special GPU kernel for int32.
 // TODO(b/25387198): Also enable int32 in device memory. This kernel
@@ -50,6 +50,6 @@ REGISTER_KERNEL_BUILDER(
 
 #undef REGISTER_GPU_KERNELS
 
-#endif
+// #endif
 
 }  // namespace tensorflow
