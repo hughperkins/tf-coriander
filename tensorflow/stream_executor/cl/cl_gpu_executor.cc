@@ -759,7 +759,7 @@ bool CLExecutor::BlockHostUntilDone(Stream *stream) {
 }
 
 blas::BlasSupport *CLExecutor::CreateBlas() {
-  std::cout << "cl_gpu_executor::CreateBlas()" << std::endl;
+  // std::cout << "cl_gpu_executor::CreateBlas()" << std::endl;
   PluginRegistry *registry = PluginRegistry::Instance();
   port::StatusOr<PluginRegistry::BlasFactory> status =
       registry->GetFactory<PluginRegistry::BlasFactory>(kClPlatformId,
@@ -769,7 +769,7 @@ blas::BlasSupport *CLExecutor::CreateBlas() {
                << status.status().error_message();
     return nullptr;
   }
-  std::cout << "cl_gpu_executor::CreateBlas() => created blas ok :-)" << std::endl;
+  // std::cout << "cl_gpu_executor::CreateBlas() => created blas ok :-)" << std::endl;
 
   return status.ValueOrDie()(this);
 }
