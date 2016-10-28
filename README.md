@@ -17,12 +17,13 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - per-element unary operators: `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sign`, `sin`, `sqrt`, square`, `tan` (test: [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py))
 - Variables can be placed on GPU
 - `matmul` (using [CLBlast](https://github.com/CNugteren/CLBlast))
-- gradients
-- reductions
+- some gradients
+- `reduction_sum` (not tested)
 - training works :-)))
 
 ### To do
 
+- reduction operations
 - convolutions
 
 ## Installation 
