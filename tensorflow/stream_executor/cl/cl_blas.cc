@@ -380,18 +380,18 @@ bool CLBlas::Init() {
 
 CLBlas::CLBlas(cl::CLExecutor *parent)
     : parent_(CHECK_NOTNULL(parent)), blas_(nullptr) {
-      std::cout << "CLBlas()" << std::endl;
+      // std::cout << "CLBlast()" << std::endl;
     }
 
 CLBlas::~CLBlas() {
-      std::cout << "~CLBlas()" << std::endl;
+      // std::cout << "~CLBlast()" << std::endl;
   if (blas_ != nullptr) {
     cublasDestroy_v2(blas_);
   }
 }
 
 bool CLBlas::SetStream(Stream *stream) {
-      std::cout << "CLBlas::SetStream()" << std::endl;
+      // std::cout << "CLBlas::SetStream()" << std::endl;
   CHECK(stream != nullptr);
   CHECK(AsCLStreamValue(stream) != nullptr);
   CHECK(blas_ != nullptr);
@@ -410,7 +410,7 @@ namespace {
 // Helper functions transforming blas arguments into CLBlast arguments.
 
 cublasOperation_t CLBlasTranspose(blas::Transpose trans) {
-      std::cout << "CLBlas::CLBlasTranspoe()" << std::endl;
+      // std::cout << "CLBlas::CLBlasTranspoe()" << std::endl;
   switch (trans) {
     case blas::Transpose::kNoTranspose:
       return CUBLAS_OP_N;
@@ -424,7 +424,7 @@ cublasOperation_t CLBlasTranspose(blas::Transpose trans) {
 }
 
 cublasFillMode_t CLBlasUpperLower(blas::UpperLower uplo) {
-      std::cout << "CLBlas::CLBlasUpperLower()" << std::endl;
+      // std::cout << "CLBlas::CLBlasUpperLower()" << std::endl;
   switch (uplo) {
     case blas::UpperLower::kUpper:
       return CUBLAS_FILL_MODE_UPPER;
@@ -436,7 +436,7 @@ cublasFillMode_t CLBlasUpperLower(blas::UpperLower uplo) {
 }
 
 cublasDiagType_t CLBlasDiagonal(blas::Diagonal diag) {
-      std::cout << "CLBlas::CLBlasDiagonal()" << std::endl;
+      // std::cout << "CLBlas::CLBlasDiagonal()" << std::endl;
   switch (diag) {
     case blas::Diagonal::kUnit:
       return CUBLAS_DIAG_UNIT;
@@ -448,7 +448,7 @@ cublasDiagType_t CLBlasDiagonal(blas::Diagonal diag) {
 }
 
 cublasSideMode_t CLBlasSide(blas::Side side) {
-      std::cout << "CLBlas::CLBlasSide()" << std::endl;
+      // std::cout << "CLBlas::CLBlasSide()" << std::endl;
   switch (side) {
     case blas::Side::kLeft:
       return CUBLAS_SIDE_LEFT;
@@ -464,7 +464,7 @@ cublasSideMode_t CLBlasSide(blas::Side side) {
 template <typename FuncT, typename... Args>
 bool CLBlas::DoBlasInternal(FuncT cublas_func, Stream *stream,
                               bool pointer_mode_host, Args... args) {
-      std::cout << "CLBlas::DoBlasInternal()" << std::endl;
+      // std::cout << "CLBlas::DoBlasInternal()" << std::endl;
   mutex_lock lock{mu_};
 
   CHECK(blas_ != nullptr);
@@ -495,7 +495,7 @@ bool CLBlas::DoBlasGemm(Stream *stream, blas::Transpose transa,
                           float alpha, const DeviceMemory<float> &a, int lda,
                           const DeviceMemory<float> &b, int ldb, float beta,
                           DeviceMemory<float> *c, int ldc) {
-      std::cout << "CLBlas::DoBlasGemm()" << std::endl;
+      // std::cout << "CLBlas::DoBlasGemm()" << std::endl;
   VLOG(1) << port::Printf(
       "doing CLBlast SGEMM: at=%d bt=%d m=%llu n=%llu "
       "k=%llu alpha=%f a=%p lda=%d b=%p ldb=%d beta=%f "
@@ -2435,7 +2435,7 @@ bool CLBlas::DoBlasTrsm(Stream *stream, blas::Side side,
 namespace gpu = ::perftools::gputools;
 
 void initialize_clblas() {
-      std::cout << "CLBlas::initialize_clblas()" << std::endl;
+      // std::cout << "CLBlas::initialize_clblas()" << std::endl;
   gpu::port::Status status =
       gpu::PluginRegistry::Instance()
           ->RegisterFactory<gpu::PluginRegistry::BlasFactory>(
