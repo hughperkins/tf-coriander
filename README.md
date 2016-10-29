@@ -18,12 +18,11 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - Variables can be placed on GPU
 - `matmul` (using [CLBlast](https://github.com/CNugteren/CLBlast))
 - some gradients
-- `reduce_sum`, `reduce_prod`, `reduce_max`, `reduce_mean` at least partly working, [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py)
+- `reduce_sum`, `reduce_prod`, `reduce_max`, `reduce_mean`, `reduce_min` working, in beta [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py)
 - training works :-)))
 
 ### To do
 
-- `reduce_min`
 - convolutions
 
 ## Installation 
@@ -90,6 +89,8 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_gradients.py
 
 ## News
 
+- Oct 29:
+  - `reduce_min` working now, and [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py) tests three types of reduction axes: inner, outer, all
 - Oct 28:
   - training working :-)  [test_gradients.py](tensorflow/stream_executor/cl/test/test_gradients.py)
   - `reduce_sum`, `reduce_prod`, `reduce_max`, `reduce_mean` added, in beta [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py)
