@@ -48,21 +48,25 @@ cc_library(
 """,
   )
 
-  # native.new_git_repository(
-  native.new_local_repository(
-      name = "cocl_links",
-      path = "third_party/cocl_links",
-      build_file_content = """
-cc_library(
-    name = 'libcocl',
-    srcs = [
-      'lib/libcocl.a',
-    ],
-    visibility = ["//visibility:public"],
-     linkstatic = 1,
-)
-""",
-  )
+#  # native.new_git_repository(
+#  native.new_local_repository(
+#      name = "cocl_links",
+#      path = "third_party/cocl_links",
+#      build_file_content = """
+#cc_library(
+#    name = 'libcocl',
+#    srcs = [
+#      'lib/libcocl.a',
+#    ],
+#    hdrs = glob([
+#      'include/cocl/*.h',
+#      'include/cocl/cuda/*.h',
+#    ]),
+#    visibility = ["//visibility:public"],
+#     linkstatic = 1,
+#)
+#""",
+#  )
 
   native.new_http_archive(
     name = "eigen_archive",

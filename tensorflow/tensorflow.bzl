@@ -441,6 +441,7 @@ def tf_gpu_kernel_library(srcs, copts=[], cuda_copts=[], deps=[], hdrs=[],
   copts = copts + _cuda_copts() + if_cuda(cuda_copts)
   if copts == None:
     copts = []
+  # , '-Ithird_party/cocl_links/include/cocl'
   copts = copts + ['-Iexternal/protobuf/src']
   if 'cwise' in ','.join(srcs):
     print('tf_gpu_kernel_library')
@@ -558,12 +559,14 @@ def tf_kernel_library(name, prefix=None, srcs=None, gpu_srcs=None, hdrs=None,
     # cuda_deps.extend([":" + name + "_gpu"])
     print('tf_kernel_library deps', deps)
     deps += [":" + name + "_gpu"]
+  # deps += ['third_party/cocl_links/include/cocl/cuda_runtime.h', 'third_party/cocl_links/include/cocl/cocl.h']
+  # deps += ['@cocl_links//:libcocl']
   tf_cuda_library(
       name = name,
       srcs = srcs,
       hdrs = hdrs,
       # copts = tf_copts() + ['-Ithird_party/eigen3'],
-      copts = tf_copts() + ['-Iexternal/eigen_archive'],
+      copts = tf_copts() + ['-Iexternal/eigen_archive', '-Ithird_party/cocl_links/include/cocl'],
       cuda_deps = cuda_deps,
       linkstatic = 1,   # Needed since alwayslink is broken in bazel b/27630669
       alwayslink = alwayslink,

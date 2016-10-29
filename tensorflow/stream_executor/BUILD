@@ -29,11 +29,11 @@ cc_library(
         "platform/**/*.h",
     ]),
     data = [
-        "@usr_local_lib//:libcocl",
+        # "@usr_local_lib//:libcocl",
         "@usr_lib_x8664linux//:libopencl",
     ],
     copts = [
-        '-Iexternal/cocl/include/cocl'
+        '-Ithird_party/cocl_links/include/cocl'
     ],
     linkopts = [
         "-ldl",
@@ -42,8 +42,11 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@cocl//:cocl-headers",
-        "@cocl_links//:libcocl",
+        #"@cocl//:cocl-headers",
+        #"@cocl_links//:libcocl",
+        "//third_party/cocl_links:headers",
+        "//third_party/cocl_links:libcocl",
+
         # "@local_usr_lib//:libopencl",
         # "@cocl//:cocl-lib",
         # "@clew//:clew-lib",
@@ -63,7 +66,8 @@ cc_binary(
     ],
     deps = [
         "@usr_lib_x8664linux//:libopencl",
-        "@usr_local_lib//:libcocl",
+        # "@usr_local_lib//:libcocl",
+        "//third_party/cocl_links:libcocl",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",
@@ -88,7 +92,8 @@ cc_binary(
     ],
     deps = [
         "@usr_lib_x8664linux//:libopencl",
-        "@usr_local_lib//:libcocl",
+        # "@usr_local_lib//:libcocl",
+        "//third_party/cocl_links:libcocl",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",
@@ -120,7 +125,8 @@ cc_binary(
     ],
     deps = [
         "@usr_lib_x8664linux//:libopencl",
-        "@usr_local_lib//:libcocl",
+        # "@usr_local_lib//:libcocl",
+        "//third_party/cocl_links:libcocl",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",
@@ -154,7 +160,8 @@ cc_binary(
         "//tensorflow/core:tensorflow",
 
         "@usr_lib_x8664linux//:libopencl",
-        "@usr_local_lib//:libcocl",
+        # "@usr_local_lib//:libcocl",
+        "//third_party/cocl_links:libcocl",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",

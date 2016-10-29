@@ -106,6 +106,7 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_gradients.py
 
 - Oct 29:
   - `reduce_min` working now, and [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py) tests three types of reduction axes: inner, outer, all
+  - https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py runs, but really slllooowwwwlllllyyy :-P
 - Oct 28:
   - training working :-)  [test_gradients.py](tensorflow/stream_executor/cl/test/test_gradients.py)
   - `reduce_sum`, `reduce_prod`, `reduce_max`, `reduce_mean` added, in beta [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py)

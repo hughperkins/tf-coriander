@@ -165,7 +165,7 @@ class DynamicStitchOp : public OpKernel {
 TF_CALL_ALL_TYPES(REGISTER_DYNAMIC_STITCH);
 #undef REGISTER_DYNAMIC_STITCH
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define REGISTER_DYNAMIC_STITCH_GPU(type)                \
   REGISTER_KERNEL_BUILDER(Name("DynamicStitch")          \
                               .Device(DEVICE_GPU)        \
@@ -178,6 +178,6 @@ TF_CALL_ALL_TYPES(REGISTER_DYNAMIC_STITCH);
 TF_CALL_ALL_TYPES(REGISTER_DYNAMIC_STITCH_GPU);
 #undef REGISTER_DYNAMIC_STITCH_GPU
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow

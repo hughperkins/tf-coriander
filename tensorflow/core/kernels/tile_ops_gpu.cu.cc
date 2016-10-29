@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -42,13 +42,13 @@ typedef Eigen::GpuDevice GPUDevice;
   template struct ReduceAndReshape<GPUDevice, T, NDIM, 1>;
 
 DEFINE_TYPE(float)
-DEFINE_TYPE(double)
-DEFINE_TYPE(Eigen::half)
-DEFINE_TYPE(int64)
+// DEFINE_TYPE(double)
+// DEFINE_TYPE(Eigen::half)
+// DEFINE_TYPE(int64)
 DEFINE_TYPE(int32)
-DEFINE_TYPE(int16)
-DEFINE_TYPE(complex64)
-DEFINE_TYPE(complex128)
+// DEFINE_TYPE(int16)
+// DEFINE_TYPE(complex64)
+// DEFINE_TYPE(complex128)
 // NOTE(keveman): Eigen's int8 and string versions don't compile yet with nvcc.
 
 #undef DEFINE_DIM
@@ -57,4 +57,4 @@ DEFINE_TYPE(complex128)
 }  // end namespace functor
 }  // end namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
