@@ -31,7 +31,11 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ### To do
 
-- device properties should return actual device properties, not just say "theres 1MB of available memory" :-P
+- device properties should return actual device properties, ie as a priority:
+  - available memory, not just say "theres 1MB of available memory" :-P
+  - free memory
+  - num devices (not just say "there's one" :-P)
+  - device name (not just "an opencl device" :-P)
 - `select`
 - convolutions
 - rng
