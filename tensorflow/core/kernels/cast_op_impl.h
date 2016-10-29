@@ -97,48 +97,48 @@ GetCpuCastFromComplex128(DataType dst_dtype);
 std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
 GetCpuCastFromBfloat(DataType dst_dtype);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 // Same, for GPU.
 std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
 GetGpuCastFromBool(DataType dst_dtype);
 
-std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
-GetGpuCastFromUint8(DataType dst_dtype);
+// std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
+// GetGpuCastFromUint8(DataType dst_dtype);
 
-std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
-GetGpuCastFromInt8(DataType dst_dtype);
+// std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
+// GetGpuCastFromInt8(DataType dst_dtype);
 
-std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
-GetGpuCastFromUint16(DataType dst_dtype);
+// std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
+// GetGpuCastFromUint16(DataType dst_dtype);
 
-std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
-GetGpuCastFromInt16(DataType dst_dtype);
+// std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
+// GetGpuCastFromInt16(DataType dst_dtype);
 
 std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
 GetGpuCastFromInt32(DataType dst_dtype);
 
-std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
-GetGpuCastFromInt64(DataType dst_dtype);
+// std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
+// GetGpuCastFromInt64(DataType dst_dtype);
 
-std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
-GetGpuCastFromHalf(DataType dst_dtype);
+// std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
+// GetGpuCastFromHalf(DataType dst_dtype);
 
 std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
 GetGpuCastFromFloat(DataType dst_dtype);
 
-std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
-GetGpuCastFromDouble(DataType dst_dtype);
+// std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
+// GetGpuCastFromDouble(DataType dst_dtype);
 
-std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
-GetGpuCastFromComplex64(DataType dst_dtype);
+// std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
+// GetGpuCastFromComplex64(DataType dst_dtype);
 
-std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
-GetGpuCastFromComplex128(DataType dst_dtype);
+// std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
+// GetGpuCastFromComplex128(DataType dst_dtype);
 
-std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
-GetGpuCastFromBfloat(DataType dst_dtype);
+// std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
+// GetGpuCastFromBfloat(DataType dst_dtype);
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow
 

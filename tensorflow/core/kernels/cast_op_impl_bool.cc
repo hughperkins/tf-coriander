@@ -26,12 +26,29 @@ GetCpuCastFromBool(DataType dst_dtype) {
   return nullptr;
 }
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
+
+#undef CURRY_TYPES3
+#define CURRY_TYPES3(FN, arg0, arg1)   \
+  FN(arg0, arg1, bool);                \
+  FN(arg0, arg1, int32);               \
+  FN(arg0, arg1, float);               
+
+//  FN(arg0, arg1, uint8);               \
+  FN(arg0, arg1, int8);                \
+  FN(arg0, arg1, uint16);              \
+  FN(arg0, arg1, int16);               \
+  FN(arg0, arg1, int64);               \
+  FN(arg0, arg1, Eigen::half);         \
+  FN(arg0, arg1, double);              \
+  FN(arg0, arg1, std::complex<float>); \
+  FN(arg0, arg1, std::complex<double>)
+
 std::function<void(OpKernelContext*, const Tensor&, Tensor*)>
 GetGpuCastFromBool(DataType dst_dtype) {
   CURRY_TYPES3(CAST_CASE, GPUDevice, bool);
   return nullptr;
 }
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow
