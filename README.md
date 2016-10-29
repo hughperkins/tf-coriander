@@ -23,6 +23,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ### To do
 
+- device properties should return actual device properties, not just say "theres 1MB of available memory" :-P
 - convolutions
 
 ## Installation 
