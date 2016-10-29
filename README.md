@@ -20,6 +20,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - some gradients
 - `reduce_sum`, `reduce_prod`, `reduce_max`, `reduce_mean`, `reduce_min` working, in beta [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py)
 - training works :-)))
+- device name and memory reported correctly now
 
 ### Scope
 
@@ -31,12 +32,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ### To do
 
-- device properties should return actual device properties, ie as a priority:
-  - available memory, not just say "theres 1MB of available memory" :-P
-  - free memory
-  - num devices (not just say "there's one" :-P)
-  - device name (not just "an opencl device" :-P)
-- `select`
+- number of devices should be reported correctly
 - convolutions
 - rng
 
@@ -84,6 +80,10 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_gradients.py
 ```
 
 <img src="doc/img/trainingrunning.png?raw=true" width="600" />
+
+Piccie of running Aymeric Damien's [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py):
+
+<img src="doc/img/aymericdamien_linearregression.png?raw=true" width="600" />
 
 ## Design/architecture
 
