@@ -109,7 +109,7 @@ Piccie of running Aymeric Damien's [linear_regression.py](https://github.com/hug
   - Wheel [v0.10.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.10.0/tensorflow-0.11.0rc0-py3-none-any.whl) released:
      - Aymeric Damien's [linear_regression](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) runs fairly ok now (a bit slow, but not monstrously slow, maybe 3-4 times slower than on CUDA)
      - kernels cached between kernel launches (this gives a hugggeee speed boost, compared to earlier)
-     - - bunch of behind-the-scenes ops added, like Cast
+     - bunch of behind-the-scenes ops added, like Cast
      - memory and device name reported correctly now
      - `reduce_min` working now
      - `softmax` added
