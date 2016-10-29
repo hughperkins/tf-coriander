@@ -21,6 +21,14 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - `reduce_sum`, `reduce_prod`, `reduce_max`, `reduce_mean`, `reduce_min` working, in beta [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py)
 - training works :-)))
 
+### Scope
+
+- types:
+  - float32 are primarily supported type
+  - int32 is also supported, as a second priority
+  - int8 (or uint8, havent decided yet), will probably be supported too
+  - out of scope: complex, double, half
+
 ### To do
 
 - device properties should return actual device properties, not just say "theres 1MB of available memory" :-P
