@@ -140,7 +140,7 @@ REGISTER_KERNEL_BUILDER(Name("ShapeN")
                             .TypeConstraint<int64>("out_type"),
                         ShapeNOp<int64>);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNEL(type)                                \
   REGISTER_KERNEL_BUILDER(Name("ShapeN")                         \
                               .Device(DEVICE_GPU)                \
@@ -148,12 +148,12 @@ REGISTER_KERNEL_BUILDER(Name("ShapeN")
                               .TypeConstraint<int32>("out_type") \
                               .TypeConstraint<type>("T"),        \
                           ShapeNOp<int32>);                      \
-  REGISTER_KERNEL_BUILDER(Name("ShapeN")                         \
-                              .Device(DEVICE_GPU)                \
-                              .HostMemory("output")              \
-                              .TypeConstraint<int64>("out_type") \
-                              .TypeConstraint<type>("T"),        \
-                          ShapeNOp<int64>)
+  // REGISTER_KERNEL_BUILDER(Name("ShapeN")                         \
+  //                             .Device(DEVICE_GPU)                \
+  //                             .HostMemory("output")              \
+  //                             .TypeConstraint<int64>("out_type") \
+  //                             .TypeConstraint<type>("T"),        \
+  //                         ShapeNOp<int64>)
 
 TF_CALL_NUMBER_TYPES_NO_INT32(REGISTER_GPU_KERNEL);
 #undef REGISTER_GPU_KERNEL
@@ -168,14 +168,14 @@ REGISTER_KERNEL_BUILDER(Name("ShapeN")
                             .TypeConstraint<int32>("T")
                             .TypeConstraint<int32>("out_type"),
                         ShapeNOp<int32>);
-REGISTER_KERNEL_BUILDER(Name("ShapeN")
-                            .Device(DEVICE_GPU)
-                            .HostMemory("input")
-                            .HostMemory("output")
-                            .TypeConstraint<int32>("T")
-                            .TypeConstraint<int64>("out_type"),
-                        ShapeNOp<int64>);
-#endif
+// REGISTER_KERNEL_BUILDER(Name("ShapeN")
+//                             .Device(DEVICE_GPU)
+//                             .HostMemory("input")
+//                             .HostMemory("output")
+//                             .TypeConstraint<int32>("T")
+//                             .TypeConstraint<int64>("out_type"),
+//                         ShapeNOp<int64>);
+// #endif
 
 class RankOp : public OpKernel {
  public:
@@ -194,7 +194,7 @@ class RankOp : public OpKernel {
 REGISTER_KERNEL_BUILDER(Name("Rank").Device(DEVICE_CPU).HostMemory("output"),
                         RankOp);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNEL(type)                        \
   REGISTER_KERNEL_BUILDER(Name("Rank")                   \
                               .Device(DEVICE_GPU)        \
@@ -214,13 +214,13 @@ REGISTER_KERNEL_BUILDER(Name("Rank")
                             .HostMemory("output"),
                         RankOp);
 
-REGISTER_KERNEL_BUILDER(Name("Rank")
-                            .Device(DEVICE_GPU)
-                            .TypeConstraint<bool>("T")
-                            .HostMemory("input")
-                            .HostMemory("output"),
-                        RankOp);
-#endif
+// REGISTER_KERNEL_BUILDER(Name("Rank")
+//                             .Device(DEVICE_GPU)
+//                             .TypeConstraint<bool>("T")
+//                             .HostMemory("input")
+//                             .HostMemory("output"),
+//                         RankOp);
+// #endif
 
 template <typename OutType>
 class SizeOp : public OpKernel {
@@ -254,7 +254,7 @@ REGISTER_KERNEL_BUILDER(Name("Size")
                             .TypeConstraint<int64>("out_type"),
                         SizeOp<int64>);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNEL(type)                                \
   REGISTER_KERNEL_BUILDER(Name("Size")                           \
                               .Device(DEVICE_GPU)                \
@@ -262,12 +262,12 @@ REGISTER_KERNEL_BUILDER(Name("Size")
                               .TypeConstraint<int32>("out_type") \
                               .HostMemory("output"),             \
                           SizeOp<int32>);                        \
-  REGISTER_KERNEL_BUILDER(Name("Size")                           \
-                              .Device(DEVICE_GPU)                \
-                              .TypeConstraint<type>("T")         \
-                              .TypeConstraint<int64>("out_type") \
-                              .HostMemory("output"),             \
-                          SizeOp<int64>);
+  // REGISTER_KERNEL_BUILDER(Name("Size")                           \
+  //                             .Device(DEVICE_GPU)                \
+  //                             .TypeConstraint<type>("T")         \
+  //                             .TypeConstraint<int64>("out_type") \
+  //                             .HostMemory("output"),             \
+  //                         SizeOp<int64>);
 TF_CALL_NUMBER_TYPES_NO_INT32(REGISTER_GPU_KERNEL);
 #undef REGISTER_GPU_KERNEL
 
@@ -281,14 +281,14 @@ REGISTER_KERNEL_BUILDER(Name("Size")
                             .HostMemory("input")
                             .HostMemory("output"),
                         SizeOp<int32>);
-REGISTER_KERNEL_BUILDER(Name("Size")
-                            .Device(DEVICE_GPU)
-                            .TypeConstraint<int32>("T")
-                            .TypeConstraint<int64>("out_type")
-                            .HostMemory("input")
-                            .HostMemory("output"),
-                        SizeOp<int64>);
-#endif
+// REGISTER_KERNEL_BUILDER(Name("Size")
+//                             .Device(DEVICE_GPU)
+//                             .TypeConstraint<int32>("T")
+//                             .TypeConstraint<int64>("out_type")
+//                             .HostMemory("input")
+//                             .HostMemory("output"),
+//                         SizeOp<int64>);
+// #endif
 
 class ExpandDimsOp : public OpKernel {
  public:
@@ -338,7 +338,7 @@ class ExpandDimsOp : public OpKernel {
 REGISTER_KERNEL_BUILDER(Name("ExpandDims").Device(DEVICE_CPU).HostMemory("dim"),
                         ExpandDimsOp);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNEL(type)                        \
   REGISTER_KERNEL_BUILDER(Name("ExpandDims")             \
                               .Device(DEVICE_GPU)        \
@@ -355,7 +355,7 @@ REGISTER_KERNEL_BUILDER(Name("ExpandDims")
                             .HostMemory("dim")
                             .HostMemory("output"),
                         ExpandDimsOp);
-#endif
+// #endif
 
 class SqueezeOp : public OpKernel {
  public:
@@ -431,7 +431,7 @@ class SqueezeOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("Squeeze").Device(DEVICE_CPU), SqueezeOp);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define REGISTER_GPU_KERNEL(type)                                   \
   REGISTER_KERNEL_BUILDER(                                          \
       Name("Squeeze").Device(DEVICE_GPU).TypeConstraint<type>("T"), \
@@ -448,6 +448,6 @@ REGISTER_KERNEL_BUILDER(Name("Squeeze")
                             .HostMemory("input")
                             .HostMemory("output"),
                         SqueezeOp);
-#endif
+// #endif
 
 }  // namespace tensorflow

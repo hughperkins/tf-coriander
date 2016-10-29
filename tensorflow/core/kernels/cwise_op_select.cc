@@ -15,9 +15,9 @@ limitations under the License.
 
 #define EIGEN_USE_THREADS
 
-#if GOOGLE_CUDA
-#define EIGEN_USE_GPU
-#endif  // GOOGLE_CUDA
+// #if GOOGLE_CUDA
+// #define EIGEN_USE_GPU
+// #endif  // GOOGLE_CUDA
 
 #include "tensorflow/core/framework/register_types.h"
 #include "tensorflow/core/kernels/bounds_check.h"
@@ -119,7 +119,7 @@ class SelectOp : public OpKernel {
 
 TF_CALL_ALL_TYPES(REGISTER_SELECT);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 // Registration of the GPU implementations.
 #define REGISTER_SELECT_GPU(type)                                  \
@@ -127,17 +127,17 @@ TF_CALL_ALL_TYPES(REGISTER_SELECT);
       Name("Select").Device(DEVICE_GPU).TypeConstraint<type>("T"), \
       SelectOp<GPUDevice, type>);
 
-REGISTER_SELECT_GPU(Eigen::half);
+// REGISTER_SELECT_GPU(Eigen::half);
 REGISTER_SELECT_GPU(float);
-REGISTER_SELECT_GPU(double);
+// REGISTER_SELECT_GPU(double);
 REGISTER_SELECT_GPU(int32);
-REGISTER_SELECT_GPU(int64);
-REGISTER_SELECT_GPU(complex64);
-REGISTER_SELECT_GPU(complex128);
+// REGISTER_SELECT_GPU(int64);
+// REGISTER_SELECT_GPU(complex64);
+// REGISTER_SELECT_GPU(complex128);
 
 #undef REGISTER_SELECT_GPU
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 namespace functor {
 

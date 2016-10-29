@@ -205,18 +205,18 @@ class ZerosLikeOp : public OpKernel {
 TF_CALL_ALL_TYPES(REGISTER_CPU);
 #undef REGISTER_CPU
 
-#if GOOGLE_CUDA
-REGISTER_KERNEL(Eigen::half, GPU);
+// #if GOOGLE_CUDA
+// REGISTER_KERNEL(Eigen::half, GPU);
 REGISTER_KERNEL(float, GPU);
-REGISTER_KERNEL(double, GPU);
-REGISTER_KERNEL(complex64, GPU);
-REGISTER_KERNEL(complex128, GPU);
+// REGISTER_KERNEL(double, GPU);
+// REGISTER_KERNEL(complex64, GPU);
+// REGISTER_KERNEL(complex128, GPU);
 REGISTER_KERNEL_BUILDER(Name("ZerosLike")
                             .Device(DEVICE_GPU)
                             .TypeConstraint<int32>("T")
                             .HostMemory("y"),
                         ZerosLikeOp<CPUDevice, int32>);
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 #undef REGISTER_KERNEL
 

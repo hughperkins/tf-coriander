@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #include "tensorflow/core/kernels/cwise_ops_gpu_common.cu.h"
 
@@ -70,17 +70,17 @@ struct BatchSelectFunctor<GPUDevice, T> {
   template struct SelectFunctor<GPUDevice, T>; \
   template struct BatchSelectFunctor<GPUDevice, T>;
 
-SELECT_FUNCTOR(Eigen::half);
+// SELECT_FUNCTOR(Eigen::half);
 SELECT_FUNCTOR(float);
-SELECT_FUNCTOR(double);
+// SELECT_FUNCTOR(double);
 SELECT_FUNCTOR(int32);
-SELECT_FUNCTOR(int64);
-SELECT_FUNCTOR(complex64);
-SELECT_FUNCTOR(complex128);
+// SELECT_FUNCTOR(int64);
+// SELECT_FUNCTOR(complex64);
+// SELECT_FUNCTOR(complex128);
 
 #undef SELECT_FUNCTOR
 
 }  // namespace functor
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
