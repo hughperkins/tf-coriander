@@ -157,11 +157,14 @@ class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
   }
 
   void* allocate(size_t num_bytes) const override {
+    std::cout << "gpu_device.cc allocate(bytes=" << num_bytes << std::endl;
     void* ret = allocator_->AllocateRaw(32 /* alignment */, num_bytes);
     if (ret == nullptr) {
+      std::cout << "gpu_device.cc allocate() failed" << std::endl;
       LOG(FATAL) << "EigenAllocator for GPU ran out of memory when allocating "
                  << num_bytes << ". See error logs for more detailed info.";
     }
+    std::cout << "gpu_device.cc allocate() ok" << std::endl;
     if (LogMemory::IsEnabled()) {
       LogMemory::RecordRawAllocation(operation_, step_id_, num_bytes, ret,
                                      allocator_);
@@ -169,13 +172,15 @@ class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
     return ret;
   }
   void deallocate(void* buffer) const override {
+    std::cout << "gpu_device.cc deallocate()" << std::endl;
     if (LogMemory::IsEnabled()) {
       LogMemory::RecordRawDeallocation(operation_, step_id_, buffer, allocator_,
                                        true);
     }
     AsyncFreeData* afData =
         new AsyncFreeData(allocator_, buffer, operation_, step_id_);
-    cudaError_t err; // = cudaStreamAddCallback(*stream_, asyncFree, afData, 0);
+    // std::cout << "gpu_device.cc deallocate() failed call to AsyncFreeData " << (void *)buffer << std::endl;
+    cudaError_t err = cudaStreamAddCallback(*stream_, asyncFree, afData, 0);
     CHECK_EQ(err, cudaSuccess);
   }
 
@@ -204,6 +209,7 @@ class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
 
   static void CUDART_CB asyncFree(cudaStream_t stream, cudaError_t status,
                                   void* userData) {
+    std::cout << "gpu_device.cc asyncFree stream=" << (void *)stream << std::endl;
     AsyncFreeData* data = static_cast<AsyncFreeData*>(userData);
     if (LogMemory::IsEnabled()) {
       LogMemory::RecordRawDeallocation(data->operation_, data->step_id_,

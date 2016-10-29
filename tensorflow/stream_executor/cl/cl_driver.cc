@@ -998,6 +998,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
 
 /* static */ void *CLDriver::DeviceAllocate(ClContext *context,
                                               uint64 bytes) {
+  std::cout << "cl_driver DeviceAllocate " << bytes << std::endl;
   ScopedActivateContext activated{context};
   CUdeviceptr result = 0;
   CUresult res = CUDA_ERROR_UNKNOWN;
@@ -1016,6 +1017,7 @@ CLDriver::ContextGetSharedMemConfig(ClContext* context) {
 
 /* static */ void CLDriver::DeviceDeallocate(ClContext* context,
                                                void *location) {
+  std::cout << "cl_driver DeviceDeallocate " << location << std::endl;
   ScopedActivateContext activation{context};
   CUdeviceptr pointer = port::bit_cast<CUdeviceptr>(location);
   CUresult res = CUDA_ERROR_UNKNOWN;
