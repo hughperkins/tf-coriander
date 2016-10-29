@@ -47,7 +47,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
   - the tensorflow non-gpu installation pre-requisites,
    - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
    - python 3
-- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.9.0/tensorflow-0.11.0rc0-py3-none-any.whl , and
+- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.10.0/tensorflow-0.11.0rc0-py3-none-any.whl , and
 - Install using pip:
 ```
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
@@ -106,7 +106,13 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_gradients.py
 
 - Oct 29:
   - `reduce_min` working now, and [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py) tests three types of reduction axes: inner, outer, all
-  - https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py runs, but really slllooowwwwlllllyyy :-P
+  - Wheel [v0.10.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.10.0/tensorflow-0.11.0rc0-py3-none-any.whl) released:
+     - Aymeric Damien's [linear_regression](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) runs fairly ok now (a bit slow, but not monstrously slow, maybe 3-4 times slower than on CUDA)
+     - kernels cached between kernel launches (this gives a hugggeee speed boost, compared to earlier)
+     - - bunch of behind-the-scenes ops added, like Cast
+     - memory and device name reported correctly now
+     - `reduce_min` working now
+     - `softmax` added
 - Oct 28:
   - training working :-)  [test_gradients.py](tensorflow/stream_executor/cl/test/test_gradients.py)
   - `reduce_sum`, `reduce_prod`, `reduce_max`, `reduce_mean` added, in beta [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py)
