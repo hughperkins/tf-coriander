@@ -21,6 +21,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - `reduce_sum`, `reduce_prod`, `reduce_max`, `reduce_mean`, `reduce_min` working, in beta [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py)
 - training works :-)))
 - device name and memory reported correctly now
+- Aymeric Damien's [2_BasicModels](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels) run ok on NVIDIA K520 now (not working on Intel HD5500 yet).
 
 ### Scope
 
@@ -32,10 +33,8 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ### To do
 
-- kernels should be able to run in parallel, from multiple threads
-- multiple GPU devices
-- convolutions
-- rng
+- fix bugs...
+- add convolutions
 
 ## Installation 
 
@@ -44,7 +43,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
   - the tensorflow non-gpu installation pre-requisites,
    - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
    - python 3
-- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.10.0/tensorflow-0.11.0rc0-py3-none-any.whl , and
+- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.11.0/tensorflow-0.11.0rc0-py3-none-any.whl , and
 - Install using pip:
 ```
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
@@ -86,6 +85,22 @@ Piccie of running Aymeric Damien's [linear_regression.py](https://github.com/hug
 
 <img src="doc/img/aymericdamien_linearregression.png?raw=true" width="600" />
 
+## Test results, on v0.11.0 wheel
+
+| test | Intel HD5500 | NVIDIA K520 |
+|----- |-------|-----|
+|test_tf.py| ok | ok |
+| test_tf2.py | ok | ok |
+| test_tf3.py | fails for pow | ok |
+| test_tf4.py | fails for all | ok |
+| test_blas.py | ok | ok |
+| test_reductions.py | fails for all except reduce_mean | ok |
+| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | runs, but cost seems wrong | ok |
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | epoch 1 ok, then memory error | ok |
+| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | accuracy 0.12, seems a bit low... | ok |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | cost is nan | a bit slow, otherwise seems ok |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) | loss nan, accuracy broken | cost looks ok, accuracy seems broken |
+
 ## Design/architecture
 
 - tensorflow code stays 100% [NVIDIA® CUDA™](https://www.nvidia.com/object/cuda_home_new.html)
@@ -105,6 +120,11 @@ Piccie of running Aymeric Damien's [linear_regression.py](https://github.com/hug
 
 ## News
 
+- Oct 30:
+  - new wheel [v0.11.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.11.0/tensorflow-0.11.0rc0-py3-none-any.whl)
+    - fixes critical bug in v0.10.0 release, where the number of devices was hard-coded to be 0 :-P
+    - Aymeric Damien's 2_BasicModels all run now, on NVIDIA K520.  Seem broken on Intel HD5500 for now
+    - bunch of fixes underneath to get 2_BasicModels working ok on K520
 - Oct 29:
   - `reduce_min` working now, and [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py) tests three types of reduction axes: inner, outer, all
   - Wheel [v0.10.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.10.0/tensorflow-0.11.0rc0-py3-none-any.whl) released:
