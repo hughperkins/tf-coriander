@@ -128,7 +128,7 @@ class ArgMinOp : public ArgOp<Device, T, functor::ArgMin<Device, T> > {
 
 TF_CALL_REAL_NUMBER_TYPES(REGISTER_ARGMAX);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 // Forward declarations of the functor specializations for GPU.
 namespace functor {
@@ -179,6 +179,6 @@ TF_CALL_GPU_NUMBER_TYPES(REGISTER_ARGMAX_GPU);
 
 #undef REGISTER_ARGMAX_GPU
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow

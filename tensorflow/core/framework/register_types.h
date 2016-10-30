@@ -159,10 +159,13 @@ limitations under the License.
 #define TF_CALL_ALL_TYPES(m) TF_CALL_POD_TYPES(m) TF_CALL_string(m)
 
 // Call "m" on all types supported on GPU.
-#define TF_CALL_GPU_NUMBER_TYPES(m) \
-  TF_CALL_half(m) TF_CALL_float(m) TF_CALL_double(m)
+// #define TF_CALL_GPU_NUMBER_TYPES(m) \
+   TF_CALL_half(m) TF_CALL_float(m) TF_CALL_double(m)
 
-#define TF_CALL_GPU_NUMBER_TYPES_NO_HALF(m) TF_CALL_float(m) TF_CALL_double(m)
+// #define TF_CALL_GPU_NUMBER_TYPES_NO_HALF(m) TF_CALL_float(m) TF_CALL_double(m)
+
+#define TF_CALL_GPU_NUMBER_TYPES(m) TF_CALL_float(m)
+#define TF_CALL_GPU_NUMBER_TYPES_NO_HALF(m) TF_CALL_float(m)
 
 // Call "m" on all quantized types.
 // TODO(cwhipkey): include TF_CALL_qint16(m) TF_CALL_quint16(m)
