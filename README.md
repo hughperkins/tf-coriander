@@ -32,8 +32,8 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ### To do
 
-- number of devices should be reported correctly
 - kernels should be able to run in parallel, from multiple threads
+- multiple GPU devices
 - convolutions
 - rng
 
