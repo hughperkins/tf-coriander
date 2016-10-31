@@ -17,57 +17,6 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
   eigen_version = "911c278cedc5"
   eigen_sha256 = "aa6fd99626aa6c96d2e97a982b1823dbc5d2ebe85264a728921af23e432b665e"
 
-  # we should probably fix this to work ok on Mac .... (or just use clew?)
-  # this is used to provide CL/cl.h
-  native.new_local_repository(
-    name = "usr_lib_x8664linux",
-    path = "/usr/lib/x86_64-linux-gnu/",
-    build_file = "usr_lib_x8664linux.BUILD"
-  )
-
-  # this is used to provide libcocl.a
-  native.new_local_repository(
-    name = "usr_local_lib",
-    path = "/usr/local/lib",
-    build_file = "usr_local_lib.BUILD"
-  )
-
-  # native.new_git_repository(
-  native.new_local_repository(
-      name = "cocl",
-      path = "third_party/cuda-on-cl",
-      build_file_content = """
-cc_library(
-    name = 'cocl-headers',
-    hdrs = glob([
-        'include/cocl/*.h',
-        'include/cocl/cuda/*.h',
-    ]),
-    visibility = ["//visibility:public"],
-)
-""",
-  )
-
-#  # native.new_git_repository(
-#  native.new_local_repository(
-#      name = "cocl_links",
-#      path = "third_party/cocl_links",
-#      build_file_content = """
-#cc_library(
-#    name = 'libcocl',
-#    srcs = [
-#      'lib/libcocl.a',
-#    ],
-#    hdrs = glob([
-#      'include/cocl/*.h',
-#      'include/cocl/cuda/*.h',
-#    ]),
-#    visibility = ["//visibility:public"],
-#     linkstatic = 1,
-#)
-#""",
-#  )
-
   native.new_http_archive(
     name = "eigen_archive",
     url = "http://bitbucket.org/hughperkins/eigen/get/" + eigen_version + ".tar.gz",

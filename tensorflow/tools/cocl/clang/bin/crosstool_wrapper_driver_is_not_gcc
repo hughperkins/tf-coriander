@@ -51,7 +51,8 @@ CURRENT_DIR = os.path.dirname(sys.argv[0])
 LLVM_HOST_COMPILER_PATH = ('/usr/bin/gcc')
 PREFIX_DIR = os.path.dirname(GCC_HOST_COMPILER_PATH)
 # print('CURRENT_DIR', CURRENT_DIR)
-COCL_PATH = '/usr/local/bin/cocl'
+# COCL_PATH = '/usr/local/bin/cocl'
+COCL_PATH = CURRENT_DIR + '/../../../../../third_party/cuda-on-cl/bin/cocl'
 # print('COCL_PATH', COCL_PATH)
 
 

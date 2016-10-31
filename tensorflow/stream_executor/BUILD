@@ -28,29 +28,18 @@ cc_library(
         "lib/gtl/*.h",
         "platform/**/*.h",
     ]),
-    data = [
-        # "@usr_local_lib//:libcocl",
-        "@usr_lib_x8664linux//:libopencl",
-    ],
     copts = [
-        '-Ithird_party/cocl_links/include/cocl'
+        '-Ithird_party/cuda-on-cl/include/cocl'
     ],
     linkopts = [
         "-ldl",
         '-lcocl',
+        '-lclblast',
         '-lOpenCL',
     ],
     visibility = ["//visibility:public"],
     deps = [
-        #"@cocl//:cocl-headers",
-        #"@cocl_links//:libcocl",
-        "//third_party/cocl_links:headers",
-        "//third_party/cocl_links:libcocl",
-
-        # "@local_usr_lib//:libopencl",
-        # "@cocl//:cocl-lib",
-        # "@clew//:clew-lib",
-        # "@EasyCL//:easycl-lib",
+        "//third_party:cocl",
         "//tensorflow/core:lib",
     ],
     alwayslink = 1,
@@ -65,9 +54,7 @@ cc_binary(
         '-lOpenCL'
     ],
     deps = [
-        "@usr_lib_x8664linux//:libopencl",
-        # "@usr_local_lib//:libcocl",
-        "//third_party/cocl_links:libcocl",
+        "//third_party:cocl",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",
@@ -91,9 +78,7 @@ cc_binary(
         '-lOpenCL'
     ],
     deps = [
-        "@usr_lib_x8664linux//:libopencl",
-        # "@usr_local_lib//:libcocl",
-        "//third_party/cocl_links:libcocl",
+        "//third_party:cocl",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",
@@ -124,9 +109,7 @@ cc_binary(
         '-lOpenCL'
     ],
     deps = [
-        "@usr_lib_x8664linux//:libopencl",
-        # "@usr_local_lib//:libcocl",
-        "//third_party/cocl_links:libcocl",
+        "//third_party:cocl",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",
@@ -159,9 +142,7 @@ cc_binary(
     deps = [
         "//tensorflow/core:tensorflow",
 
-        "@usr_lib_x8664linux//:libopencl",
-        # "@usr_local_lib//:libcocl",
-        "//third_party/cocl_links:libcocl",
+        "//third_party:cocl",
         "//tensorflow/core:core_cpu",
         "//tensorflow/core:framework",
         "//tensorflow/core:gpu_runtime",

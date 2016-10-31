@@ -441,15 +441,8 @@ def tf_gpu_kernel_library(srcs, copts=[], cuda_copts=[], deps=[], hdrs=[],
   copts = copts + _cuda_copts() + if_cuda(cuda_copts)
   if copts == None:
     copts = []
-  # , '-Ithird_party/cocl_links/include/cocl'
   copts = copts + ['-Iexternal/protobuf/src']
-  if 'cwise' in ','.join(srcs):
-    print('tf_gpu_kernel_library')
-    print('tf_gpu_kernel_library copts', copts, 'cuda_copts', cuda_copts)
   copts += ['-x', 'cuda']
-  if 'cwise' in ','.join(srcs):
-    print('tf_gpu_kernel_library name', kwargs['name'])
-    print('tf_gpu_kernel_library copts after add', copts)
   native.cc_library(
       srcs = srcs,
       hdrs = hdrs,
@@ -484,12 +477,7 @@ def tf_cuda_library(deps=None, cuda_deps=None, copts=None, **kwargs):
   if not copts:
     copts = []
 
-  # print('tf_cuda_library kwargs name=%s' % (kwargs['name']))
   name = kwargs['name']
-  if 'cwise' in name:
-    print('tf_cuda_library name', name)
-    print('tf_cuda_library kwargs', kwargs)
-    print('tf_cuda_library copts', copts)
   """
   kwargs is eg:
   {"alwayslink": 1, "hdrs": [], "linkstatic": 1, "name": "base64_ops", "srcs": ["base64_ops.cc"]}.
@@ -539,34 +527,19 @@ def tf_kernel_library(name, prefix=None, srcs=None, gpu_srcs=None, hdrs=None,
                               exclude = ["*test*", "*.cu.cc"])
     hdrs = hdrs + native.glob([prefix + "*.h"], exclude = ["*test*", "*.cu.h"])
 
-  if 'cwise' in name:
-    print('tensorflow.bzl tf_kernel_library name=' + name, 'prefix', prefix, 'gpu_srcs?', gpu_srcs != None)
-    print('gpu_srcs', gpu_srcs)
   cuda_deps = ["//tensorflow/core:gpu_lib"]
   if gpu_srcs:
-    if 'cwise' in name:
-      print('  tensorflow.bzl tf_kernel_library calling tf_gpu_kernel_library')
-    #kwargs_copy = {}
-    #for k, v in kwargs.items():
-    #  kwargs_copy[k] = v
-    #kwargs_copy['copts'] = kwargs_copy.get('copts', []).append('-Iexternal/protobuf/src')
-    #kwargs_copy['cuda_opts'] = kwargs_copy.get('cuda_opts', [])
     tf_gpu_kernel_library(
         name = name + "_gpu",
         srcs = gpu_srcs,
         deps = deps,
         **kwargs)
-    # cuda_deps.extend([":" + name + "_gpu"])
-    print('tf_kernel_library deps', deps)
     deps += [":" + name + "_gpu"]
-  # deps += ['third_party/cocl_links/include/cocl/cuda_runtime.h', 'third_party/cocl_links/include/cocl/cocl.h']
-  # deps += ['@cocl_links//:libcocl']
   tf_cuda_library(
       name = name,
       srcs = srcs,
       hdrs = hdrs,
-      # copts = tf_copts() + ['-Ithird_party/eigen3'],
-      copts = tf_copts() + ['-Iexternal/eigen_archive', '-Ithird_party/cocl_links/include/cocl'],
+      copts = tf_copts() + ['-Iexternal/eigen_archive', '-Ithird_party/cuda-on-cl/include/cocl'],
       cuda_deps = cuda_deps,
       linkstatic = 1,   # Needed since alwayslink is broken in bazel b/27630669
       alwayslink = alwayslink,

@@ -408,7 +408,7 @@ ARRAY_DEPS = [
     "//tensorflow/core:protos_all_cc",
     "//tensorflow/core/debug:debug_io_utils",
     "//third_party/eigen3",
-    '//third_party/cocl_links:headers'
+    '//third_party:cocl'
 ]
 
 tf_kernel_libraries(
