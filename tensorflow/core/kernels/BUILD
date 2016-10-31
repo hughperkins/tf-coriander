@@ -454,6 +454,9 @@ tf_kernel_libraries(
         "where_op",
     ],
     #copts = [
+    #    '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include'
+    #],
+    #copts = [
     #    '-Iexternal/protobuf/src',  # cant build constantop without this
     #],
     deps = ARRAY_DEPS,

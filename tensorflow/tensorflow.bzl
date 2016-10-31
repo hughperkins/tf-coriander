@@ -539,7 +539,7 @@ def tf_kernel_library(name, prefix=None, srcs=None, gpu_srcs=None, hdrs=None,
       name = name,
       srcs = srcs,
       hdrs = hdrs,
-      copts = tf_copts() + ['-Iexternal/eigen_archive', '-Ithird_party/cuda-on-cl/include/cocl'],
+      copts = tf_copts() + ['-Iexternal/eigen_archive', '-Ithird_party/cuda-on-cl/include/cocl', '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include'],
       cuda_deps = cuda_deps,
       linkstatic = 1,   # Needed since alwayslink is broken in bazel b/27630669
       alwayslink = alwayslink,

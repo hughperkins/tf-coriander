@@ -52,6 +52,8 @@ try:
     print('resource_loader.get_path_to_datafile(name)', resource_loader.get_path_to_datafile('libcocl.so'))
     tf_dir = os.path.dirname(os.path.dirname(resource_loader.get_path_to_datafile('libcocl.so')))
     cocl_dir = join(tf_dir, 'third_party', 'cuda-on-cl')
+    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclew.so'))
+    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libeasycl.so'))
     ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclblast.so'))
     ctypes.cdll.LoadLibrary(join(cocl_dir, 'libcocl.so'))
     # print('__name__', __name__)
@@ -64,6 +66,8 @@ try:
     print('resource_loader.get_path_to_datafile(name)', resource_loader.get_path_to_datafile('libcocl.so'))
     tf_dir = os.path.dirname(os.path.dirname(resource_loader.get_path_to_datafile('libcocl.so')))
     cocl_dir = join(tf_dir, 'third_party', 'cuda-on-cl')
+    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclew.so'))
+    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libeasycl.so'))
     ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclblast.so'))
     ctypes.cdll.LoadLibrary(join(cocl_dir, 'libcocl.so'))
 

@@ -170,6 +170,8 @@ setup(
     include_package_data=True,
     package_data={
         'tensorflow': ['python/_pywrap_tensorflow.so',
+                       'third_party/cuda-on-cl/libclew.so',
+                       'third_party/cuda-on-cl/libeasycl.so',
                        'third_party/cuda-on-cl/libcocl.so',
                        'third_party/cuda-on-cl/libclblast.so',
                        'tensorboard/dist/bazel-html-imports.html',
