@@ -1395,7 +1395,7 @@ tf_cuda_library(
         "common_runtime/gpu/pool_allocator.h",
         "common_runtime/gpu/process_state.h",
     ]),
-    copts = tf_copts() + ['-Ithird_party/cuda-on-cl/include/cocl'],
+    copts = tf_copts() + ['-Ithird_party/cuda-on-cl/include/cocl', '-Ithird_party/cuda-on-cl/src/EasyCL', '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew'],
     linkstatic = 1,
     deps = [
         ":core_cpu",

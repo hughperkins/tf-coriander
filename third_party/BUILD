@@ -19,6 +19,7 @@ cc_library(
     ],
     hdrs = glob([
         'cuda-on-cl/src/EasyCL/thirdparty/clew/include/clew.h',
+        'cuda-on-cl/src/EasyCL/*.h',
         'cuda-on-cl/include/cocl/*.h',
         'cuda-on-cl/include/cocl/cuda/*.h',
     ]),

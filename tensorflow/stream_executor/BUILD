@@ -29,7 +29,9 @@ cc_library(
         "platform/**/*.h",
     ]),
     copts = [
-        '-Ithird_party/cuda-on-cl/include/cocl'
+        '-Ithird_party/cuda-on-cl/include/cocl',
+        '-Ithird_party/cuda-on-cl/src/EasyCL',
+        '-Ithird_party/cuda-on-cl/src/EasyCL/third_party/clew/include',
     ],
     linkopts = [
         "-ldl",
@@ -135,6 +137,7 @@ cc_binary(
     copts = [
         # '-Ithird_party/eigen3',
         '-Iexternal/eigen_archive',
+        '-Ithird_party/cuda-on-cl/src/EasyCL',
     ],
     linkopts = [
         '-lOpenCL'
