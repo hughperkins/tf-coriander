@@ -140,12 +140,14 @@ def find_files(pattern, root):
 
 
 matches = ['../' + x for x in find_files('*', 'external') if '.py' not in x]
+#   print('matches', matches)
 
 
-headers = (list(find_files('*.h', 'tensorflow/core')) +
-           list(find_files('*.h', 'google/protobuf/src')) +
-           list(find_files('*', 'third_party/eigen3')) +
-           list(find_files('*', 'external/eigen_archive')))
+# headers = (list(find_files('*.h', 'tensorflow/core')) +
+#            list(find_files('*.h', 'google/protobuf/src')) +
+#            list(find_files('*', 'third_party/eigen3')) +
+#            list(find_files('*', 'external/eigen_archive')))
+headers = []
 
 
 setup(
@@ -168,6 +170,8 @@ setup(
     include_package_data=True,
     package_data={
         'tensorflow': ['python/_pywrap_tensorflow.so',
+                       'third_party/cuda-on-cl/libcocl.so',
+                       'third_party/cuda-on-cl/libclblast.so',
                        'tensorboard/dist/bazel-html-imports.html',
                        'tensorboard/dist/index.html',
                        'tensorboard/dist/tf-tensorboard.html',

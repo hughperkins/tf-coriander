@@ -30,6 +30,8 @@ import importlib
 import inspect
 import sys
 import traceback
+import os
+from os.path import join
 
 # go/tf-wildcard-import
 # pylint: disable=wildcard-import,g-bad-import-order,g-import-not-at-top
@@ -46,11 +48,25 @@ try:
   if hasattr(sys, 'getdlopenflags') and hasattr(sys, 'setdlopenflags'):
     _default_dlopen_flags = sys.getdlopenflags()
     sys.setdlopenflags(_default_dlopen_flags | ctypes.RTLD_GLOBAL)
+    from tensorflow.python.platform import resource_loader
+    print('resource_loader.get_path_to_datafile(name)', resource_loader.get_path_to_datafile('libcocl.so'))
+    tf_dir = os.path.dirname(os.path.dirname(resource_loader.get_path_to_datafile('libcocl.so')))
+    cocl_dir = join(tf_dir, 'third_party', 'cuda-on-cl')
+    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclblast.so'))
+    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libcocl.so'))
+    # print('__name__', __name__)
+    # print('tensorflow.python.__name__', tensorflow.python.__name__)
     from tensorflow.python import pywrap_tensorflow
     sys.setdlopenflags(_default_dlopen_flags)
   else:
     # TODO(keveman,mrry): Support dynamic op loading on platforms that do not
     # use `dlopen()` for dynamic loading.
+    print('resource_loader.get_path_to_datafile(name)', resource_loader.get_path_to_datafile('libcocl.so'))
+    tf_dir = os.path.dirname(os.path.dirname(resource_loader.get_path_to_datafile('libcocl.so')))
+    cocl_dir = join(tf_dir, 'third_party', 'cuda-on-cl')
+    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclblast.so'))
+    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libcocl.so'))
+
     from tensorflow.python import pywrap_tensorflow
 except ImportError:
   msg = """%s\n\nError importing tensorflow.  Unless you are using bazel,

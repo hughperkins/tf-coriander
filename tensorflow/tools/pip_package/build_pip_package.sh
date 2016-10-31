@@ -78,10 +78,15 @@ function main() {
   # protobuf pip package doesn't ship with header files. Copy the headers
   # over so user defined ops can be compiled.
   mkdir -p ${TMPDIR}/google
-  rsync --include "*/" --include "*.h" --exclude "*" --prune-empty-dirs -a \
+  rsync --include "*/" --exclude "*" --prune-empty-dirs -a \
     $RUNFILES/external/protobuf ${TMPDIR}/google
-  rsync -a $RUNFILES/third_party/eigen3 ${TMPDIR}/third_party
+  # rsync -a $RUNFILES/third_party/eigen3 ${TMPDIR}/third_party
 
+  mkdir -p ${TMPDIR}/tensorflow/third_party/cuda-on-cl
+  cp third_party/cuda-on-cl/build/libcocl.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
+  cp third_party/cuda-on-cl/build/clblast/libclblast.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
+  touch ${TMPDIR}/tensorflow/third_party/__init__.py
+  touch ${TMPDIR}/tensorflow/third_party/cuda-on-cl/__init__.py
   cp tensorflow/tools/pip_package/MANIFEST.in ${TMPDIR}
   cp tensorflow/tools/pip_package/README ${TMPDIR}
   cp tensorflow/tools/pip_package/setup.py ${TMPDIR}
@@ -91,13 +96,14 @@ function main() {
   source tools/python_bin_path.sh
 
   pushd ${TMPDIR}
-  rm -f MANIFEST
+  # rm -f MANIFEST
   echo $(date) : "=== Building wheel"
   ${PYTHON_BIN_PATH:-python} setup.py bdist_wheel >/dev/null
   mkdir -p ${DEST}
   cp dist/* ${DEST}
   popd
-  rm -rf ${TMPDIR}
+  echo ${TMPDIR}
+  # rm -rf ${TMPDIR}
   echo $(date) : "=== Output wheel file is in: ${DEST}"
 }
 
