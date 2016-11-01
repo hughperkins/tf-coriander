@@ -48,14 +48,22 @@ try:
   if hasattr(sys, 'getdlopenflags') and hasattr(sys, 'setdlopenflags'):
     _default_dlopen_flags = sys.getdlopenflags()
     sys.setdlopenflags(_default_dlopen_flags | ctypes.RTLD_GLOBAL)
-    from tensorflow.python.platform import resource_loader
-    print('resource_loader.get_path_to_datafile(name)', resource_loader.get_path_to_datafile('libcocl.so'))
-    tf_dir = os.path.dirname(os.path.dirname(resource_loader.get_path_to_datafile('libcocl.so')))
-    cocl_dir = join(tf_dir, 'third_party', 'cuda-on-cl')
-    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclew.so'))
-    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libeasycl.so'))
-    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclblast.so'))
-    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libcocl.so'))
+    # from tensorflow.python.platform import resource_loader
+    # print('resource_loader.get_path_to_datafile(name)', resource_loader.get_path_to_datafile('libcocl.so'))
+    # tf_dir = os.path.dirname(os.path.dirname(resource_loader.get_path_to_datafile('libcocl.so')))
+    # print('tf_dir', tf_dir)
+    # cocl_dir = join(tf_dir, 'third_party', 'cuda-on-cl')
+    # print('cocl_dir', cocl_dir)
+
+    # def load_so(soname):
+    #     soname = 'lib%s.so' % soname
+    #     print('loading ', soname)
+    #     sopath = join(cocl_dir, soname)
+    #     print('sopath', sopath)
+    #     ctypes.cdll.LoadLibrary(sopath)
+
+    # for soname in ['clew', 'easycl', 'clblast', 'cocl']:
+    #     load_so(soname)
     # print('__name__', __name__)
     # print('tensorflow.python.__name__', tensorflow.python.__name__)
     from tensorflow.python import pywrap_tensorflow
@@ -63,13 +71,17 @@ try:
   else:
     # TODO(keveman,mrry): Support dynamic op loading on platforms that do not
     # use `dlopen()` for dynamic loading.
-    print('resource_loader.get_path_to_datafile(name)', resource_loader.get_path_to_datafile('libcocl.so'))
-    tf_dir = os.path.dirname(os.path.dirname(resource_loader.get_path_to_datafile('libcocl.so')))
-    cocl_dir = join(tf_dir, 'third_party', 'cuda-on-cl')
-    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclew.so'))
-    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libeasycl.so'))
-    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclblast.so'))
-    ctypes.cdll.LoadLibrary(join(cocl_dir, 'libcocl.so'))
+    # print('resource_loader.get_path_to_datafile(name)', resource_loader.get_path_to_datafile('libcocl.so'))
+    # tf_dir = os.path.dirname(os.path.dirname(resource_loader.get_path_to_datafile('libcocl.so')))
+    # print('tf_dir', tf_dir)
+    # cocl_dir = join(tf_dir, 'third_party', 'cuda-on-cl')
+    # print('cocl_dir', cocl_dir)
+    # clewpath = join(cocl_dir, 'libclew.so')
+    # print('clewpath', clewpath)
+    # ctypes.cdll.LoadLibrary(clewpath)
+    # ctypes.cdll.LoadLibrary(join(cocl_dir, 'libeasycl.so'))
+    # ctypes.cdll.LoadLibrary(join(cocl_dir, 'libclblast.so'))
+    # ctypes.cdll.LoadLibrary(join(cocl_dir, 'libcocl.so'))
 
     from tensorflow.python import pywrap_tensorflow
 except ImportError:

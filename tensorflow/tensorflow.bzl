@@ -790,6 +790,7 @@ def tf_py_wrap_cc(name, srcs, swig_includes=[], deps=[], copts=[], **kwargs):
         "//tensorflow:tf_version_script.lds"
       ]
   })
+  extra_linkopts += kwargs['linkopts']
 
   native.cc_binary(
       name=cc_library_name,
