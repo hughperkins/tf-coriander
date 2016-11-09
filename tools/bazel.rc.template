@@ -2,6 +2,7 @@ build:cuda --crosstool_top=@local_config_cuda//crosstool:toolchain
 build:cuda --define=using_cuda=true --define=using_cuda_nvcc=true
 
 build --crosstool_top=//tensorflow/tools/cocl:toolchain
+build --define COCL_OPTIONS=--devicell-opt;inline;--devicell-opt;mem2reg;--devicell-opt;instcombine;--devicell-opt;O2
 build --force_python=py$PYTHON_MAJOR_VERSION
 build --host_force_python=py$PYTHON_MAJOR_VERSION
 build --python$PYTHON_MAJOR_VERSION_path=$PYTHON_BINARY

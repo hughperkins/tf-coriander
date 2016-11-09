@@ -17,10 +17,11 @@ def test(tf_func, py_func):
             a -= 0.5
 
         ar, cr = sess.run((tf_a, tf_c), {tf_a: a})
-        print('ar', ar)
-        print('cr', cr)
+        print('original ', ar)
         c_py = eval(py_func)
         diff = np.abs(c_py - cr).max()
+        print('expected ', c_py)
+        print('gpu ', cr)
         print('diff', diff)
         assert diff < 1e-4, 'failed for %s' % tf_func
 
@@ -29,7 +30,7 @@ funcs = {
     'tanh': 'np.tanh(a)',
     'neg': 'np.negative(a)',
     'exp': 'np.exp(a)',
-    # 'sigmoid': '1/(1+np.exp(-a))',
+    'sigmoid': '1/(1+np.exp(-a))',
     'sqrt': 'np.sqrt(a)',
     'log': 'np.log(a)',
     'abs': 'np.abs(a)',

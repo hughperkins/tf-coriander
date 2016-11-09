@@ -9,13 +9,13 @@ cc_library(
         ":cuda-on-cl/build/libclew.so",
         ":cuda-on-cl/build/libeasycl.so",
         ":cuda-on-cl/build/libcocl.so",
-        ":cuda-on-cl/build/clblast/libclblast.so",
+        ":cuda-on-cl/build/libclblast.so",
     ],
     srcs = [
         'cuda-on-cl/build/libclew.so',
         'cuda-on-cl/build/libeasycl.so',
         'cuda-on-cl/build/libcocl.so',
-        'cuda-on-cl/build/clblast/libclblast.so',
+        'cuda-on-cl/build/libclblast.so',
     ],
     hdrs = glob([
         'cuda-on-cl/src/EasyCL/thirdparty/clew/include/clew.h',

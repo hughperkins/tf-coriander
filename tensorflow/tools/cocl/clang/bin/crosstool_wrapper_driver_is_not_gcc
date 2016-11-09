@@ -54,6 +54,7 @@ PREFIX_DIR = os.path.dirname(GCC_HOST_COMPILER_PATH)
 # COCL_PATH = '/usr/local/bin/cocl'
 COCL_PATH = CURRENT_DIR + '/../../../../../third_party/cuda-on-cl/bin/cocl'
 # print('COCL_PATH', COCL_PATH)
+bazel_rc_path = CURRENT_DIR + '/../../../../../tools/bazel.rc'
 
 
 def Log(s):
@@ -234,12 +235,19 @@ def InvokeNvcc(argv, log=False):
     for include in add_includes:
         includes_string += ' -I%s' % include
 
+    with open(bazel_rc_path, 'r') as f:
+        bazelrc_contents = f.read()
+    cocl_options = []
+    for line in bazelrc_contents.split('\n'):
+        if line.startswith('build --define COCL_OPTIONS='):
+            cocl_options = line.split('=')[1].split(';')
+
     # print('compiling srcs [%s] to out [%s]' % (str(srcs), str(out)))
     cmd = (COCL_PATH + ' ' + nvccopts +
                        # ' --compiler-options "' + host_compiler_options + ' -fPIC"' +
                        ' ' + includes_string + ' ' +
                        ' --compiler-bindir=' + GCC_HOST_COMPILER_PATH +
-                       ' -I . ' +
+                       ' -I . ' + ' '.join(cocl_options) + ' ' +
                        '-fPIC ' +
                        ' -x cu ' + opt + includes + ' -c ' + out + ' ' + srcs)
     # print('cmd', cmd)

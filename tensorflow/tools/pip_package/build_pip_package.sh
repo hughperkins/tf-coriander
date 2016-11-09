@@ -86,7 +86,7 @@ function main() {
   cp third_party/cuda-on-cl/build/libcocl.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
   cp third_party/cuda-on-cl/build/libeasycl.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
   cp third_party/cuda-on-cl/build/libclew.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
-  cp third_party/cuda-on-cl/build/clblast/libclblast.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
+  cp third_party/cuda-on-cl/build/libclblast.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
   touch ${TMPDIR}/tensorflow/third_party/__init__.py
   touch ${TMPDIR}/tensorflow/third_party/cuda-on-cl/__init__.py
   cp tensorflow/tools/pip_package/MANIFEST.in ${TMPDIR}

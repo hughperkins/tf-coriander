@@ -93,13 +93,29 @@ Piccie of running Aymeric Damien's [linear_regression.py](https://github.com/hug
 | test_tf2.py | ok | ok |
 | test_tf3.py | fails for pow | ok |
 | test_tf4.py | fails for all | ok |
-| test_blas.py | ok | ok |
+| test_blas.py | ok | not ok |
 | test_reductions.py | fails for all except reduce_mean | ok |
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | runs, but cost seems wrong | ok |
 | [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | epoch 1 ok, then memory error | ok |
 | [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | accuracy 0.12, seems a bit low... | ok |
 | [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | cost is nan | a bit slow, otherwise seems ok |
 | [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) | loss nan, accuracy broken | cost looks ok, accuracy seems broken |
+
+## Test results, on v0.12.0 wheel
+
+| test | Intel HD5500 | NVIDIA K520 |
+|----- |-------|-----|
+|test_tf.py| ok | ok |
+| test_tf2.py | ok | ok |
+| test_tf3.py | all ok, except `not_equal` | all ok, except `not_equal` |
+| test_tf4.py | ok :-) | ok |
+| test_blas.py | runs ok, but segfault at end | not tested |
+| test_reductions.py | all pass :-) | not tested |
+| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | runs, but spamtastic | not tested |
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | either slow or blocked | not tested |
+| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | either slow or blocked | not tested |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | either slow or blocked | not tested |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) | either slow or blocked | not tested |
 
 ## Design/architecture
 
@@ -120,6 +136,9 @@ Piccie of running Aymeric Damien's [linear_regression.py](https://github.com/hug
 
 ## News
 
+- Nov 9:
+  - fixed unary and binary operators on beignet
+  - note that the tools/bazel.rc.templ has changed.  Please make sure to copy the new value into tools/bazel.rc, or re-run configure (probably need to do `bazel clean` anyway, so might as well do `./configure`)
 - Nov 1:
   - building clew, CLBlast, easycl, cocl as shared libraries now, rather than static
     - hopefully this will facilitate debugging things on the HD5500 on my laptop, since dont need to build/install entire wheel, for `libcocl` tweaks
