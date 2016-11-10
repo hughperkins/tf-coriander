@@ -45,6 +45,13 @@ pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 
 If you want, you can [build from source](doc/build-from-source.md)
 
+## Testing
+
+```
+pip install pytest
+py.test -vx tensorflow/stream_executor/cl/test/test_unary.py
+```
+
 ## Design/architecture
 
 - tensorflow code stays 100% [NVIDIA® CUDA™](https://www.nvidia.com/object/cuda_home_new.html)
