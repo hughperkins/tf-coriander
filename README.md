@@ -26,7 +26,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 | [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | a bit slow, otherwise seems ok | a bit slow, otherwise seems ok |
 | [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) | cost looks ok, accuracy seems broken | cost looks ok, accuracy seems broken |
 
-Piccie of running Aymeric Damien's [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py):
+Aymeric Damien's [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py):
 
 <img src="doc/img/aymericdamien_linearregression.png?raw=true" width="600" />
 
@@ -65,7 +65,7 @@ If you want, you can [build from source](doc/build-from-source.md)
 ## News
 
 - Nov 10:
-  - released wheel v0.13.0
+  - released wheel [v0.13.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.13.0/tensorflow-0.11.0rc0-py3-none-any.whl)
      - beignet test results fairly solidly match K520 results now
      - fixed the regression on `not_equal` operator
      - removed the spam from memory copy  
