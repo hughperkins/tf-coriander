@@ -26,9 +26,9 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 | [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | a bit slow, otherwise seems ok | a bit slow, otherwise seems ok |
 | [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) | cost looks ok, accuracy seems broken | cost looks ok, accuracy seems broken |
 
-Aymeric Damien's [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py):
+Aymeric Damien's [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) running on Intel HD5500 using Beignet v1.2.1:
 
-<img src="doc/img/aymericdamien_linearregression.png?raw=true" width="600" />
+<img src="doc/img/linearregressiononbeignet_hd5500?raw=true" width="600" />
 
 ## Installation 
 
