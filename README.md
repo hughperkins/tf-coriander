@@ -21,7 +21,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - `reduce_sum`, `reduce_prod`, `reduce_max`, `reduce_mean`, `reduce_min` working, in beta [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py)
 - training works :-)))
 - device name and memory reported correctly now
-- Aymeric Damien's [2_BasicModels](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels) run ok on NVIDIA K520 now (not working on Intel HD5500 yet).
+- Aymeric Damien's [2_BasicModels](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels) run ok on NVIDIA K520 now, and some examples run also on Intel HD5500 with Beignet 1.2.1
 
 ### Scope
 
