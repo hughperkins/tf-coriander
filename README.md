@@ -49,7 +49,9 @@ If you want, you can [build from source](doc/build-from-source.md)
 
 ```
 pip install pytest
+py.test -vx tensorflow/stream_executor/cl/test/test_simple.py
 py.test -vx tensorflow/stream_executor/cl/test/test_unary.py
+py.test -vx tensorflow/stream_executor/cl/test/test_binary.py
 py.test -vx tensorflow/stream_executor/cl/test/test_reductions.py
 ```
 
