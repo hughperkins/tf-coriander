@@ -11,9 +11,9 @@ def softmax(x):
 
 
 @pytest.mark.parametrize('size', [
-        (1, 3),
-        pytest.mark.xfail((2, 3)),
-        pytest.mark.xfail((3, 10))
+    (1, 3),
+    pytest.mark.xfail((2, 3)),
+    pytest.mark.xfail((3, 10))
 ])
 def test_softmax(size):
     print('size', size)

@@ -45,5 +45,3 @@ def test(tf_func, py_func, axes):
                     print('c_py', c_py)
                     print('cr', cr)
                     assert diff < 1e-4, 'failed for %s' % tf_func
-
-

@@ -47,9 +47,17 @@ If you want, you can [build from source](doc/build-from-source.md)
 
 ## Testing
 
+
+### Setup
+
 ```
-pip install pytest
-py.test -v tensorflow/stream_executor/cl/test
+pip install -r tensorflow/stream_executor/cl/test/requirements.txt
+```
+
+### Run
+
+```
+py.test -v
 ```
 
 ## Design/architecture

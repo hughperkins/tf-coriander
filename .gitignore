@@ -23,3 +23,5 @@ __pycache__
 *.swp
 env/
 ~*
+
+junit-pytest-report.xml
