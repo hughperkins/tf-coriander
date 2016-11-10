@@ -1,6 +1,6 @@
 # Tensorflow-cl
 
-Run Tensorflow on OpenCL™ devices.  UNDER CONSTRUCTION!!!
+Run Tensorflow on OpenCL™ 1.2 devices.  UNDER CONSTRUCTION!!!
 
 ## Summary
 
@@ -28,7 +28,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 Aymeric Damien's [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) running on Intel HD5500 using Beignet v1.2.1:
 
-<img src="doc/img/linearregressiononbeignet_hd5500?raw=true" width="600" />
+<img src="doc/img/linearregressiononbeignet_hd5500.png?raw=true" width="600" />
 
 ## Installation 
 
