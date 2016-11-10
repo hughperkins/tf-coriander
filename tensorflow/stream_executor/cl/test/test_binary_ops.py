@@ -27,12 +27,15 @@ def get_test_funcs():
         for tf_func, py_func in funcs.items():
             if 'int' in dtype and tf_func in ['not_equal', 'pow']:
                 continue
-            if dtype == 'uint8' and tf_func in ['maximum', 'minimum', 'squared_difference', 'sub', 'add']:
+            if dtype == 'uint8' and tf_func in [
+                    'maximum', 'minimum', 'squared_difference', 'sub', 'add']:
                 continue
-            test = {'dtype': dtype, 'tf_func': tf_func, 'py_func': py_func}
-            test['mark'] = nop
+            mark = nop
             if dtype == 'uint8' and tf_func in ['mul', 'div']:
-                test['mark'] = pytest.mark.xfail
+                mark = pytest.mark.xfail
+
+            test = {'mark': mark, 'dtype': dtype, 'tf_func': tf_func, 'py_func': py_func}
+
             tests.append(test)
     return tests
 
