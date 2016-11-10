@@ -35,7 +35,7 @@ funcs = {
     'maximum': 'np.maximum(a,b)',
     'pow': 'np.power(a,b)',
     'squared_difference': '(a - b) * (a - b)',
-    #'not_equal': 'np.not_equal(a, b)'
+    'not_equal': 'np.not_equal(a, b)'
 }
 for tf_func, py_func in funcs.items():
     test(tf_func, py_func)
