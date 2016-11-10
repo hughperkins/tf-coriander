@@ -15,7 +15,8 @@ funcs = {
     'floor': 'np.floor(a)',
     'ceil': 'np.ceil(a)',
     'square': 'np.square(a)',
-    'argmax': 'np.argmax(a, 1)'
+    'argmax': 'np.argmax(a, 1)',
+    'argmin': 'np.argmin(a, 1)',
 }
 
 
