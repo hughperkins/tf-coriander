@@ -54,6 +54,7 @@ py.test -vx tensorflow/stream_executor/cl/test/test_unary.py
 py.test -vx tensorflow/stream_executor/cl/test/test_binary.py
 py.test -vx tensorflow/stream_executor/cl/test/test_reductions.py
 py.test -vx tensorflow/stream_executor/cl/test/test_blas.py
+py.test -vx tensorflow/stream_executor/cl/test/test_gradients.py
 ```
 
 ## Design/architecture
