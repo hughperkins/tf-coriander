@@ -35,25 +35,26 @@ def test(tf_func, py_func, dtype):
     print('func', tf_func, dtype)
     np_dtype = eval('np.%s' % dtype)
     tf_dtype = eval('tf.%s' % dtype)
-    with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
+    with tf.Graph().as_default():
         with tf.device('/gpu:0'):
             tf_a = tf.placeholder(tf_dtype, [None, None], 'a')
             tf_c = tf.__dict__[tf_func](tf_a, name="c")
+            with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
 
-        np.random.seed(123)
-        shape = (1, 10)
-        a = np.random.choice(50, shape) / 50
-        if 'sqrt' not in tf_func and 'log' not in tf_func:
-            a -= 0.5
-        if 'int' in dtype:
-            a *= 10
-        a = a.astype(np_dtype)
+                np.random.seed(123)
+                shape = (1, 10)
+                a = np.random.choice(50, shape) / 50
+                if 'sqrt' not in tf_func and 'log' not in tf_func:
+                    a -= 0.5
+                if 'int' in dtype:
+                    a *= 10
+                a = a.astype(np_dtype)
 
-        ar, cr = sess.run((tf_a, tf_c), {tf_a: a})
-        print('original ', ar)
-        c_py = eval(py_func)
-        diff = np.abs(c_py - cr).max()
-        print('expected ', c_py)
-        print('gpu ', cr)
-        print('diff', diff)
-        assert diff < 1e-4, 'failed for %s' % tf_func
+                ar, cr = sess.run((tf_a, tf_c), {tf_a: a})
+                print('original ', ar)
+                c_py = eval(py_func)
+                diff = np.abs(c_py - cr).max()
+                print('expected ', c_py)
+                print('gpu ', cr)
+                print('diff', diff)
+                assert diff < 1e-4, 'failed for %s' % tf_func
