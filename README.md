@@ -89,12 +89,12 @@ Piccie of running Aymeric Damien's [linear_regression.py](https://github.com/hug
 
 | test | Intel HD5500 | NVIDIA K520 |
 |----- |-------|-----|
-|test_tf.py| ok | ok |
-| test_tf2.py | ok | ok |
-| test_tf3.py | ok | ok |
-| test_tf4.py | ok | ok |
-| test_blas.py | runs ok, but segfault at end | ok, but segfault at end |
-| test_reductions.py | ok | ok |
+| [test_tf.py](tensorflow/stream_executor/cl/test/test_tf.py) | ok | ok |
+| [test_tf2.py](tensorflow/stream_executor/cl/test/test_tf2.py) | ok | ok |
+| [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py) | ok | ok |
+| [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py) | ok | ok |
+| [test_blas.py](tensorflow/stream_executor/cl/test/test_blas.py) | runs ok, but segfault at end | ok, but segfault at end |
+| [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py) | ok | ok |
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | ok | ok |
 | [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | cost is nan | ok |
 | [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | accuracy 0.12, seems a little low | accuracy 0.12, seems a bit low |
