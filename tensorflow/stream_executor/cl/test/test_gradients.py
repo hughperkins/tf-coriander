@@ -48,22 +48,19 @@ def test_gradients():
             print(sess.run((tf_W)))
             tf_bias = tf.Variable(tf.zeros((2,), dtype=tf.float32), dtype=tf.float32, name='bias')
             tf_out = tf.matmul(tf_x, tf_W, name="out") + tf_bias
+            tf_pred = tf.argmax(tf_out, 1)
             tf_loss = tf.square(tf_y - tf_out)
             optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
             train_op = optimizer.minimize(tf_loss)
             bias_init = np.random.uniform(size=(2,)).astype(np.float32)
             sess.run(tf.assign(tf_bias, bias_init))
 
-        # merged = tf.merge_all_summaries()
-        # train_writer = tf.train.SummaryWriter('/tmp/hugh/sess1', sess.graph)
-
         print(sess.run(tf_W))
 
         for epoch in range(4):
-            loss, out, _ = sess.run((tf_loss, tf_out, train_op), {tf_x: X, tf_y: y})
+            loss, pred, _ = sess.run((tf_loss, tf_pred, train_op), {tf_x: X, tf_y: y})
             if epoch % 1 == 0:
                 print('epoch', epoch)
                 print('loss', loss)
-                res = np.argmax(out, 1)
-                print(res)
-        assert np.array_equal(res, [0, 1, 1, 1])
+                print(pred)
+        assert np.array_equal(pred, [0, 1, 1, 1])
