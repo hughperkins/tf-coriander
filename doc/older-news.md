@@ -1,5 +1,16 @@
 # Older news
 
+- Nov 1:
+  - building clew, CLBlast, easycl, cocl as shared libraries now, rather than static
+    - hopefully this will facilitate debugging things on the HD5500 on my laptop, since dont need to build/install entire wheel, for `libcocl` tweaks
+  - turned on `clew`
+    - this means no longer needs `libOpenCL.so` during build process
+    - might facilitiate building on Mac, since no longer need to link to `libOpenCL.so`, which was outside the Bazel build tree
+- Oct 30:
+  - new wheel [v0.11.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.11.0/tensorflow-0.11.0rc0-py3-none-any.whl)
+    - fixes critical bug in v0.10.0 release, where the number of devices was hard-coded to be 0 :-P
+    - Aymeric Damien's 2_BasicModels all run now, on NVIDIA K520.  Seem broken on Intel HD5500 for now
+    - bunch of fixes underneath to get 2_BasicModels working ok on K520
 - Oct 29:
   - `reduce_min` working now, and [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py) tests three types of reduction axes: inner, outer, all
   - Wheel [v0.10.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.10.0/tensorflow-0.11.0rc0-py3-none-any.whl) released:
