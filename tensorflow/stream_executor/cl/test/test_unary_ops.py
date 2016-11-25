@@ -34,8 +34,6 @@ def get_test_params():
             if dtype == 'uint8' and tf_func in ['abs', 'square', 'neg']:
                 continue
             mark = nop
-            if tf_func in ['argmax', 'argmin']:
-                mark = pytest.mark.xfail
             tests.append({'mark': mark, 'dtype': dtype, 'tf_func': tf_func, 'py_func': py_func})
     return tests
 

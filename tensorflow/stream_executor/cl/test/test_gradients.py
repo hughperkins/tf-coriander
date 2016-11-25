@@ -7,7 +7,6 @@ import pytest
 learning_rate = 0.1
 
 
-@pytest.mark.xfail
 def test_gradients():
     # lets learn or
     # we'll use one-hot, with 2 binary inputs, so 4 input neurons in total
