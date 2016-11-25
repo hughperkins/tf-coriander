@@ -243,7 +243,8 @@ def InvokeNvcc(argv, log=False):
     cocl_options = []
     for line in bazelrc_contents.split('\n'):
         if line.startswith('build --define COCL_OPTIONS='):
-            cocl_options = line.split('=')[1].split(';')
+            cocl_options = '='.join(line.split('=')[1:]).split(';')
+            # cocl_options = line.split('=')[1].split(';')
 
     # print('compiling srcs [%s] to out [%s]' % (str(srcs), str(out)))
     cmd = (COCL_PATH + ' ' + nvccopts +
@@ -253,13 +254,13 @@ def InvokeNvcc(argv, log=False):
                        ' -I . ' + ' '.join(cocl_options) + ' ' +
                        '-fPIC ' +
                        ' -x cu ' + opt + includes + ' -c ' + out + ' ' + srcs)
-    # print('cmd', cmd)
 
     # TODO(zhengxq): for some reason, 'gcc' needs this help to find 'as'.
     # Need to investigate and fix.
     cmd = 'PATH=' + PREFIX_DIR + ':/usr/local/bin:/bin ' + cmd
     # if log:
     #     Log(cmd)
+    print('cmd', cmd)
     return os.system(cmd)
 
 
