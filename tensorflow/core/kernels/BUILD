@@ -464,7 +464,7 @@ tf_kernel_libraries(
         "where_op",
     ],
     copts = [
-        '-Ithird_party/cuda-on-cl/include/cocl',
+        # '-Ithird_party/cuda-on-cl/include/cocl',
         '-Ithird_party/cuda-on-cl/src/EasyCL',
         '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
     ],
