@@ -3,6 +3,7 @@ build:cuda --define=using_cuda=true --define=using_cuda_nvcc=true
 
 build --crosstool_top=//tensorflow/tools/cocl:toolchain
 build --define COCL_OPTIONS=--devicell-opt;inline;--devicell-opt;mem2reg;--devicell-opt;instcombine;--devicell-opt;O2;-DEIGEN_DEFAULT_DENSE_INDEX_TYPE=int32_t
+build --copt="-DEIGEN_DEFAULT_DENSE_INDEX_TYPE=int32_t"
 build --force_python=py$PYTHON_MAJOR_VERSION
 build --host_force_python=py$PYTHON_MAJOR_VERSION
 build --python$PYTHON_MAJOR_VERSION_path=$PYTHON_BINARY
