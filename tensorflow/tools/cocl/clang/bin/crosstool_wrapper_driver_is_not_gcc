@@ -52,7 +52,7 @@ LLVM_HOST_COMPILER_PATH = ('/usr/bin/gcc')
 PREFIX_DIR = os.path.dirname(GCC_HOST_COMPILER_PATH)
 # print('CURRENT_DIR', CURRENT_DIR)
 # COCL_PATH = '/usr/local/bin/cocl'
-COCL_PATH = CURRENT_DIR + '/../../../../../third_party/cuda-on-cl/bin/cocl'
+COCL_PATH = '/usr/local/bin/cocl'
 # print('COCL_PATH', COCL_PATH)
 bazel_rc_path = CURRENT_DIR + '/../../../../../tools/bazel.rc'
 
@@ -202,6 +202,9 @@ def InvokeNvcc(argv, log=False):
     nvccopts += m_options
 
     os.environ['NOCOCLREBUILD'] = '1'
+    # print('os.environ[PATH]', os.environ['PATH'])
+    # we need at least 'sed' and 'uname'
+    # os.environ['PATH'] = '/bin:/usr/bin'
     if depfiles:
         #     # Generate the dependency file
         depfile = depfiles[0]
@@ -254,7 +257,7 @@ def InvokeNvcc(argv, log=False):
 
     # TODO(zhengxq): for some reason, 'gcc' needs this help to find 'as'.
     # Need to investigate and fix.
-    cmd = 'PATH=' + PREFIX_DIR + ':/usr/local/bin ' + cmd
+    cmd = 'PATH=' + PREFIX_DIR + ':/usr/local/bin:/bin ' + cmd
     # if log:
     #     Log(cmd)
     return os.system(cmd)
@@ -271,7 +274,7 @@ def main():
     # with open('foobar.flag', 'w') as f:
     #     f.write('foo')
     if args.x and args.x[0] == 'cuda':
-        # os.environ['PATH'] = os.environ['PATH'] + ':/usr/local/bin'
+        # os.environ['PATH'] = os.environ['PATH'] + ':/bin'
         # print('building as cuda')
         # print('sys.argv', sys.argv)
         # if args.cuda_log:
