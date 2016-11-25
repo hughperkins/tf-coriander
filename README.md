@@ -37,7 +37,7 @@ Aymeric Damien's [linear_regression.py](https://github.com/hughperkins/TensorFlo
   - the tensorflow non-gpu installation pre-requisites,
    - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
    - python 3
-- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.13.0/tensorflow-0.11.0rc0-py3-none-any.whl , and
+- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.14.0/tensorflow-0.11.0rc0-py3-none-any.whl , and
 - Install using pip:
 ```
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
@@ -79,6 +79,10 @@ py.test -v
 
 ## News
 
+- Nov 25:
+  - release wheel [v0.14.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.14.0/tensorflow-0.11.0rc0-py3-none-any.whl)
+    - this fixes `argmin`, `argmax`, and `softmax`
+    - tons of changes under-the-hood
 - Nov 10:
   - released wheel [v0.13.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.13.0/tensorflow-0.11.0rc0-py3-none-any.whl)
      - beignet test results fairly solidly match K520 results now
