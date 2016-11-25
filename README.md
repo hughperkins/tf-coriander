@@ -1,6 +1,6 @@
 # Tensorflow-cl
 
-Run Tensorflow on OpenCL™ 1.2 devices.  UNDER CONSTRUCTION!!!
+Run Tensorflow on OpenCL™ 1.2 devices
 
 ## Summary
 
@@ -10,25 +10,20 @@ This repo was created from the original Tensorflow repository at:
 
 Please see the main repository for full Tensorflow documentation.  This readme will only focus on the OpenCL porting aspects of Tensorflow.
 
-## Test results, on v0.13.0 wheel
+## Test results, on v0.14.0 wheel
 
-| test | Intel HD5500 | NVIDIA K520 |
+| test | Intel HD5500, beignet 1.2.1 | NVIDIA 940M, driver v367.57 |
 |----- |-------|-----|
-| [test_tf.py](https://github.com/hughperkins/tensorflow-cl/blob/v0.13.0/tensorflow/stream_executor/cl/test/test_tf.py) | ok | ok |
-| [test_tf2.py](https://github.com/hughperkins/tensorflow-cl/blob/v0.13.0/tensorflow/stream_executor/cl/test/test_tf2.py) | ok | ok |
-| [test_tf3.py](https://github.com/hughperkins/tensorflow-cl/blob/v0.13.0/tensorflow/stream_executor/cl/test/test_tf3.py) | ok | ok |
-| [test_tf4.py](https://github.com/hughperkins/tensorflow-cl/blob/v0.13.0/tensorflow/stream_executor/cl/test/test_tf4.py) | ok | ok |
-| [test_blas.py](https://github.com/hughperkins/tensorflow-cl/blob/v0.13.0/tensorflow/stream_executor/cl/test/test_blas.py) | runs ok, but segfault at end | ok, but segfault at end |
-| [test_reductions.py](https://github.com/hughperkins/tensorflow-cl/blob/v0.13.0/tensorflow/stream_executor/cl/test/test_reductions.py) | ok | ok |
-| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | ok | ok |
-| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | cost is nan | ok |
-| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | accuracy 0.12, seems a little low | accuracy 0.12, seems a bit low |
-| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | a bit slow, otherwise seems ok | a bit slow, otherwise seems ok |
-| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) | cost looks ok, accuracy seems broken | cost looks ok, accuracy seems broken |
+| unit tests (`py.test -v`) | pass | pass |
+| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | slow, but works   | slow, but works   |
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | ok  | ok   |
+| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | ok (accuracy 0.92)  | ok (accuracy 0.92)   |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | slowissimo, but ok  | slowissimo, but ok  |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| ok   |  ok  |
 
-Aymeric Damien's [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) running on Intel HD5500 using Beignet v1.2.1:
+Aymeric Damien's [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) running on Intel HD5500 using Beignet v1.2.1:
 
-<img src="doc/img/linearregressiononbeignet_hd5500.png?raw=true" width="600" />
+<img src="doc/img/recurrentnetwork_hd5500.png?raw=true" width="600" />
 
 ## Installation 
 
