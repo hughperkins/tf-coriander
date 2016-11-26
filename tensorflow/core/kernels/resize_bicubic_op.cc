@@ -120,16 +120,16 @@ class ResizeBicubicOp : public OpKernel {
             for (int64 i = 0; i < 4; ++i) {
               const std::array<float, 4> values = {
                   {static_cast<float>(
-                       input_data((Indextype)b, (Indextype)y_indices[i], (Indextype)x_indices[0], (Indextype)c)),
+                       input_data((Eigen::DenseIndex)b, (Eigen::DenseIndex)y_indices[i], (Eigen::DenseIndex)x_indices[0], (Eigen::DenseIndex)c)),
                    static_cast<float>(
-                       input_data((Indextype)b, (Indextype)y_indices[i], (Indextype)x_indices[1], (Indextype)c)),
+                       input_data((Eigen::DenseIndex)b, (Eigen::DenseIndex)y_indices[i], (Eigen::DenseIndex)x_indices[1], (Eigen::DenseIndex)c)),
                    static_cast<float>(
-                       input_data((Indextype)b, (Indextype)y_indices[i], (Indextype)x_indices[2], (Indextype)c)),
+                       input_data((Eigen::DenseIndex)b, (Eigen::DenseIndex)y_indices[i], (Eigen::DenseIndex)x_indices[2], (Eigen::DenseIndex)c)),
                    static_cast<float>(
-                       input_data((Indextype)b, (Indextype)y_indices[i], (Indextype)x_indices[3], (Indextype)c))}};
+                       input_data((Eigen::DenseIndex)b, (Eigen::DenseIndex)y_indices[i], (Eigen::DenseIndex)x_indices[3], (Eigen::DenseIndex)c))}};
               coeff[i] = Interpolate1D(x_weights, values);
             }
-            output_data((Indextype)b, (Indextype)y, (Indextype)x, (Indextype)c) = Interpolate1D(y_weights, coeff);
+            output_data((Eigen::DenseIndex)b, (Eigen::DenseIndex)y, (Eigen::DenseIndex)x, (Eigen::DenseIndex)c) = Interpolate1D(y_weights, coeff);
           }
         }
       }
