@@ -95,7 +95,7 @@ struct ResizeBilinear<CPUDevice, T> {
           for (int c = 0; c < channels; ++c) {
             const float top_left(images((Eigen::DenseIndex)b, (Eigen::DenseIndex)top_y_index, (Eigen::DenseIndex)left_x_index, (Eigen::DenseIndex)c));
             const float top_right(images((Eigen::DenseIndex)b, (Eigen::DenseIndex)top_y_index, (Eigen::DenseIndex)right_x_index, (Eigen::DenseIndex)c));
-            const float bottom_left(images((Eigen::DenseIndex)b, (Eigen::DenseIndex)bottom_y_index, (Eigen::DenseIndex)left_xh_index, (Eigen::DenseIndex)c));
+            const float bottom_left(images((Eigen::DenseIndex)b, (Eigen::DenseIndex)bottom_y_index, (Eigen::DenseIndex)left_x_index, (Eigen::DenseIndex)c));
             const float bottom_right(
                 images((Eigen::DenseIndex)b, (Eigen::DenseIndex)bottom_y_index, (Eigen::DenseIndex)right_x_index, (Eigen::DenseIndex)c));
             const float top = top_left + (top_right - top_left) * x_lerp;
