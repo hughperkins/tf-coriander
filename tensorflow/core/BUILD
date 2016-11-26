@@ -983,6 +983,7 @@ cc_library(
                 "**/*test*",
                 "platform/**/cuda.h",
                 "platform/**/stream_executor.h",
+                "platform/profile_utils/android*"
             ],
         ),
     }) + tf_additional_lib_srcs(
