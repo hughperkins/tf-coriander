@@ -19,10 +19,9 @@ before_install:
   - ls
   - cd swig-3.0.10
   - ./configure
-  - make
+  - make -j 8
   - sudo make install
   - ls /usr/local/bin
-  - swig
   - echo =============== bazel =====================
   - cd ${BASEDIR}/soft
   - java -version
