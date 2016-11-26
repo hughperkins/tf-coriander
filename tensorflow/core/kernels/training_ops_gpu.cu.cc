@@ -37,7 +37,7 @@ struct ApplyGradientDescent<GPUDevice, T> {
   }
 };
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 template <typename T>
 struct ApplyAdagrad<GPUDevice, T> {
@@ -182,7 +182,7 @@ struct ApplyCenteredRMSProp<GPUDevice, T> {
   }
 };
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace functor
 
@@ -193,27 +193,27 @@ template struct functor::ApplyGradientDescent<GPUDevice, float>;
 // #if GOOGLE_CUDA
 
 // template struct functor::ApplyAdagrad<GPUDevice, Eigen::half>;
-// template struct functor::ApplyAdagrad<GPUDevice, float>;
+template struct functor::ApplyAdagrad<GPUDevice, float>;
 // template struct functor::ApplyAdagrad<GPUDevice, double>;
 
 // template struct functor::ApplyAdadelta<GPUDevice, Eigen::half>;
-// template struct functor::ApplyAdadelta<GPUDevice, float>;
+template struct functor::ApplyAdadelta<GPUDevice, float>;
 // template struct functor::ApplyAdadelta<GPUDevice, double>;
 
 // template struct functor::ApplyMomentum<GPUDevice, Eigen::half>;
-// template struct functor::ApplyMomentum<GPUDevice, float>;
+template struct functor::ApplyMomentum<GPUDevice, float>;
 // template struct functor::ApplyMomentum<GPUDevice, double>;
 
 // template struct functor::ApplyAdam<GPUDevice, Eigen::half>;
-// template struct functor::ApplyAdam<GPUDevice, float>;
+template struct functor::ApplyAdam<GPUDevice, float>;
 // template struct functor::ApplyAdam<GPUDevice, double>;
 
 // template struct functor::ApplyRMSProp<GPUDevice, Eigen::half>;
-// template struct functor::ApplyRMSProp<GPUDevice, float>;
+template struct functor::ApplyRMSProp<GPUDevice, float>;
 // template struct functor::ApplyRMSProp<GPUDevice, double>;
 
 // template struct functor::ApplyCenteredRMSProp<GPUDevice, Eigen::half>;
-// template struct functor::ApplyCenteredRMSProp<GPUDevice, float>;
+template struct functor::ApplyCenteredRMSProp<GPUDevice, float>;
 // template struct functor::ApplyCenteredRMSProp<GPUDevice, double>;
 }  // end namespace tensorflow
 
