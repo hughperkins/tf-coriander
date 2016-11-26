@@ -1,0 +1,71 @@
+language: objective-c
+matrix:
+  include:
+    - env: OSX=10.11
+      os: osx
+      osx_image: osx10.11
+      rvm: system
+
+before_install:
+  - if [ -f ".git/shallow" ]; then travis_retry git fetch --unshallow; fi
+  - BASEDIR=$(pwd)
+  - echo BASEDIR ${BASEDIR}
+  - mkdir soft
+  - cd soft
+  - CLANG_VERSION=3.8.0
+  - wget http://llvm.org/releases/${CLANG_VERSION}/clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin.tar.xz
+  - tar -xf clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin.tar.xz
+  - ls
+  - export CLANG_HOME=${PWD}/clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin
+  - ${CLANG_HOME}/bin/clang++ -### -c ${BASEDIR}/test/cocl/cuda_sample.cu
+  - cd ${BASEDIR}
+  - git submodule update --init --recursive
+  - echo ============= cuda-on-cl ================
+  - cd third_party/cuda-on-cl
+  - mkdir build
+  - cd build
+  - echo CLANG_HOME ${CLANG_HOME}
+  - cmake .. -DCLANG_HOME=${CLANG_HOME} -DBUILD_TESTS=ON -DTESTS_DUMP_CL=ON
+  - make -j 8
+  - make install
+  - echo =============== bazel =====================
+  - cd ${BASEDIR}
+  - git clone https://github.com/bazelbuild/bazel.git
+  - cd bazel
+  - git checkout 0.3.2
+  - ./compile.sh
+  - sudo cp output/bazel /usr/local/bin
+  - echo ====== python ==============
+  - #echo -------- virtualenv ----------
+  - #cd ${BASEDIR}
+  - #wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-14.0.6.tar.gz
+  - #tar -xf virtualenv-14.0.6.tar.gz
+  - echo -------- python 3.5 ----------
+  - cd ${BASEDIR}
+  - wget https://www.python.org/ftp/python/3.5.2/python-3.5.2-macosx10.6.pkg
+  - sudo installer -pkg python-3.5.2-macosx10.6.pkg -target /
+  - python3 -V
+  - which python3
+  - #${BASEDIR}/virtualenv-14.0.6/virtualenv.py -p python3 ~/env35
+  - #source ~/env35/bin/activate
+  - #pip install -U pip
+  - #pip install -U setuptools
+  - #pip install wheel
+  - #pip install numpy
+  - #pip install -r ${BASEDIR}/test/requirements.txt
+  - #python -c 'import numpy'
+  - echo ================ tensorflow ==================
+  - cd ${BASEDIR}
+  - echo /usr/lib/python3/dist-packages | util/python/python_config.sh --setup /usr/bin/python3
+  - ls tools
+  - bazel fetch //tensorflow/...
+  - bazel build --verbose_failures //tensorflow/tools/pip_package:build_pip_package
+  - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
+
+script:
+  - cd ${BASEDIR}
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
