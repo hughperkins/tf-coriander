@@ -36,7 +36,7 @@ before_install:
   - export TF_NEED_HDFS=0
   - export TF_NEED_CUDA=0
   - export PYTHON_BIN_PATH=/usr/local/bin/python3
-  - echo /usr/local/lib/python3.5/dist-packages | util/python/python_config.sh --setup /usr/local/bin/python3
+  - echo /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages | util/python/python_config.sh --setup /usr/local/bin/python3
   - ls tools
   - bazel fetch //tensorflow/...
   - echo =========== clang ================================
