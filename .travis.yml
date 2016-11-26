@@ -12,7 +12,7 @@ before_install:
   - echo BASEDIR ${BASEDIR}
   - mkdir soft
   - cd soft
-  - ========= swig ============
+  - echo ========= swig ============
   - cd ${BASEDIR}/soft
   - wget http://kent.dl.sourceforge.net/project/swig/swig/swig-3.0.10/swig-3.0.10.tar.gz
   - tar -xf swig-3.0.10.tar.gz
@@ -77,7 +77,7 @@ before_install:
   - cmake .. -DCLANG_HOME=${CLANG_HOME} -DBUILD_TESTS=ON -DTESTS_DUMP_CL=ON
   - make -j 8
   - make install
-  - ========= tensorflow install =================
+  - echo ========= tensorflow install =================
   - cd ${BASEDIR}
   - export PATH=$HOME/bin:$PATH
   - bazel version
