@@ -57,6 +57,7 @@ before_install:
   - echo SOURCE_BASE_DIR ${SOURCE_BASE_DIR}
   - ${PYTHON_BIN_PATH} ${GEN_GIT_SOURCE} --configure ${SOURCE_BASE_DIR}
   - ls tools
+  - perl -pi -e "s,SO_SUFFIX = \".(so|dylib)\",SO_SUFFIX = \".dylib\",s" tensorflow/core/platform/default/build_config.bzl
   - bazel fetch //tensorflow/...
   - echo =========== clang ================================
   - cd ${BASEDIR}
