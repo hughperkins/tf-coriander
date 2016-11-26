@@ -194,18 +194,18 @@ class FusedResizeAndPadConvFunctor {
                 if ((conv_in_x >= 0) && (conv_in_x < padded_width) &&
                     (conv_in_y >= 0) && (conv_in_y < padded_height)) {
                   if (SampleMode == NEAREST) {
-                    const T1 top_left(input_data(batch, top_y_index,
-                                                 left_x_index, in_channel));
+                    const T1 top_left(input_data((Indextype)batch, (Indextype)top_y_index,
+                                                 (Indextype)left_x_index, (Indextype)in_channel));
                     in_value = top_left;
                   } else if (SampleMode == BILINEAR) {
-                    const T1 top_left(input_data(batch, top_y_index,
-                                                 left_x_index, in_channel));
-                    const T1 top_right(input_data(batch, top_y_index,
-                                                  right_x_index, in_channel));
-                    const T1 bottom_left(input_data(batch, bottom_y_index,
-                                                    left_x_index, in_channel));
+                    const T1 top_left(input_data((Indextype)batch, (Indextype)top_y_index,
+                                                 (Indextype)left_x_index, (Indextype)in_channel));
+                    const T1 top_right(input_data((Indextype)batch, (Indextype)top_y_index,
+                                                  (Indextype)right_x_index, (Indextype)in_channel));
+                    const T1 bottom_left(input_data((Indextype)batch, (Indextype)bottom_y_index,
+                                                    (Indextype)left_x_index, (Indextype)in_channel));
                     const T1 bottom_right(input_data(
-                        batch, bottom_y_index, right_x_index, in_channel));
+                        (Indextype)batch, (Indextype)bottom_y_index, (Indextype)right_x_index, (Indextype)in_channel));
                     const T1 top = top_left + (top_right - top_left) * x_lerp;
                     const T1 bottom =
                         bottom_left + (bottom_right - bottom_left) * x_lerp;
