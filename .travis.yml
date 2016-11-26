@@ -78,6 +78,9 @@ before_install:
   - make -j 8
   - make install
   - ========= tensorflow install =================
+  - cd ${BASEDIR}
+  - export PATH=$HOME/bin:$PATH
+  - bazel version
   - bazel build --verbose_failures //tensorflow/tools/pip_package:build_pip_package
   - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
 
