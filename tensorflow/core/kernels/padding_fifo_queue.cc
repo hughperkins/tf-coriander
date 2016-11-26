@@ -102,7 +102,7 @@ void PaddingFIFOQueue::TryDequeueMany(int num_elements, OpKernelContext* ctx,
               // to reset the attempt tuple.
               if (!attempt->tuples.empty()) {
                 // Restore already-dequeued elements to the front of the queue.
-                for (int64 i = attempt->tuples.size() - 1; i >= 0; --i) {
+                for (Eigen::DenseIndex i = attempt->tuples.size() - 1; i >= 0; --i) {
                   for (int j = 0; j < num_components(); ++j) {
                     PersistentTensor element;
                     Status s = GetElementComponent(attempt->tuples[i], j,
@@ -157,7 +157,7 @@ void PaddingFIFOQueue::TryDequeueMany(int num_elements, OpKernelContext* ctx,
                 const std::vector<Tuple>& tuples = attempt->tuples;
 
                 std::vector<bool> dynamic_shape;
-                const int64 batch_size = tuples.size();
+                const Eigen::DenseIndex batch_size = tuples.size();
 
                 for (int i = 0; i < num_components(); ++i) {
                   const PartialTensorShape partial_shape =
@@ -170,7 +170,7 @@ void PaddingFIFOQueue::TryDequeueMany(int num_elements, OpKernelContext* ctx,
                       shape.AddDim(partial_shape.dim_size(j + 1));
                     } else {
                       // Expand sizes to match.
-                      int64 max_val = 0;
+                      Eigen::DenseIndex max_val = 0;
                       for (const Tuple& t : tuples) {
                         max_val = std::max(max_val, t[i].shape().dim_size(j));
                       }
@@ -244,7 +244,7 @@ Status PaddingFIFOQueue::ValidateTuple(const Tuple& tuple) {
 
 Status PaddingFIFOQueue::ValidateManyTuple(const Tuple& tuple) {
   TF_RETURN_IF_ERROR(ValidateTupleCommon(tuple));
-  const int64 batch_size = tuple[0].dim_size(0);
+  const Eigen::DenseIndex batch_size = tuple[0].dim_size(0);
   for (size_t i = 0; i < tuple.size(); ++i) {
     // Expected shape is [batch_size] + partial_shapes_[i]
     const PartialTensorShape expected_shape =
@@ -391,7 +391,7 @@ std::vector<TensorShape> PaddingFIFOQueue::ConvertShapesPartialDimensionsToZero(
   for (size_t i = 0; i < shapes.size(); ++i) {
     const PartialTensorShape& partial = partial_shapes[i];
     TensorShape& shape = shapes[i];
-    for (int64 s : partial.dim_sizes()) shape.AddDim(s < 0 ? 0 : s);
+    for (Eigen::DenseIndex s : partial.dim_sizes()) shape.AddDim(s < 0 ? 0 : s);
   }
   return shapes;
 }

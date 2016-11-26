@@ -35,9 +35,9 @@ class DecodeRawOp : public OpKernel {
 
   void Compute(OpKernelContext* context) override {
     const auto& input = context->input(0);
-    int64 str_size = -1;
+    Eigen::DenseIndex str_size = -1;
     auto flat_in = input.flat<string>();
-    for (int64 i = 0; i < flat_in.size(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < flat_in.size(); ++i) {
       const string& in_str = flat_in(i);
       if (str_size == -1) {
         str_size = in_str.size();
@@ -62,7 +62,7 @@ class DecodeRawOp : public OpKernel {
         errors::InvalidArgument("Input to DecodeRaw has length ", str_size,
                                 " that is not a multiple of ", sizeof(T),
                                 ", the size of ", DataTypeString(out_type_)));
-    const int64 added_dim = str_size / sizeof(T);
+    const Eigen::DenseIndex added_dim = str_size / sizeof(T);
     out_shape.AddDim(added_dim);
     Tensor* output_tensor = nullptr;
     OP_REQUIRES_OK(
@@ -76,7 +76,7 @@ class DecodeRawOp : public OpKernel {
                               little_endian_ ? "true" : "false"));
     // Endianness matches, so just copy each string byte-for-byte.
     T* out_data = out.data();
-    for (int64 i = 0; i < flat_in.size(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < flat_in.size(); ++i) {
       const T* in_data = reinterpret_cast<const T*>(flat_in(i).data());
       memcpy(out_data, in_data, str_size);
       out_data += added_dim;
@@ -100,7 +100,7 @@ REGISTER(int32);
 REGISTER(uint8);
 REGISTER(int16);
 REGISTER(int8);
-REGISTER(int64);
+REGISTER(Eigen::DenseIndex);
 
 #undef REGISTER
 

@@ -85,7 +85,7 @@ class SummaryHistoOp : public OpKernel {
                 errors::InvalidArgument("tags must be scalar"));
     // Build histogram of values in "values" tensor
     histogram::Histogram histo;
-    for (int64 i = 0; i < flat.size(); i++) {
+    for (Eigen::DenseIndex i = 0; i < flat.size(); i++) {
       const double double_val = static_cast<double>(flat(i));
       if (Eigen::numext::isnan(double_val)) {
         c->SetStatus(

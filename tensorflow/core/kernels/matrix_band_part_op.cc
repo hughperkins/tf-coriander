@@ -52,13 +52,13 @@ class MatrixBandPartOp : public OpKernel {
     OP_REQUIRES(context, TensorShapeUtils::IsScalar(num_lower_in.shape()),
                 errors::InvalidArgument("num_lower must be scalar, got shape ",
                                         num_lower_in.shape().DebugString()));
-    const int64 num_lower = num_lower_in.scalar<int64>()();
+    const Eigen::DenseIndex num_lower = num_lower_in.scalar<Eigen::DenseIndex>()();
 
     const Tensor& num_upper_in = context->input(2);
     OP_REQUIRES(context, TensorShapeUtils::IsScalar(num_upper_in.shape()),
                 errors::InvalidArgument("num_upper must be scalar, got shape ",
                                         num_upper_in.shape().DebugString()));
-    const int64 num_upper = num_upper_in.scalar<int64>()();
+    const Eigen::DenseIndex num_upper = num_upper_in.scalar<Eigen::DenseIndex>()();
 
     const TensorShape& input_shape = input.shape();
     // Preliminary validation of sizes.
@@ -100,7 +100,7 @@ TF_CALL_NUMBER_TYPES(REGISTER_BATCH_MATRIX_BAND_PART);
 namespace functor {
 template <typename T>
 struct MatrixBandPart<CPUDevice, T> {
-  static void Compute(const CPUDevice& d, int64 num_lower, int64 num_upper,
+  static void Compute(const CPUDevice& d, Eigen::DenseIndex num_lower, Eigen::DenseIndex num_upper,
                       typename TTypes<T, 3>::ConstTensor input,
                       typename TTypes<T, 3>::Tensor output) {
     if ((num_lower < 0 || num_lower >= input.dimension(1)) &&
@@ -108,13 +108,13 @@ struct MatrixBandPart<CPUDevice, T> {
       output.device(d) = input;
     } else {
       output.device(d) = output.constant(T());
-      for (int64 r = 0; r < output.dimension(0); ++r) {
-        for (int64 i = 0; i < output.dimension(1); ++i) {
-          const int64 band_start =
+      for (Eigen::DenseIndex r = 0; r < output.dimension(0); ++r) {
+        for (Eigen::DenseIndex i = 0; i < output.dimension(1); ++i) {
+          const Eigen::DenseIndex band_start =
               num_lower < 0 ? 0 : std::max(0ll, i - num_lower);
-          const int64 band_end =
+          const Eigen::DenseIndex band_end =
               num_upper < 0 ? output.dimension(2)
-                            : std::min(static_cast<int64>(output.dimension(2)),
+                            : std::min(static_cast<Eigen::DenseIndex>(output.dimension(2)),
                                        i + num_upper + 1);
           if (band_start < band_end) {
             const Eigen::DSizes<Eigen::DenseIndex, 3> indices((Eigen::DenseIndex)r, (Eigen::DenseIndex)i, (Eigen::DenseIndex)band_start);

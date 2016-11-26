@@ -41,13 +41,13 @@ class RangeSamplerTest : public ::testing::Test {
   void CheckHistogram(int num_samples, float tolerance) {
     const int range = sampler_->range();
     std::vector<int> h(range);
-    std::vector<int64> a(num_samples);
+    std::vector<Eigen::DenseIndex> a(num_samples);
     // Using a fixed random seed to make the test deterministic.
     random::PhiloxRandom philox(123, 17);
     random::SimplePhilox rnd(&philox);
     sampler_->SampleBatch(&rnd, false, &a);
     for (int i = 0; i < num_samples; i++) {
-      int64 val = a[i];
+      Eigen::DenseIndex val = a[i];
       ASSERT_GE(val, 0);
       ASSERT_LT(val, range);
       h[val]++;
@@ -59,7 +59,7 @@ class RangeSamplerTest : public ::testing::Test {
   }
   void Update1() {
     // Add the value 3 ten times.
-    std::vector<int64> a(10);
+    std::vector<Eigen::DenseIndex> a(10);
     for (int i = 0; i < 10; i++) {
       a[i] = 3;
     }
@@ -67,12 +67,12 @@ class RangeSamplerTest : public ::testing::Test {
   }
   void Update2() {
     // Add the value n times.
-    int64 a[10];
+    Eigen::DenseIndex a[10];
     for (int i = 0; i < 10; i++) {
       a[i] = i;
     }
-    for (int64 i = 1; i < 10; i++) {
-      sampler_->Update(ArraySlice<int64>(a + i, 10 - i));
+    for (Eigen::DenseIndex i = 1; i < 10; i++) {
+      sampler_->Update(ArraySlice<Eigen::DenseIndex>(a + i, 10 - i));
     }
   }
   std::unique_ptr<RangeSampler> sampler_;
@@ -244,9 +244,9 @@ TEST_F(RangeSamplerTest, FixedUnigramProbabilitiesReserve2FromVector) {
 TEST_F(RangeSamplerTest, All) {
   int batch_size = 10;
   sampler_.reset(new AllSampler(10));
-  std::vector<int64> batch(batch_size);
+  std::vector<Eigen::DenseIndex> batch(batch_size);
   std::vector<float> batch_expected(batch_size);
-  std::vector<int64> extras(2);
+  std::vector<Eigen::DenseIndex> extras(2);
   std::vector<float> extras_expected(2);
   extras[0] = 0;
   extras[1] = batch_size - 1;
@@ -273,8 +273,8 @@ TEST_F(RangeSamplerTest, Unique) {
   const int num_batches = 100;
   sampler_.reset(new LogUniformSampler(range));
   std::vector<int> histogram(range);
-  std::vector<int64> batch(batch_size);
-  std::vector<int64> all_values(range);
+  std::vector<Eigen::DenseIndex> batch(batch_size);
+  std::vector<Eigen::DenseIndex> all_values(range);
   for (int i = 0; i < range; i++) {
     all_values[i] = i;
   }
@@ -284,7 +284,7 @@ TEST_F(RangeSamplerTest, Unique) {
   sampler_->SampleBatchGetExpectedCount(
       &rnd, true, &batch, MutableArraySlice<float>(), all_values, &expected);
   // Check that all elements are unique
-  std::set<int64> s(batch.begin(), batch.end());
+  std::set<Eigen::DenseIndex> s(batch.begin(), batch.end());
   CHECK_EQ(batch_size, s.size());
 
   for (int trial = 0; trial < num_batches; trial++) {
@@ -311,14 +311,14 @@ TEST_F(RangeSamplerTest, Avoid) {
   random::PhiloxRandom philox(123, 17);
   random::SimplePhilox rnd(&philox);
   sampler_.reset(new LogUniformSampler(100));
-  std::vector<int64> avoided(2);
+  std::vector<Eigen::DenseIndex> avoided(2);
   avoided[0] = 17;
   avoided[1] = 23;
-  std::vector<int64> batch(98);
+  std::vector<Eigen::DenseIndex> batch(98);
 
   // We expect to pick all elements of [0, 100) except the avoided two.
   sampler_->SampleBatchGetExpectedCountAvoid(
-      &rnd, true, &batch, MutableArraySlice<float>(), ArraySlice<int64>(),
+      &rnd, true, &batch, MutableArraySlice<float>(), ArraySlice<Eigen::DenseIndex>(),
       MutableArraySlice<float>(), avoided);
 
   int sum = 0;

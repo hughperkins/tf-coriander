@@ -60,7 +60,7 @@ template <typename Device, class Distribution>
 struct FillPhiloxRandom {
   typedef typename Distribution::ResultElementType T;
   void operator()(OpKernelContext*, const Device&, random::PhiloxRandom gen,
-                  T* data, int64 size, Distribution dist) {
+                  T* data, Eigen::DenseIndex size, Distribution dist) {
     LOG(FATAL) << "Default FillPhiloxRandom should not be executed.";
   }
 };
@@ -74,16 +74,16 @@ struct FillPhiloxRandomTask;
 template <class Distribution>
 struct FillPhiloxRandomTask<Distribution, false> {
   typedef typename Distribution::ResultElementType T;
-  static void Run(random::PhiloxRandom gen, T* data, int64 size,
-                  int64 start_group, int64 limit_group, Distribution dist) {
+  static void Run(random::PhiloxRandom gen, T* data, Eigen::DenseIndex size,
+                  Eigen::DenseIndex start_group, Eigen::DenseIndex limit_group, Distribution dist) {
     const int kGroupSize = Distribution::kResultElementCount;
 
     gen.Skip(start_group);
-    int64 offset = start_group * kGroupSize;
+    Eigen::DenseIndex offset = start_group * kGroupSize;
 
     // First fill all the full-size groups
-    int64 limit_group_full = std::min(limit_group, size / kGroupSize);
-    for (int64 index = start_group; index < limit_group_full; ++index) {
+    Eigen::DenseIndex limit_group_full = std::min(limit_group, size / kGroupSize);
+    for (Eigen::DenseIndex index = start_group; index < limit_group_full; ++index) {
       auto samples = dist(&gen);
       std::copy(&samples[0], &samples[0] + kGroupSize, data + offset);
       offset += kGroupSize;
@@ -91,7 +91,7 @@ struct FillPhiloxRandomTask<Distribution, false> {
 
     // If there are any remaining elements that need to be filled, process them
     if (limit_group_full < limit_group) {
-      int64 remaining_size = size - limit_group_full * kGroupSize;
+      Eigen::DenseIndex remaining_size = size - limit_group_full * kGroupSize;
       auto samples = dist(&gen);
       std::copy(&samples[0], &samples[0] + remaining_size, data + offset);
     }
@@ -103,21 +103,21 @@ struct FillPhiloxRandomTask<Distribution, false> {
 template <class Distribution>
 struct FillPhiloxRandomTask<Distribution, true> {
   typedef typename Distribution::ResultElementType T;
-  static const int64 kReservedSamplesPerOutput = 256;
+  static const Eigen::DenseIndex kReservedSamplesPerOutput = 256;
 
-  static void Run(random::PhiloxRandom base_gen, T* data, int64 size,
-                  int64 start_group, int64 limit_group, Distribution dist) {
+  static void Run(random::PhiloxRandom base_gen, T* data, Eigen::DenseIndex size,
+                  Eigen::DenseIndex start_group, Eigen::DenseIndex limit_group, Distribution dist) {
     const int kGroupSize = Distribution::kResultElementCount;
 
     static const int kGeneratorSkipPerOutputGroup =
         kGroupSize * kReservedSamplesPerOutput /
         PhiloxRandom::kResultElementCount;
 
-    int64 offset = start_group * kGroupSize;
+    Eigen::DenseIndex offset = start_group * kGroupSize;
 
     // First fill all the full-size groups
-    int64 limit_group_full = std::min(limit_group, size / kGroupSize);
-    int64 group_index;
+    Eigen::DenseIndex limit_group_full = std::min(limit_group, size / kGroupSize);
+    Eigen::DenseIndex group_index;
     for (group_index = start_group; group_index < limit_group_full;
          ++group_index) {
       // Reset the generator to the beginning of the output group region
@@ -138,7 +138,7 @@ struct FillPhiloxRandomTask<Distribution, true> {
       gen.Skip(group_index * kGeneratorSkipPerOutputGroup);
       SingleSampleAdapter<PhiloxRandom> single_samples(&gen);
 
-      int64 remaining_size = size - limit_group_full * kGroupSize;
+      Eigen::DenseIndex remaining_size = size - limit_group_full * kGroupSize;
       auto samples = dist(&single_samples);
       std::copy(&samples[0], &samples[0] + remaining_size, data + offset);
     }
@@ -150,20 +150,20 @@ struct FillPhiloxRandomTask<Distribution, true> {
 template <class Distribution>
 void FillPhiloxRandom<CPUDevice, Distribution>::operator()(
     OpKernelContext* context, const CPUDevice&, random::PhiloxRandom gen,
-    typename Distribution::ResultElementType* data, int64 size,
+    typename Distribution::ResultElementType* data, Eigen::DenseIndex size,
     Distribution dist) {
   const int kGroupSize = Distribution::kResultElementCount;
 
   auto worker_threads = *(context->device()->tensorflow_cpu_worker_threads());
 
-  int64 total_group_count = (size + kGroupSize - 1) / kGroupSize;
+  Eigen::DenseIndex total_group_count = (size + kGroupSize - 1) / kGroupSize;
 
   const int kGroupCost =
       random::PhiloxRandom::kResultElementCount *
       (random::PhiloxRandom::kElementCost + Distribution::kElementCost);
   Shard(worker_threads.num_threads, worker_threads.workers, total_group_count,
         kGroupCost,
-        [&gen, data, size, dist](int64 start_group, int64 limit_group) {
+        [&gen, data, size, dist](Eigen::DenseIndex start_group, Eigen::DenseIndex limit_group) {
           FillPhiloxRandomTask<
               Distribution,
               Distribution::kVariableSamplesPerOutput>::Run(gen, data, size,
@@ -180,7 +180,7 @@ static Status AllocateOutputWithShape(OpKernelContext* ctx, const Tensor& shape,
                                       int index, Tensor** output) {
   if (!ctx->op_kernel().IsLegacyVector(shape.shape())) {
     return errors::InvalidArgument(
-        "shape must be a vector of {int32,int64}, got shape ",
+        "shape must be a vector of {int32,Eigen::DenseIndex}, got shape ",
         shape.shape().DebugString());
   }
   if (shape.dtype() == DataType::DT_INT32) {
@@ -190,13 +190,13 @@ static Status AllocateOutputWithShape(OpKernelContext* ctx, const Tensor& shape,
         TensorShapeUtils::MakeShape(vec.data(), vec.size(), &tensor_shape));
     TF_RETURN_IF_ERROR(ctx->allocate_output(index, tensor_shape, output));
   } else if (shape.dtype() == DataType::DT_INT64) {
-    auto vec = shape.flat<int64>();
+    auto vec = shape.flat<Eigen::DenseIndex>();
     TensorShape tensor_shape;
     TF_RETURN_IF_ERROR(
         TensorShapeUtils::MakeShape(vec.data(), vec.size(), &tensor_shape));
     TF_RETURN_IF_ERROR(ctx->allocate_output(index, tensor_shape, output));
   } else {
-    return errors::InvalidArgument("shape must be a vector of {int32,int64}.");
+    return errors::InvalidArgument("shape must be a vector of {int32,Eigen::DenseIndex}.");
   }
   return Status::OK();
 }
@@ -290,7 +290,7 @@ class RandomGammaOp : public OpKernel {
                          (shape_t.dtype() == DataType::DT_INT32 ||
                           shape_t.dtype() == DataType::DT_INT64),
                 errors::InvalidArgument(
-                    "shape must be a vector of {int32,int64}, got shape: ",
+                    "shape must be a vector of {int32,Eigen::DenseIndex}, got shape: ",
                     shape_t.DebugString()));
     TensorShape samples_shape;
     if (shape_t.dtype() == DataType::DT_INT32) {
@@ -298,11 +298,11 @@ class RandomGammaOp : public OpKernel {
       OP_REQUIRES_OK(ctx, TensorShapeUtils::MakeShape(vec.data(), vec.size(),
                                                       &samples_shape));
     } else if (shape_t.dtype() == DataType::DT_INT64) {
-      auto vec = shape_t.flat<int64>();
+      auto vec = shape_t.flat<Eigen::DenseIndex>();
       OP_REQUIRES_OK(ctx, TensorShapeUtils::MakeShape(vec.data(), vec.size(),
                                                       &samples_shape));
     }
-    const int64 num_samples = samples_shape.num_elements();
+    const Eigen::DenseIndex num_samples = samples_shape.num_elements();
     OP_REQUIRES(ctx, num_samples > 0,
                 errors::InvalidArgument(
                     "Input shape should have non-zero element count, got: ",
@@ -329,7 +329,7 @@ class RandomGammaOp : public OpKernel {
     static constexpr int kReservedSamplesPerOutput = 256;
 
     const auto alpha_flat = alpha_t.flat<T>().data();
-    const int64 num_alphas = alpha_t.NumElements();
+    const Eigen::DenseIndex num_alphas = alpha_t.NumElements();
     OP_REQUIRES(ctx, num_alphas > 0,
                 errors::InvalidArgument(
                     "Input alpha should have non-zero element count, got: ",
@@ -355,9 +355,9 @@ class RandomGammaOp : public OpKernel {
       Uniform uniform;
       typename Normal::ResultType norm_result;
       typename Uniform::ResultType uniform_result;
-      for (int64 output_idx = start_output; output_idx < limit_output;
+      for (Eigen::DenseIndex output_idx = start_output; output_idx < limit_output;
            /* output_idx incremented within inner loop below */) {
-        int64 alpha_idx = output_idx / num_samples;
+        Eigen::DenseIndex alpha_idx = output_idx / num_samples;
 
         // Instead of +alpha_idx for each sample, we offset the pointer once.
         T* const samples_alpha_offset = samples_flat + alpha_idx;
@@ -369,7 +369,7 @@ class RandomGammaOp : public OpKernel {
         if (alpha == double(1.0)) {
           ENABLE_FLOAT_EQUALITY_WARNING
           // Sample from an exponential distribution.
-          for (int64 sample_idx = output_idx % num_samples;
+          for (Eigen::DenseIndex sample_idx = output_idx % num_samples;
                sample_idx < num_samples && output_idx < limit_output;
                sample_idx++, output_idx++) {
             // As we want data stable regardless of sharding
@@ -396,7 +396,7 @@ class RandomGammaOp : public OpKernel {
           const double c = 1.0 / 3 / sqrt(d);
 
           // Compute the rest of the samples for the current alpha value.
-          for (int64 sample_idx = output_idx % num_samples;
+          for (Eigen::DenseIndex sample_idx = output_idx % num_samples;
                sample_idx < num_samples && output_idx < limit_output;
                sample_idx++, output_idx++) {
             // Since each sample may use a variable number of normal/uniform
@@ -508,7 +508,7 @@ TF_CALL_half(REGISTER);
 TF_CALL_float(REGISTER);
 TF_CALL_double(REGISTER);
 TF_CALL_int32(REGISTER_INT);
-TF_CALL_int64(REGISTER_INT);
+TF_CALL_Eigen::DenseIndex(REGISTER_INT);
 
 #undef REGISTER
 #undef REGISTER_INT
@@ -557,7 +557,7 @@ TF_CALL_half(REGISTER);
 TF_CALL_float(REGISTER);
 TF_CALL_double(REGISTER);
 TF_CALL_int32(REGISTER_INT);
-TF_CALL_int64(REGISTER_INT);
+TF_CALL_Eigen::DenseIndex(REGISTER_INT);
 
 #undef REGISTER
 #undef REGISTER_INT

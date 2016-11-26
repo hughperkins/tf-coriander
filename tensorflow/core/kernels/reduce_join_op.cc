@@ -31,9 +31,9 @@ namespace tensorflow {
 
 namespace {
 
-const gtl::InlinedVector<int64, 8> GetStrides(const TensorShape& shape) {
-  gtl::InlinedVector<int64, 8> result(shape.dims());
-  int64 product = 1;
+const gtl::InlinedVector<Eigen::DenseIndex, 8> GetStrides(const TensorShape& shape) {
+  gtl::InlinedVector<Eigen::DenseIndex, 8> result(shape.dims());
+  Eigen::DenseIndex product = 1;
   for (int32 i = shape.dims() - 1; i >= 0; --i) {
     result[i] = product;
     product *= shape.dim_size(i);
@@ -46,15 +46,15 @@ const gtl::InlinedVector<int64, 8> GetStrides(const TensorShape& shape) {
 // dimensions in the subset, outputs the linear index to the full shape with
 // nonspecified dimensions set to 0.  Dimensions must be ordered from outer-most
 // to inner-most with respect to the subset linear index.
-inline int64 LinearSubIndexToFullIndex(
-    int64 output_index, const gtl::InlinedVector<int32, 8>& dim_list,
+inline Eigen::DenseIndex LinearSubIndexToFullIndex(
+    Eigen::DenseIndex output_index, const gtl::InlinedVector<int32, 8>& dim_list,
     const TensorShape& input_shape,
-    const gtl::InlinedVector<int64, 8>& strides) {
-  int64 result = 0;
-  int64 quotient = output_index;
+    const gtl::InlinedVector<Eigen::DenseIndex, 8>& strides) {
+  Eigen::DenseIndex result = 0;
+  Eigen::DenseIndex quotient = output_index;
   for (int32 i = dim_list.size() - 1; i >= 0; --i) {
     int32 dim = dim_list[i];
-    int64 dim_value = quotient % input_shape.dim_size(dim);
+    Eigen::DenseIndex dim_value = quotient % input_shape.dim_size(dim);
     quotient = quotient / input_shape.dim_size(dim);
     result += strides[dim] * dim_value;
   }
@@ -62,9 +62,9 @@ inline int64 LinearSubIndexToFullIndex(
 }
 
 // Computes the number of input elements reduced per output element.
-int64 GetReductionIterSize(const gtl::InlinedVector<int32, 8>& reduced_indices,
+Eigen::DenseIndex GetReductionIterSize(const gtl::InlinedVector<int32, 8>& reduced_indices,
                            const TensorShape& input_shape) {
-  int64 result = 1;
+  Eigen::DenseIndex result = 1;
   for (int32 reduce_dim : reduced_indices) {
     result *= input_shape.dim_size(reduce_dim);
   }
@@ -173,16 +173,16 @@ class ReduceJoinOp : public OpKernel {
                                                      &output_tensor));
     auto output_flat = output_tensor->flat<string>();
 
-    const int64 reduction_iter_size =
+    const Eigen::DenseIndex reduction_iter_size =
         GetReductionIterSize(reduced_indices, input_shape);
     gtl::InlinedVector<StringPiece, 8> curr_strings(reduction_iter_size);
-    for (int64 output_index = 0; output_index < output_shape.num_elements();
+    for (Eigen::DenseIndex output_index = 0; output_index < output_shape.num_elements();
          ++output_index) {
-      int64 output_full_index = LinearSubIndexToFullIndex(
+      Eigen::DenseIndex output_full_index = LinearSubIndexToFullIndex(
           output_index, unreduced_indices, input_shape, strides);
-      for (int64 reduction_index = 0; reduction_index < reduction_iter_size;
+      for (Eigen::DenseIndex reduction_index = 0; reduction_index < reduction_iter_size;
            ++reduction_index) {
-        int64 reduction_full_index = LinearSubIndexToFullIndex(
+        Eigen::DenseIndex reduction_full_index = LinearSubIndexToFullIndex(
             reduction_index, reduced_indices, input_shape, strides);
         curr_strings[reduction_index] =
             input_flat(output_full_index + reduction_full_index);

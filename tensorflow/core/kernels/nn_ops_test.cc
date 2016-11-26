@@ -55,10 +55,10 @@ limitations under the License.
 
 namespace tensorflow {
 
-static void SetConstOp(const string& name, std::initializer_list<int64> dims,
+static void SetConstOp(const string& name, std::initializer_list<Eigen::DenseIndex> dims,
                        DataType data_type, NodeDef* node) {
   Tensor tensor(data_type, TensorShape(dims));
-  for (int64 i = 0; i < tensor.NumElements(); ++i) {
+  for (Eigen::DenseIndex i = 0; i < tensor.NumElements(); ++i) {
     switch (data_type) {
       case DT_FLOAT:
         tensor.flat<float>()(i) = i / 10.0f;
@@ -81,7 +81,7 @@ static void SetConstSizesOp(const string& name, const std::vector<int32>& sizes,
   TensorShape shape;
   shape.AddDim(sizes.size());
   Tensor tensor(DT_INT32, shape);
-  for (int64 i = 0; i < tensor.NumElements(); ++i) {
+  for (Eigen::DenseIndex i = 0; i < tensor.NumElements(); ++i) {
     tensor.flat<int32>()(i) = sizes[i];
   }
   TF_CHECK_OK(NodeDefBuilder(name, "Const")
@@ -121,27 +121,27 @@ static void BM_ConvFloat(int iters, int batch, int rows, int cols, int in_depth,
 
   // For this, we need an input tensor and a filter tensor.
   // Compute the output size.
-  int64 out_rows = 0, out_cols = 0, pad_rows = 0, pad_cols = 0;
+  Eigen::DenseIndex out_rows = 0, out_cols = 0, pad_rows = 0, pad_cols = 0;
   TF_CHECK_OK(GetWindowedOutputSize(rows, filter_rows, stride, padding,
                                     &out_rows, &pad_rows));
   TF_CHECK_OK(GetWindowedOutputSize(cols, filter_cols, stride, padding,
                                     &out_cols, &pad_cols));
   // Counting the number of floating point operations (both MUL and ADD)
-  int64 num_ops = 0;
+  Eigen::DenseIndex num_ops = 0;
   if (op == CONV_OP_FORWARD) {
     // Forward computation:
     // BATCH x OUT_ROW X OUT_COL X IN_DEPTH X PATCH_ROW X PATH_COL X OUT_DEPTH
     // We multiply by two since there are multiplications and additions.
-    num_ops = static_cast<int64>(batch * in_depth * out_depth) *
-              static_cast<int64>(filter_rows * filter_cols) *
-              static_cast<int64>(out_rows * out_cols) * 2;
+    num_ops = static_cast<Eigen::DenseIndex>(batch * in_depth * out_depth) *
+              static_cast<Eigen::DenseIndex>(filter_rows * filter_cols) *
+              static_cast<Eigen::DenseIndex>(out_rows * out_cols) * 2;
   } else {
     // Backward computation:
     // BATCH x IN_ROW X IN_COL X IN_DEPTH X PATCH_ROW X PATCH_COL X OUT_DEPTH
     // We multiply by two since there are multiplications and additions.
-    num_ops = static_cast<int64>(batch * in_depth * out_depth) *
-              static_cast<int64>(filter_rows * filter_cols) *
-              static_cast<int64>(rows * cols) * 2;
+    num_ops = static_cast<Eigen::DenseIndex>(batch * in_depth * out_depth) *
+              static_cast<Eigen::DenseIndex>(filter_rows * filter_cols) *
+              static_cast<Eigen::DenseIndex>(rows * cols) * 2;
   }
 
   SetConstOp("input", {batch, rows, cols, in_depth}, data_type,
@@ -475,21 +475,21 @@ static void BM_ConvFloatDepthwise(int iters, int batch, int rows, int cols,
 
   // For this, we need an input tensor and a filter tensor.
   // Compute the output size.
-  int64 out_rows = 0, out_cols = 0, pad_rows = 0, pad_cols = 0;
+  Eigen::DenseIndex out_rows = 0, out_cols = 0, pad_rows = 0, pad_cols = 0;
   TF_CHECK_OK(GetWindowedOutputSize(rows, filter_rows, stride, padding,
                                     &out_rows, &pad_rows));
   TF_CHECK_OK(GetWindowedOutputSize(cols, filter_cols, stride, padding,
                                     &out_cols, &pad_cols));
 
-  int64 num_ops = 0;
+  Eigen::DenseIndex num_ops = 0;
   if (op == DEPTHWISE_CONV_OP_FWD) {
     // Counting the number of floating point operations (both MUL and ADD)
     // Forward computation:
     // BATCH x OUT_ROW X OUT_COL X FLTR_ROW X FLTR_COL X DEPTH_MULT X IN_DEPTH
     // We multiply by two since there are multiplications and additions.
-    num_ops = static_cast<int64>(batch * out_rows * out_cols) *
-              static_cast<int64>(filter_rows * filter_cols) *
-              static_cast<int64>(in_depth * depth_multiplier) * 2;
+    num_ops = static_cast<Eigen::DenseIndex>(batch * out_rows * out_cols) *
+              static_cast<Eigen::DenseIndex>(filter_rows * filter_cols) *
+              static_cast<Eigen::DenseIndex>(in_depth * depth_multiplier) * 2;
   } else {
     // Backward computation: both input and filter backprop take the same
     // amount of computation:
@@ -498,9 +498,9 @@ static void BM_ConvFloatDepthwise(int iters, int batch, int rows, int cols,
     // We divide by stride squared to approximate the affect of decreasing
     // number of bprop output points per bprop input point with increasing
     // stride.
-    num_ops = (static_cast<int64>(batch * rows * cols) *
-               static_cast<int64>(filter_rows * filter_cols) *
-               static_cast<int64>(in_depth * depth_multiplier) * 2) /
+    num_ops = (static_cast<Eigen::DenseIndex>(batch * rows * cols) *
+               static_cast<Eigen::DenseIndex>(filter_rows * filter_cols) *
+               static_cast<Eigen::DenseIndex>(in_depth * depth_multiplier) * 2) /
               (stride * stride);
   }
 
@@ -861,7 +861,7 @@ static void BM_AvgPoolBk(int iters, int batch_size, int rows, int cols,
 
   gtl::InlinedVector<TensorValue, 4> inputs;
 
-  int64 out_height, out_width, pad_rows, pad_cols;
+  Eigen::DenseIndex out_height, out_width, pad_rows, pad_cols;
   TF_CHECK_OK(GetWindowedOutputSize(rows, kernel_rows, stride, padding,
                                     &out_height, &pad_rows));
   TF_CHECK_OK(GetWindowedOutputSize(cols, kernel_cols, stride, padding,
@@ -1049,7 +1049,7 @@ static void BM_MaxPoolBk(int iters, int batch_size, int rows, int cols,
                          bool use_gpu, const string& label) {
   auto root = Scope::NewRootScope().ExitOnError();
 
-  int64 out_height, out_width, pad_rows, pad_cols;
+  Eigen::DenseIndex out_height, out_width, pad_rows, pad_cols;
   TF_CHECK_OK(GetWindowedOutputSize(rows, kernel_rows, stride, padding,
                                     &out_height, &pad_rows));
   TF_CHECK_OK(GetWindowedOutputSize(cols, kernel_cols, stride, padding,

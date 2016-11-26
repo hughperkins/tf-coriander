@@ -64,9 +64,9 @@ class CTCLossOp : public OpKernel {
                 errors::InvalidArgument("labels_values is not a vector"));
 
     const TensorShape& inputs_shape = inputs->shape();
-    const int64 max_time = inputs_shape.dim_size(0);
-    const int64 batch_size = inputs_shape.dim_size(1);
-    const int64 num_classes_raw = inputs_shape.dim_size(2);
+    const Eigen::DenseIndex max_time = inputs_shape.dim_size(0);
+    const Eigen::DenseIndex batch_size = inputs_shape.dim_size(1);
+    const Eigen::DenseIndex num_classes_raw = inputs_shape.dim_size(2);
     OP_REQUIRES(
         ctx, FastBoundsCheck(num_classes_raw, std::numeric_limits<int>::max()),
         errors::InvalidArgument("num_classes cannot exceed max int"));
@@ -87,7 +87,7 @@ class CTCLossOp : public OpKernel {
                     labels_values->shape().DebugString()));
 
     TensorShape labels_shape({batch_size, max_time});
-    std::vector<int64> order{0, 1};
+    std::vector<Eigen::DenseIndex> order{0, 1};
     sparse::SparseTensor labels_sp(*labels_indices, *labels_values,
                                    labels_shape, order);
 
@@ -98,7 +98,7 @@ class CTCLossOp : public OpKernel {
 
     ctc::CTCLossCalculator::LabelSequences labels_t(batch_size);
     for (const auto& g : labels_sp.group({0})) {  // iterate by batch
-      const int64 batch_indices = g.group()[0];
+      const Eigen::DenseIndex batch_indices = g.group()[0];
       OP_REQUIRES(ctx, FastBoundsCheck(batch_indices, batch_size),
                   errors::InvalidArgument("labels batch index must be between ",
                                           0, " and ", batch_size, " but saw: ",
@@ -115,7 +115,7 @@ class CTCLossOp : public OpKernel {
                                         "len(labels):  ", labels_t.size(),
                                         " batch_size: ", batch_size));
 
-    for (int64 b = 0; b < batch_size; ++b) {
+    for (Eigen::DenseIndex b = 0; b < batch_size; ++b) {
       OP_REQUIRES(
           ctx, seq_len_t(b) <= max_time,
           errors::InvalidArgument("sequence_length(", b, ") <= ", max_time));

@@ -53,7 +53,7 @@ class StringSplitOp : public OpKernel {
                                         input_tensor->shape().DebugString()));
 
     const auto input_vec = input_tensor->vec<string>();
-    const int64 batch_size = input_vec.dimension(0);
+    const Eigen::DenseIndex batch_size = input_vec.dimension(0);
 
     const Tensor* delimiter_tensor;
     OP_REQUIRES_OK(ctx, ctx->input("delimiter", &delimiter_tensor));
@@ -73,12 +73,12 @@ class StringSplitOp : public OpKernel {
     static constexpr int kReserveSize = 4;
     tokens.reserve(batch_size * kReserveSize);
 
-    int64 output_size = 0;
-    int64 max_num_entries = 0;
-    std::vector<int64> num_indices(batch_size);
-    for (int64 i = 0; i < batch_size; ++i) {
+    Eigen::DenseIndex output_size = 0;
+    Eigen::DenseIndex max_num_entries = 0;
+    std::vector<Eigen::DenseIndex> num_indices(batch_size);
+    for (Eigen::DenseIndex i = 0; i < batch_size; ++i) {
       std::vector<string> parts = Split(input_vec(i), delimiter);
-      int64 n_entries = parts.size();
+      Eigen::DenseIndex n_entries = parts.size();
       num_indices[i] = n_entries;
       output_size += n_entries;
       max_num_entries = std::max(max_num_entries, n_entries);
@@ -94,9 +94,9 @@ class StringSplitOp : public OpKernel {
     Tensor* sp_shape_t;
     OP_REQUIRES_OK(ctx, ctx->allocate_output(2, TensorShape({2}), &sp_shape_t));
 
-    auto sp_indices = sp_indices_t->matrix<int64>();
+    auto sp_indices = sp_indices_t->matrix<Eigen::DenseIndex>();
     auto sp_tokens = sp_tokens_t->vec<string>();
-    auto sp_shape = sp_shape_t->vec<int64>();
+    auto sp_shape = sp_shape_t->vec<Eigen::DenseIndex>();
     sp_shape(0) = batch_size;
     sp_shape(1) = max_num_entries;
     size_t c = 0;

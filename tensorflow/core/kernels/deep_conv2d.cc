@@ -45,33 +45,33 @@ namespace tensorflow {
 // start of the DeepConv2D call, based on convolution parameters.
 
 // Approximate cost models for direct and deep convolutions.
-static int64 GetDeepConvCost(int input_tile_rows, int input_tile_cols,
+static Eigen::DenseIndex GetDeepConvCost(int input_tile_rows, int input_tile_cols,
                              int out_tile_rows, int out_tile_cols, int in_depth,
                              int out_depth, int out_rows, int out_cols) {
   // Input transform cost.
-  const int64 input_tile_spatial_size = input_tile_rows * input_tile_cols;
-  const int64 input_transform_cost =
+  const Eigen::DenseIndex input_tile_spatial_size = input_tile_rows * input_tile_cols;
+  const Eigen::DenseIndex input_transform_cost =
       input_tile_spatial_size * input_tile_spatial_size * in_depth;
 
   // Element-wise products (each product is a MatMul across depth).
-  const int64 product_cost = input_tile_spatial_size * in_depth * out_depth;
+  const Eigen::DenseIndex product_cost = input_tile_spatial_size * in_depth * out_depth;
 
   // Output transform cost.
-  const int64 output_tile_spatial_size = out_tile_rows * out_tile_cols;
-  const int64 output_transform_cost =
+  const Eigen::DenseIndex output_tile_spatial_size = out_tile_rows * out_tile_cols;
+  const Eigen::DenseIndex output_transform_cost =
       output_tile_spatial_size * input_tile_spatial_size * out_depth;
 
   // Calculate number of input tiles to process.
-  const int64 row_tiles = (out_rows + out_tile_rows - 1) / out_tile_rows;
-  const int64 col_tiles = (out_cols + out_tile_cols - 1) / out_tile_cols;
-  const int64 num_tiles = row_tiles * col_tiles;
+  const Eigen::DenseIndex row_tiles = (out_rows + out_tile_rows - 1) / out_tile_rows;
+  const Eigen::DenseIndex col_tiles = (out_cols + out_tile_cols - 1) / out_tile_cols;
+  const Eigen::DenseIndex num_tiles = row_tiles * col_tiles;
 
   // Return total cost.
   return num_tiles *
          (input_transform_cost + product_cost + output_transform_cost);
 }
 
-static int64 GetDirectConvCost(int filter_rows, int filter_cols, int in_depth,
+static Eigen::DenseIndex GetDirectConvCost(int filter_rows, int filter_cols, int in_depth,
                                int out_depth, int out_rows, int out_cols) {
   return filter_rows * filter_cols * in_depth * out_depth * out_rows * out_cols;
 }
@@ -112,10 +112,10 @@ bool CanUseDeepConv2D(int stride_rows, int stride_cols, int filter_rows,
 
   // Check if flop cost of deep convolution is less than direct convolution.
   WinogradTransform<float> t;
-  const int64 deep_conv_cost = GetDeepConvCost(
+  const Eigen::DenseIndex deep_conv_cost = GetDeepConvCost(
       t.input_shape().rows, t.input_shape().cols, t.output_shape().rows,
       t.output_shape().cols, in_depth, out_depth, out_rows, out_cols);
-  const int64 direct_conv_cost = GetDirectConvCost(
+  const Eigen::DenseIndex direct_conv_cost = GetDirectConvCost(
       filter_rows, filter_cols, in_depth, out_depth, out_rows, out_cols);
 
   VLOG(2) << "CanUseDeepConv2D"
@@ -141,22 +141,22 @@ template <typename T>
 struct CopyFilterDepth {
   void operator()(const Conv2DArgs& args, const T* filter_in, T* filter_buf) {
     typedef typename Eigen::internal::packet_traits<T>::type Packet;
-    static constexpr int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+    static constexpr Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
 
-    const int64 vectorized_size = args.in_depth / kPacketSize;
-    const int64 scalar_size = args.in_depth % kPacketSize;
-    const int64 input_stride = args.out_depth * kPacketSize;
+    const Eigen::DenseIndex vectorized_size = args.in_depth / kPacketSize;
+    const Eigen::DenseIndex scalar_size = args.in_depth % kPacketSize;
+    const Eigen::DenseIndex input_stride = args.out_depth * kPacketSize;
 
     // Copy vectorized portion of depth dimension.
-    for (int64 d = 0; d < vectorized_size; ++d) {
+    for (Eigen::DenseIndex d = 0; d < vectorized_size; ++d) {
       auto v = Eigen::internal::pgather<T, Packet>(filter_in + d * input_stride,
                                                    args.out_depth);
       Eigen::internal::pstoreu<T>(filter_buf + d * kPacketSize, v);
     }
     // Copy scalar portion of inner dimension.
-    const int64 in_scalar_base = vectorized_size * input_stride;
-    const int64 buf_scalar_base = vectorized_size * kPacketSize;
-    for (int64 d = 0; d < scalar_size; ++d) {
+    const Eigen::DenseIndex in_scalar_base = vectorized_size * input_stride;
+    const Eigen::DenseIndex buf_scalar_base = vectorized_size * kPacketSize;
+    for (Eigen::DenseIndex d = 0; d < scalar_size; ++d) {
       filter_buf[buf_scalar_base + d] =
           filter_in[in_scalar_base + d * args.out_depth];
     }
@@ -185,7 +185,7 @@ struct CopyFilterDepth {
 template <typename T>
 struct ComputeFilterRangeTransform {
   typedef typename Eigen::internal::packet_traits<T>::type Packet;
-  static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+  static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
 
   typedef Eigen::Map<
       Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
@@ -195,20 +195,20 @@ struct ComputeFilterRangeTransform {
       ConstMatrixMap;
 
   void operator()(const Conv2DArgs& args,
-                  const DeepConv2DTransform<T>* transform, const int64 od_start,
-                  const int64 num_filters, const int64 shard_rows,
-                  const int64 shard_cols, const T* filter_in,
-                  const int64 in_stride, const int64 out_stride,
+                  const DeepConv2DTransform<T>* transform, const Eigen::DenseIndex od_start,
+                  const Eigen::DenseIndex num_filters, const Eigen::DenseIndex shard_rows,
+                  const Eigen::DenseIndex shard_cols, const T* filter_in,
+                  const Eigen::DenseIndex in_stride, const Eigen::DenseIndex out_stride,
                   const T* transform_matrix, T* out_buffer, T* filter_out) {
     namespace ei = Eigen::internal;
 
-    const int64 in_depth = args.in_depth;
-    const int64 base_filter_rows = transform->filter_shape().rows;
-    const int64 base_filter_cols = transform->filter_shape().cols;
-    const int64 base_filter_spatial_size = base_filter_rows * base_filter_cols;
-    const int64 tile_rows = transform->input_shape().rows;
-    const int64 tile_cols = transform->input_shape().cols;
-    const int64 tile_spatial_size = tile_rows * tile_cols;
+    const Eigen::DenseIndex in_depth = args.in_depth;
+    const Eigen::DenseIndex base_filter_rows = transform->filter_shape().rows;
+    const Eigen::DenseIndex base_filter_cols = transform->filter_shape().cols;
+    const Eigen::DenseIndex base_filter_spatial_size = base_filter_rows * base_filter_cols;
+    const Eigen::DenseIndex tile_rows = transform->input_shape().rows;
+    const Eigen::DenseIndex tile_cols = transform->input_shape().cols;
+    const Eigen::DenseIndex tile_spatial_size = tile_rows * tile_cols;
 
     // Compute transform of 'num_filters' by 'transform_matrix'.
     ConstMatrixMap A(transform_matrix, tile_spatial_size,
@@ -219,34 +219,34 @@ struct ComputeFilterRangeTransform {
     C.noalias() = A * B;
 
     // Copy 'out_buffer' to 'filter_out' at required filter output stride.
-    const int64 scalar_size = in_depth % kPacketSize;
-    const int64 vectorized_size = in_depth / kPacketSize;
+    const Eigen::DenseIndex scalar_size = in_depth % kPacketSize;
+    const Eigen::DenseIndex vectorized_size = in_depth / kPacketSize;
 
-    const int64 shard_stride = args.in_depth;
-    const int64 out_depth_stride = shard_rows * shard_cols * shard_stride;
+    const Eigen::DenseIndex shard_stride = args.in_depth;
+    const Eigen::DenseIndex out_depth_stride = shard_rows * shard_cols * shard_stride;
 
-    for (int64 od = 0; od < num_filters; ++od) {
-      const int64 out_depth_buf_base = od * out_depth_stride;
-      const int64 out_depth_base = (od_start + od) * out_depth_stride;
+    for (Eigen::DenseIndex od = 0; od < num_filters; ++od) {
+      const Eigen::DenseIndex out_depth_buf_base = od * out_depth_stride;
+      const Eigen::DenseIndex out_depth_base = (od_start + od) * out_depth_stride;
 
       // TODO(andydavis) Shard filters that are multiples of base filter sizes.
-      for (int64 s_r = 0; s_r < shard_rows; ++s_r) {
-        for (int64 s_c = 0; s_c < shard_cols; ++s_c) {
-          const int64 shard_base = shard_stride * (s_r * shard_cols + s_c);
+      for (Eigen::DenseIndex s_r = 0; s_r < shard_rows; ++s_r) {
+        for (Eigen::DenseIndex s_c = 0; s_c < shard_cols; ++s_c) {
+          const Eigen::DenseIndex shard_base = shard_stride * (s_r * shard_cols + s_c);
 
-          for (int64 i = 0; i < tile_spatial_size; ++i) {
-            const int64 in_base =
+          for (Eigen::DenseIndex i = 0; i < tile_spatial_size; ++i) {
+            const Eigen::DenseIndex in_base =
                 i * in_stride + out_depth_buf_base + shard_base;
-            const int64 out_base = i * out_stride + out_depth_base + shard_base;
+            const Eigen::DenseIndex out_base = i * out_stride + out_depth_base + shard_base;
             // Copy vectorized portion of 'in_depth'.
-            for (int64 d = 0; d < vectorized_size; ++d) {
+            for (Eigen::DenseIndex d = 0; d < vectorized_size; ++d) {
               auto v =
                   ei::ploadu<Packet>(out_buffer + in_base + d * kPacketSize);
               ei::pstoreu<T>(filter_out + out_base + d * kPacketSize, v);
             }
             // Transform scalar portion of 'in_depth'.
-            const int64 scalar_base = vectorized_size * kPacketSize;
-            for (int64 d = 0; d < scalar_size; ++d) {
+            const Eigen::DenseIndex scalar_base = vectorized_size * kPacketSize;
+            for (Eigen::DenseIndex d = 0; d < scalar_size; ++d) {
               filter_out[out_base + scalar_base + d] =
                   out_buffer[in_base + scalar_base + d];
             }
@@ -283,66 +283,66 @@ struct ComputeFilterRangeTransform {
 template <typename T>
 struct TransformFilterRange {
   void operator()(const Conv2DArgs& args,
-                  const DeepConv2DTransform<T>* transform, const int64 od_start,
-                  const int64 od_limit, const T* filter_in,
+                  const DeepConv2DTransform<T>* transform, const Eigen::DenseIndex od_start,
+                  const Eigen::DenseIndex od_limit, const T* filter_in,
                   const T* transform_matrix, T* out_buffer, T* filter_buf,
                   T* filter_out) {
-    const int64 num_filters = od_limit - od_start;
-    const int64 base_filter_rows = transform->filter_shape().rows;
-    const int64 base_filter_cols = transform->filter_shape().cols;
-    const int64 base_filter_spatial_size = base_filter_rows * base_filter_cols;
+    const Eigen::DenseIndex num_filters = od_limit - od_start;
+    const Eigen::DenseIndex base_filter_rows = transform->filter_shape().rows;
+    const Eigen::DenseIndex base_filter_cols = transform->filter_shape().cols;
+    const Eigen::DenseIndex base_filter_spatial_size = base_filter_rows * base_filter_cols;
 
     // Compute number of filter shards.
-    const int64 residual_row =
+    const Eigen::DenseIndex residual_row =
         std::max(0LL, args.filter_rows - base_filter_rows);
-    const int64 shard_rows = 1 + (residual_row + 2 - 1) / 2;
+    const Eigen::DenseIndex shard_rows = 1 + (residual_row + 2 - 1) / 2;
 
-    const int64 residual_col =
+    const Eigen::DenseIndex residual_col =
         std::max(0LL, args.filter_cols - base_filter_cols);
-    const int64 shard_cols = 1 + (residual_col + 2 - 1) / 2;
+    const Eigen::DenseIndex shard_cols = 1 + (residual_col + 2 - 1) / 2;
 
     // Compute strides to be used for input and output IO.
-    const int64 shard_stride = args.in_depth;
-    const int64 out_depth_stride = shard_rows * shard_cols * shard_stride;
-    const int64 coord_stride = out_depth_stride * args.out_depth;
-    const int64 filter_buf_stride =
+    const Eigen::DenseIndex shard_stride = args.in_depth;
+    const Eigen::DenseIndex out_depth_stride = shard_rows * shard_cols * shard_stride;
+    const Eigen::DenseIndex coord_stride = out_depth_stride * args.out_depth;
+    const Eigen::DenseIndex filter_buf_stride =
         num_filters * shard_rows * shard_cols * args.in_depth;
-    const int64 tile_stride_rows = transform->output_shape().rows;
-    const int64 tile_stride_cols = transform->output_shape().cols;
+    const Eigen::DenseIndex tile_stride_rows = transform->output_shape().rows;
+    const Eigen::DenseIndex tile_stride_cols = transform->output_shape().cols;
 
-    const int64 filter_buf_size = base_filter_spatial_size * num_filters *
+    const Eigen::DenseIndex filter_buf_size = base_filter_spatial_size * num_filters *
                                   shard_rows * shard_cols * args.in_depth;
     memset(filter_buf, 0, sizeof(T) * filter_buf_size);
 
     // Copy filter range into 'filter_buf'.
-    for (int64 od = 0; od < num_filters; ++od) {
-      const int64 out_depth_base = od * out_depth_stride;
+    for (Eigen::DenseIndex od = 0; od < num_filters; ++od) {
+      const Eigen::DenseIndex out_depth_base = od * out_depth_stride;
 
       // TODO(andydavis) Shard filters that are multiples of base filter sizes.
-      for (int64 s_r = 0; s_r < shard_rows; ++s_r) {
-        const int64 row_offset = s_r == 0 ? 0 : 1;
+      for (Eigen::DenseIndex s_r = 0; s_r < shard_rows; ++s_r) {
+        const Eigen::DenseIndex row_offset = s_r == 0 ? 0 : 1;
 
-        for (int64 s_c = 0; s_c < shard_cols; ++s_c) {
-          const int64 col_offset = s_c == 0 ? 0 : 1;
-          const int64 f_r_start = s_r * tile_stride_rows;
-          const int64 f_c_start = s_c * tile_stride_cols;
+        for (Eigen::DenseIndex s_c = 0; s_c < shard_cols; ++s_c) {
+          const Eigen::DenseIndex col_offset = s_c == 0 ? 0 : 1;
+          const Eigen::DenseIndex f_r_start = s_r * tile_stride_rows;
+          const Eigen::DenseIndex f_c_start = s_c * tile_stride_cols;
 
-          const int64 shard_base = shard_stride * (s_r * shard_cols + s_c);
+          const Eigen::DenseIndex shard_base = shard_stride * (s_r * shard_cols + s_c);
 
-          for (int64 b_r = row_offset; b_r < base_filter_rows; ++b_r) {
-            const int64 f_r = f_r_start + b_r;
+          for (Eigen::DenseIndex b_r = row_offset; b_r < base_filter_rows; ++b_r) {
+            const Eigen::DenseIndex f_r = f_r_start + b_r;
             if (f_r >= args.filter_rows) continue;
 
-            for (int64 b_c = col_offset; b_c < base_filter_cols; ++b_c) {
-              const int64 f_c = f_c_start + b_c;
+            for (Eigen::DenseIndex b_c = col_offset; b_c < base_filter_cols; ++b_c) {
+              const Eigen::DenseIndex f_c = f_c_start + b_c;
               if (f_c >= args.filter_cols) continue;
 
-              const int64 in_index =
+              const Eigen::DenseIndex in_index =
                   args.out_depth *
                       (args.in_depth * (f_r * args.filter_cols + f_c)) +
                   (od_start + od);
 
-              const int64 buf_index =
+              const Eigen::DenseIndex buf_index =
                   filter_buf_stride * (b_r * base_filter_cols + b_c) +
                   out_depth_base + shard_base;
 
@@ -376,49 +376,49 @@ template <typename T>
 struct TransformFilters {
   void operator()(OpKernelContext* ctx, const Conv2DArgs& args,
                   const DeepConv2DTransform<T>* transform,
-                  const int64 filter_shards_row, const int64 filter_shards_col,
+                  const Eigen::DenseIndex filter_shards_row, const Eigen::DenseIndex filter_shards_col,
                   const T* filter_in, T* filter_out) {
-    const int64 in_depth = args.in_depth;
-    const int64 out_depth = args.out_depth;
+    const Eigen::DenseIndex in_depth = args.in_depth;
+    const Eigen::DenseIndex out_depth = args.out_depth;
 
-    const int64 tile_rows = transform->input_shape().rows;
-    const int64 tile_cols = transform->input_shape().cols;
-    const int64 tile_spatial_size = tile_rows * tile_cols;
+    const Eigen::DenseIndex tile_rows = transform->input_shape().rows;
+    const Eigen::DenseIndex tile_cols = transform->input_shape().cols;
+    const Eigen::DenseIndex tile_spatial_size = tile_rows * tile_cols;
 
-    const int64 base_filter_rows = transform->filter_shape().rows;
-    const int64 base_filter_cols = transform->filter_shape().cols;
-    const int64 base_filter_spatial_size = base_filter_rows * base_filter_cols;
+    const Eigen::DenseIndex base_filter_rows = transform->filter_shape().rows;
+    const Eigen::DenseIndex base_filter_cols = transform->filter_shape().cols;
+    const Eigen::DenseIndex base_filter_spatial_size = base_filter_rows * base_filter_cols;
 
-    const int64 filter_shards_total = filter_shards_row * filter_shards_col;
+    const Eigen::DenseIndex filter_shards_total = filter_shards_row * filter_shards_col;
 
     // Calculate filter transform batch based on cache/filter sizes.
 
     // Cache budget (based on L2 cache size = 256KB).
     // TODO(andydavis) Read cache size from system.
-    const int64 cache_size = (256LL << 10) / sizeof(T);
+    const Eigen::DenseIndex cache_size = (256LL << 10) / sizeof(T);
 
     // Fixed cost.
-    const int64 filter_transform_matrix_size =
+    const Eigen::DenseIndex filter_transform_matrix_size =
         tile_spatial_size * base_filter_spatial_size;
 
     // Per-filter costs.
-    const int64 filter_total_size =
+    const Eigen::DenseIndex filter_total_size =
         base_filter_spatial_size * in_depth * filter_shards_total;
 
-    const int64 filter_transform_buffer_size =
+    const Eigen::DenseIndex filter_transform_buffer_size =
         base_filter_spatial_size * filter_shards_total * in_depth;
 
-    const int64 filter_out_buf_size =
+    const Eigen::DenseIndex filter_out_buf_size =
         tile_spatial_size * filter_shards_total * in_depth;
 
     // Total per-filter costs.
-    const int64 per_filter_cost =
+    const Eigen::DenseIndex per_filter_cost =
         filter_total_size + filter_transform_buffer_size + filter_out_buf_size;
 
     // Remove fixed cost and divide by per-filter cost.
-    const int64 num_filters_cache = std::max(
+    const Eigen::DenseIndex num_filters_cache = std::max(
         1LL, (cache_size - filter_transform_matrix_size) / per_filter_cost);
-    const int64 num_filters_transform = std::min(out_depth, num_filters_cache);
+    const Eigen::DenseIndex num_filters_transform = std::min(out_depth, num_filters_cache);
 
     // Allocate buffer for filter transform matrix:
     //   [tile_spatial_size, base_filter_spatial_size]
@@ -436,7 +436,7 @@ struct TransformFilters {
                   &num_filters_transform, &in_depth, &out_depth,
                   &filter_shards_row, &filter_shards_col, &tile_spatial_size,
                   &filter_in, &transform_matrix,
-                  &filter_out](int64 start, int64 limit) {
+                  &filter_out](Eigen::DenseIndex start, Eigen::DenseIndex limit) {
       // Allocate buffer for pre-processed filter:
       //   [base_filter_rows, base_filter_cols, num_filters_transform, in_depth]
       //
@@ -462,11 +462,11 @@ struct TransformFilters {
               &filter_output_buffer));
       T* out_buffer = filter_output_buffer.template flat<T>().data();
 
-      const int64 num_filters = limit - start;
-      const int64 od_unroll = num_filters_transform;
-      const int64 od_unroll_limit = (num_filters / od_unroll) * od_unroll;
+      const Eigen::DenseIndex num_filters = limit - start;
+      const Eigen::DenseIndex od_unroll = num_filters_transform;
+      const Eigen::DenseIndex od_unroll_limit = (num_filters / od_unroll) * od_unroll;
 
-      for (int64 od = start; od < od_unroll_limit; od += od_unroll) {
+      for (Eigen::DenseIndex od = start; od < od_unroll_limit; od += od_unroll) {
         TransformFilterRange<T>()(args, transform, od, od + od_unroll,
                                   filter_in, transform_matrix, out_buffer,
                                   filter_buf, filter_out);
@@ -480,7 +480,7 @@ struct TransformFilters {
     };
     auto worker_threads = *(ctx->device()->tensorflow_cpu_worker_threads());
 
-    const int64 shard_cost = args.filter_rows * args.filter_cols * in_depth *
+    const Eigen::DenseIndex shard_cost = args.filter_rows * args.filter_cols * in_depth *
                              filter_shards_total * tile_spatial_size;
     // TODO(andydavis) Resolve performance of multi-threaded filter transforms.
     Shard(1, worker_threads.workers, out_depth, shard_cost, shard);
@@ -496,14 +496,14 @@ struct TransformFilters {
 template <typename T>
 class GemmFilterPacker {
  public:
-  typedef Eigen::internal::const_blas_data_mapper<T, int64, Eigen::RowMajor>
+  typedef Eigen::internal::const_blas_data_mapper<T, Eigen::DenseIndex, Eigen::RowMajor>
       LhsMapper;
   typedef Eigen::internal::gebp_traits<T, T> Traits;
-  Eigen::internal::gemm_pack_lhs<T, int64, LhsMapper, Traits::mr,
+  Eigen::internal::gemm_pack_lhs<T, Eigen::DenseIndex, LhsMapper, Traits::mr,
                                  Traits::LhsProgress, Eigen::RowMajor>
       pack_lhs;
 
-  GemmFilterPacker(const int64 rows, const int64 depth, const T* lhs_input,
+  GemmFilterPacker(const Eigen::DenseIndex rows, const Eigen::DenseIndex depth, const T* lhs_input,
                    T* lhs_block)
       : rows_(rows),
         depth_(depth),
@@ -513,8 +513,8 @@ class GemmFilterPacker {
   void Run() { pack_lhs(lhs_block_, lhs_mapper_, depth_, rows_); }
 
  private:
-  const int64 rows_;
-  const int64 depth_;
+  const Eigen::DenseIndex rows_;
+  const Eigen::DenseIndex depth_;
   T* lhs_block_;
   LhsMapper lhs_mapper_;
 };
@@ -524,18 +524,18 @@ class GemmFilterPacker {
 template <typename T>
 struct PackFilters {
   void operator()(OpKernelContext* ctx, const Conv2DArgs& args,
-                  const int64 tile_spatial_size, const int64 filter_shards_row,
-                  const int64 filter_shards_col, const T* filter_transform_data,
+                  const Eigen::DenseIndex tile_spatial_size, const Eigen::DenseIndex filter_shards_row,
+                  const Eigen::DenseIndex filter_shards_col, const T* filter_transform_data,
                   std::vector<Tensor>* packed_filters) {
-    const int64 in_depth = args.in_depth;
-    const int64 out_depth = args.out_depth;
-    const int64 num_filters = filter_shards_row * filter_shards_col * out_depth;
+    const Eigen::DenseIndex in_depth = args.in_depth;
+    const Eigen::DenseIndex out_depth = args.out_depth;
+    const Eigen::DenseIndex num_filters = filter_shards_row * filter_shards_col * out_depth;
 
     auto shard = [&ctx, &packed_filters, &filter_transform_data,
                   &tile_spatial_size, &in_depth, &out_depth, &filter_shards_row,
-                  &filter_shards_col, &num_filters](int64 start, int64 limit) {
-      const int64 filter_coord_stride = num_filters * in_depth;
-      for (int64 i = start; i < limit; ++i) {
+                  &filter_shards_col, &num_filters](Eigen::DenseIndex start, Eigen::DenseIndex limit) {
+      const Eigen::DenseIndex filter_coord_stride = num_filters * in_depth;
+      for (Eigen::DenseIndex i = start; i < limit; ++i) {
         // Allocate filter buffer [out_depth, shard_rows, shard_cols, in_depth].
         OP_REQUIRES_OK(
             ctx, ctx->allocate_temp(DataTypeToEnum<T>::value,
@@ -571,21 +571,21 @@ struct PackFilters {
 template <typename T>
 class GemmState {
  public:
-  typedef Eigen::internal::const_blas_data_mapper<T, int64, Eigen::ColMajor>
+  typedef Eigen::internal::const_blas_data_mapper<T, Eigen::DenseIndex, Eigen::ColMajor>
       RhsMapper;
-  typedef Eigen::internal::blas_data_mapper<T, int64, Eigen::ColMajor>
+  typedef Eigen::internal::blas_data_mapper<T, Eigen::DenseIndex, Eigen::ColMajor>
       OutputMapper;
   typedef Eigen::internal::gebp_traits<T, T> Traits;
 
-  Eigen::internal::gemm_pack_rhs<T, int64, RhsMapper, Traits::nr,
+  Eigen::internal::gemm_pack_rhs<T, Eigen::DenseIndex, RhsMapper, Traits::nr,
                                  Eigen::ColMajor>
       pack_rhs;
-  Eigen::internal::gebp_kernel<T, T, int64, OutputMapper, Traits::mr,
+  Eigen::internal::gebp_kernel<T, T, Eigen::DenseIndex, OutputMapper, Traits::mr,
                                Traits::nr, false, false>
       gebp;
 
-  GemmState(const int64 rows, const int64 cols, const int64 depth,
-            const int64 out_buffer_size, const T* lhs_block, const T* rhs_input,
+  GemmState(const Eigen::DenseIndex rows, const Eigen::DenseIndex cols, const Eigen::DenseIndex depth,
+            const Eigen::DenseIndex out_buffer_size, const T* lhs_block, const T* rhs_input,
             T* rhs_block, T* out_buffer)
       : rows_(rows),
         cols_(cols),
@@ -605,10 +605,10 @@ class GemmState {
   }
 
  private:
-  const int64 rows_;
-  const int64 cols_;
-  const int64 depth_;
-  const int64 out_buffer_size_;
+  const Eigen::DenseIndex rows_;
+  const Eigen::DenseIndex cols_;
+  const Eigen::DenseIndex depth_;
+  const Eigen::DenseIndex out_buffer_size_;
   const T* lhs_block_;
   T* rhs_block_;
   T* out_buffer_;
@@ -628,38 +628,38 @@ template <typename T>
 struct CopyInputTile {
   void operator()(const Conv2DArgs& args,
                   const DeepConv2DTransform<T>* transform,
-                  const int64 num_tiles, const int64 in_r_start,
-                  const int64 in_c_start, const T* input, T* tile_buffer) {
+                  const Eigen::DenseIndex num_tiles, const Eigen::DenseIndex in_r_start,
+                  const Eigen::DenseIndex in_c_start, const T* input, T* tile_buffer) {
     typedef typename Eigen::internal::packet_traits<T>::type Packet;
-    static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+    static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
 
-    const int64 tile_rows = transform->input_shape().rows;
-    const int64 tile_cols = transform->input_shape().cols;
-    const int64 coord_stride = num_tiles * args.in_depth;
+    const Eigen::DenseIndex tile_rows = transform->input_shape().rows;
+    const Eigen::DenseIndex tile_cols = transform->input_shape().cols;
+    const Eigen::DenseIndex coord_stride = num_tiles * args.in_depth;
 
     // Calculate vectorized and scalar (residual) lengths for 'in_depth'.
-    const int64 input_vectorized_size =
+    const Eigen::DenseIndex input_vectorized_size =
         (args.in_depth / kPacketSize) * kPacketSize;
-    const int64 input_scalar_size = args.in_depth % kPacketSize;
+    const Eigen::DenseIndex input_scalar_size = args.in_depth % kPacketSize;
 
-    for (int64 r = 0; r < tile_rows; ++r) {
-      const int64 in_r = in_r_start + r;
+    for (Eigen::DenseIndex r = 0; r < tile_rows; ++r) {
+      const Eigen::DenseIndex in_r = in_r_start + r;
       if (in_r < 0 || in_r >= args.in_rows) continue;
 
-      for (int64 c = 0; c < tile_cols; ++c) {
-        const int64 in_c = in_c_start + c;
+      for (Eigen::DenseIndex c = 0; c < tile_cols; ++c) {
+        const Eigen::DenseIndex in_c = in_c_start + c;
         if (in_c < 0 || in_c >= args.in_cols) continue;
 
         auto* in = input + (in_r * args.in_cols + in_c) * args.in_depth;
         auto* tile = tile_buffer + coord_stride * (r * tile_rows + c);
         // Copy vectorized portion of depth dimension.
-        for (int64 d = 0; d < input_vectorized_size; d += kPacketSize) {
+        for (Eigen::DenseIndex d = 0; d < input_vectorized_size; d += kPacketSize) {
           auto v = Eigen::internal::ploadu<Packet>(in + d);
           Eigen::internal::pstoreu<T>(tile, v);
           tile += kPacketSize;
         }
         // Copy scalar portion of inner dimension.
-        for (int64 d = 0; d < input_scalar_size; ++d) {
+        for (Eigen::DenseIndex d = 0; d < input_scalar_size; ++d) {
           tile[d] = in[input_vectorized_size + d];
         }
       }
@@ -691,22 +691,22 @@ struct TransformInputTiles {
 
   void operator()(const Conv2DArgs& args,
                   const DeepConv2DTransform<T>* transform,
-                  const int64 num_tiles, const int64 in_r_start,
-                  const int64 in_c_start, const T* input,
+                  const Eigen::DenseIndex num_tiles, const Eigen::DenseIndex in_r_start,
+                  const Eigen::DenseIndex in_c_start, const T* input,
                   const T* transform_matrix, T* tile_buffer,
                   T* tile_transform) {
-    const int64 tile_rows = transform->input_shape().rows;
-    const int64 tile_cols = transform->input_shape().cols;
-    const int64 tile_spatial_size = tile_rows * tile_cols;
-    const int64 tile_stride_cols = transform->output_shape().cols;
-    const int64 coord_stride = num_tiles * args.in_depth;
-    const int64 num_tiles_stride = args.in_depth;
+    const Eigen::DenseIndex tile_rows = transform->input_shape().rows;
+    const Eigen::DenseIndex tile_cols = transform->input_shape().cols;
+    const Eigen::DenseIndex tile_spatial_size = tile_rows * tile_cols;
+    const Eigen::DenseIndex tile_stride_cols = transform->output_shape().cols;
+    const Eigen::DenseIndex coord_stride = num_tiles * args.in_depth;
+    const Eigen::DenseIndex num_tiles_stride = args.in_depth;
 
     memset(tile_buffer, 0, sizeof(T) * tile_spatial_size * coord_stride);
-    const int64 in_r = in_r_start;
-    for (int64 t = 0; t < num_tiles; ++t) {
-      const int64 num_tiles_base = t * num_tiles_stride;
-      const int64 in_c = in_c_start + t * tile_stride_cols;
+    const Eigen::DenseIndex in_r = in_r_start;
+    for (Eigen::DenseIndex t = 0; t < num_tiles; ++t) {
+      const Eigen::DenseIndex num_tiles_base = t * num_tiles_stride;
+      const Eigen::DenseIndex in_c = in_c_start + t * tile_stride_cols;
       CopyInputTile<T>()(args, transform, num_tiles, in_r, in_c, input,
                          tile_buffer + num_tiles_base);
     }
@@ -743,20 +743,20 @@ struct TransformOutputTile {
 
   void operator()(const Conv2DArgs& args,
                   const DeepConv2DTransform<T>* transform,
-                  const int64 num_tiles, const int64 in_r, const int64 in_c,
-                  const int64 filter_shards_row, const int64 filter_shards_col,
+                  const Eigen::DenseIndex num_tiles, const Eigen::DenseIndex in_r, const Eigen::DenseIndex in_c,
+                  const Eigen::DenseIndex filter_shards_row, const Eigen::DenseIndex filter_shards_col,
                   const T* out_transform_matrix, const T* out_buffer,
                   T* out_transform_buffer, T* output) {
-    const int64 tile_rows = transform->input_shape().rows;
-    const int64 tile_cols = transform->input_shape().cols;
-    const int64 tile_spatial_size = tile_rows * tile_cols;
+    const Eigen::DenseIndex tile_rows = transform->input_shape().rows;
+    const Eigen::DenseIndex tile_cols = transform->input_shape().cols;
+    const Eigen::DenseIndex tile_spatial_size = tile_rows * tile_cols;
 
-    const int64 out_buf_stride =
+    const Eigen::DenseIndex out_buf_stride =
         num_tiles * args.out_depth * filter_shards_row * filter_shards_col;
 
-    const int64 out_tile_rows = transform->output_shape().rows;
-    const int64 out_tile_cols = transform->output_shape().cols;
-    const int64 out_tile_spatial_size = out_tile_rows * out_tile_cols;
+    const Eigen::DenseIndex out_tile_rows = transform->output_shape().rows;
+    const Eigen::DenseIndex out_tile_cols = transform->output_shape().cols;
+    const Eigen::DenseIndex out_tile_spatial_size = out_tile_rows * out_tile_cols;
 
     // Compute output transform.
     ConstMatrixMap A(out_transform_matrix, out_tile_spatial_size,
@@ -766,33 +766,33 @@ struct TransformOutputTile {
 
     C.noalias() = A * B;
 
-    const int64 tile_stride_rows = transform->output_shape().rows;
-    const int64 tile_stride_cols = transform->output_shape().cols;
+    const Eigen::DenseIndex tile_stride_rows = transform->output_shape().rows;
+    const Eigen::DenseIndex tile_stride_cols = transform->output_shape().cols;
 
-    const int64 out_depth_stride = filter_shards_row * filter_shards_col;
-    const int64 num_tiles_stride = args.out_depth * out_depth_stride;
+    const Eigen::DenseIndex out_depth_stride = filter_shards_row * filter_shards_col;
+    const Eigen::DenseIndex num_tiles_stride = args.out_depth * out_depth_stride;
 
     // Copy transformed output from 'out_transform_buffer' to proper index
     // in 'output'. Note that some outputs at boundaries can be discarded.
-    for (int64 t = 0; t < num_tiles; ++t) {
-      const int64 tile_base = t * num_tiles_stride;
+    for (Eigen::DenseIndex t = 0; t < num_tiles; ++t) {
+      const Eigen::DenseIndex tile_base = t * num_tiles_stride;
 
-      for (int64 od = 0; od < args.out_depth; ++od) {
-        const int64 out_depth_base = od * out_depth_stride;
+      for (Eigen::DenseIndex od = 0; od < args.out_depth; ++od) {
+        const Eigen::DenseIndex out_depth_base = od * out_depth_stride;
 
         // TODO(andydavis) Update filter sharding scheme in the next CL.
-        for (int64 sr = 0; sr < filter_shards_row; ++sr) {
-          for (int64 sc = 0; sc < filter_shards_col; ++sc) {
-            const int64 shard_base = sr * filter_shards_col + sc;
-            const int64 out_buf_base = tile_base + out_depth_base + shard_base;
+        for (Eigen::DenseIndex sr = 0; sr < filter_shards_row; ++sr) {
+          for (Eigen::DenseIndex sc = 0; sc < filter_shards_col; ++sc) {
+            const Eigen::DenseIndex shard_base = sr * filter_shards_col + sc;
+            const Eigen::DenseIndex out_buf_base = tile_base + out_depth_base + shard_base;
 
             // Calcuate output indices and outputs to drop (if needed).
-            const int64 out_r_start =
+            const Eigen::DenseIndex out_r_start =
                 in_r + args.pad_rows - sr * tile_stride_rows;
             // NOTE: The index 't' for 'num_tiles is used in index calculation
             // for 'out_c_start' because we 'num_tiles' progresses along the
             // column dimension.
-            const int64 out_c_start = (in_c + t * tile_stride_cols) +
+            const Eigen::DenseIndex out_c_start = (in_c + t * tile_stride_cols) +
                                       args.pad_cols - sc * tile_stride_cols;
 
             if (out_r_start < 0 || out_r_start >= args.out_rows ||
@@ -803,22 +803,22 @@ struct TransformOutputTile {
             // Increment output if not first filter shard.
             const bool inc_output = (sr == 0 && sc == 0) ? false : true;
 
-            for (int64 ot_row = 0; ot_row < out_tile_rows; ++ot_row) {
-              const int64 out_r = out_r_start + ot_row;
+            for (Eigen::DenseIndex ot_row = 0; ot_row < out_tile_rows; ++ot_row) {
+              const Eigen::DenseIndex out_r = out_r_start + ot_row;
               if (out_r >= args.out_rows) continue;
 
-              for (int64 ot_col = 0; ot_col < out_tile_cols; ++ot_col) {
-                const int64 out_c = out_c_start + ot_col;
+              for (Eigen::DenseIndex ot_col = 0; ot_col < out_tile_cols; ++ot_col) {
+                const Eigen::DenseIndex out_c = out_c_start + ot_col;
                 if (out_c >= args.out_cols) continue;
 
                 // Calculate out tile indexl
-                const int64 out_buf_index = ot_row * out_tile_cols + ot_col;
+                const Eigen::DenseIndex out_buf_index = ot_row * out_tile_cols + ot_col;
                 // Read output value from buffer.
                 const T out_val =
                     out_transform_buffer[out_buf_base +
                                          out_buf_index * out_buf_stride];
                 // Calculate output index.
-                const int64 output_index =
+                const Eigen::DenseIndex output_index =
                     args.out_depth * (out_r * args.out_cols + out_c) + od;
                 // Update output.
                 if (inc_output) {
@@ -837,8 +837,8 @@ struct TransformOutputTile {
 
 template <typename T>
 struct Conv2DState {
-  Conv2DState(const int64 tile_spatial_size, const int64 filter_shards_row,
-              const int64 filter_shards_col, const T* input,
+  Conv2DState(const Eigen::DenseIndex tile_spatial_size, const Eigen::DenseIndex filter_shards_row,
+              const Eigen::DenseIndex filter_shards_col, const T* input,
               const T* tile_transform_matrix, const T* output_transform_matrix,
               T* buffer1, T* buffer2, T* packed_tile_buffer,
               T* gemm_output_buffer)
@@ -853,9 +853,9 @@ struct Conv2DState {
         packed_tile_buffer(packed_tile_buffer),
         gemm_output_buffer(gemm_output_buffer) {}
 
-  const int64 tile_spatial_size;
-  const int64 filter_shards_row;
-  const int64 filter_shards_col;
+  const Eigen::DenseIndex tile_spatial_size;
+  const Eigen::DenseIndex filter_shards_row;
+  const Eigen::DenseIndex filter_shards_col;
   const T* input;
   const T* tile_transform_matrix;
   const T* output_transform_matrix;
@@ -877,8 +877,8 @@ template <typename T>
 struct ComputeConv2D {
   void operator()(const Conv2DArgs& args,
                   const DeepConv2DTransform<T>* transform,
-                  const Conv2DState<T>& cs, const int64 in_r, const int64 in_c,
-                  const int64 num_tiles,
+                  const Conv2DState<T>& cs, const Eigen::DenseIndex in_r, const Eigen::DenseIndex in_c,
+                  const Eigen::DenseIndex num_tiles,
                   const std::vector<Tensor>& packed_filters, const T* input,
                   T* output) {
     // Transform input tiles.
@@ -886,15 +886,15 @@ struct ComputeConv2D {
                              cs.tile_transform_matrix, cs.buffer1, cs.buffer2);
 
     // Compute element-wise product (each a MatMul): input tiles X filters.
-    const int64 in_depth = args.in_depth;
-    const int64 out_depth = args.out_depth;
-    const int64 num_filters =
+    const Eigen::DenseIndex in_depth = args.in_depth;
+    const Eigen::DenseIndex out_depth = args.out_depth;
+    const Eigen::DenseIndex num_filters =
         cs.filter_shards_row * cs.filter_shards_col * out_depth;
-    const int64 tile_coord_stride = num_tiles * in_depth;
-    const int64 gemm_out_buf_size = num_tiles * num_filters;
-    const int64 gemm_out_buf_bytes = gemm_out_buf_size * sizeof(T);
+    const Eigen::DenseIndex tile_coord_stride = num_tiles * in_depth;
+    const Eigen::DenseIndex gemm_out_buf_size = num_tiles * num_filters;
+    const Eigen::DenseIndex gemm_out_buf_bytes = gemm_out_buf_size * sizeof(T);
 
-    for (int64 i = 0; i < cs.tile_spatial_size; ++i) {
+    for (Eigen::DenseIndex i = 0; i < cs.tile_spatial_size; ++i) {
       GemmState<T> gemm(num_filters, num_tiles, in_depth, gemm_out_buf_size,
                         packed_filters[i].template flat<T>().data(),
                         cs.buffer2 + i * tile_coord_stride,
@@ -939,26 +939,26 @@ struct DeepConv2D<CPUDevice, T> {
     // TODO(andydavis) Add function to select transform based on conv params.
     std::unique_ptr<DeepConv2DTransform<T>> transform(new WinogradTransform<T>);
 
-    const int64 in_depth = args.in_depth;
-    const int64 out_depth = args.out_depth;
+    const Eigen::DenseIndex in_depth = args.in_depth;
+    const Eigen::DenseIndex out_depth = args.out_depth;
 
-    const int64 tile_rows = transform->input_shape().rows;
-    const int64 tile_cols = transform->input_shape().cols;
-    const int64 tile_spatial_size = tile_rows * tile_cols;
+    const Eigen::DenseIndex tile_rows = transform->input_shape().rows;
+    const Eigen::DenseIndex tile_cols = transform->input_shape().cols;
+    const Eigen::DenseIndex tile_spatial_size = tile_rows * tile_cols;
 
-    const int64 out_tile_rows = transform->output_shape().rows;
-    const int64 out_tile_cols = transform->output_shape().cols;
-    const int64 out_tile_spatial_size = out_tile_rows * out_tile_cols;
+    const Eigen::DenseIndex out_tile_rows = transform->output_shape().rows;
+    const Eigen::DenseIndex out_tile_cols = transform->output_shape().cols;
+    const Eigen::DenseIndex out_tile_spatial_size = out_tile_rows * out_tile_cols;
 
-    const int64 base_filter_rows = transform->filter_shape().rows;
+    const Eigen::DenseIndex base_filter_rows = transform->filter_shape().rows;
 
-    const int64 filter_residual_row =
+    const Eigen::DenseIndex filter_residual_row =
         std::max(0LL, args.filter_rows - base_filter_rows);
-    const int64 filter_shards_row = 1 + (filter_residual_row + 2 - 1) / 2;
+    const Eigen::DenseIndex filter_shards_row = 1 + (filter_residual_row + 2 - 1) / 2;
 
-    const int64 filter_residual_col =
+    const Eigen::DenseIndex filter_residual_col =
         std::max(0LL, args.filter_cols - base_filter_rows);
-    const int64 filter_shards_col = 1 + (filter_residual_col + 2 - 1) / 2;
+    const Eigen::DenseIndex filter_shards_col = 1 + (filter_residual_col + 2 - 1) / 2;
 
     // Allocate buffer for transformed filters.
     Tensor filter_transform;
@@ -1005,61 +1005,61 @@ struct DeepConv2D<CPUDevice, T> {
                   out_depth, tile_rows, tile_cols, out_tile_rows, out_tile_cols,
                   filter_shards_row, filter_shards_col, tile_spatial_size,
                   &input, &tile_transform_matrix, &output_transform_matrix,
-                  &output](int64 batch_start, int64 batch_limit) {
-      const int64 row_tiles =
+                  &output](Eigen::DenseIndex batch_start, Eigen::DenseIndex batch_limit) {
+      const Eigen::DenseIndex row_tiles =
           (args.out_rows + out_tile_rows - 1) / out_tile_rows +
           filter_shards_row - 1;
-      const int64 col_tiles =
+      const Eigen::DenseIndex col_tiles =
           (args.out_cols + out_tile_cols - 1) / out_tile_cols +
           filter_shards_col - 1;
 
       // Calculate number of tiles to process together.
-      const int64 filter_shard_size = filter_shards_row * filter_shards_col;
-      const int64 out_tile_spatial_size = out_tile_rows * out_tile_cols;
+      const Eigen::DenseIndex filter_shard_size = filter_shards_row * filter_shards_col;
+      const Eigen::DenseIndex out_tile_spatial_size = out_tile_rows * out_tile_cols;
 
       // Cache budget (based on L2 cache size = 256KB).
       // TODO(andydavis) Read cache size from the system.
-      const int64 cache_size = (256LL << 10) / sizeof(T);
+      const Eigen::DenseIndex cache_size = (256LL << 10) / sizeof(T);
 
       // Fixed costs.
-      const int64 tile_transform_matrix_size =
+      const Eigen::DenseIndex tile_transform_matrix_size =
           tile_spatial_size * tile_spatial_size;
-      const int64 output_transform_matrix_size =
+      const Eigen::DenseIndex output_transform_matrix_size =
           out_tile_spatial_size * tile_spatial_size;
       // Calculate cache reserve size.
-      const int64 filter_depth_size = in_depth * out_depth * filter_shard_size;
+      const Eigen::DenseIndex filter_depth_size = in_depth * out_depth * filter_shard_size;
       const bool small_filter = ((filter_depth_size * 100) / cache_size) <= 25;
-      const int64 cache_reserve_size = small_filter ? filter_depth_size : 1024;
+      const Eigen::DenseIndex cache_reserve_size = small_filter ? filter_depth_size : 1024;
       // Calculate total fixed cost.
-      const int64 total_fixed_cost = tile_transform_matrix_size +
+      const Eigen::DenseIndex total_fixed_cost = tile_transform_matrix_size +
                                      output_transform_matrix_size +
                                      cache_reserve_size;
 
       // Per-tile costs.
-      const int64 buffer1_per_tile_size =
+      const Eigen::DenseIndex buffer1_per_tile_size =
           tile_spatial_size * std::max(in_depth, out_depth * filter_shard_size);
-      const int64 buffer2_per_tile_size =
+      const Eigen::DenseIndex buffer2_per_tile_size =
           std::max(tile_spatial_size * in_depth,
                    out_tile_spatial_size * out_depth * filter_shard_size);
-      const int64 packed_tile_per_tile_size = in_depth;
-      const int64 gemm_out_per_tile_size = out_depth * filter_shard_size;
-      const int64 total_per_tile_cost =
+      const Eigen::DenseIndex packed_tile_per_tile_size = in_depth;
+      const Eigen::DenseIndex gemm_out_per_tile_size = out_depth * filter_shard_size;
+      const Eigen::DenseIndex total_per_tile_cost =
           buffer1_per_tile_size + buffer2_per_tile_size +
           packed_tile_per_tile_size + gemm_out_per_tile_size;
 
-      const int64 num_tiles_cache =
+      const Eigen::DenseIndex num_tiles_cache =
           std::max(4LL, (cache_size - total_fixed_cost) / total_per_tile_cost);
-      const int64 num_tiles = std::min(num_tiles_cache, col_tiles);
+      const Eigen::DenseIndex num_tiles = std::min(num_tiles_cache, col_tiles);
 
       // Allocate temporary buffer 'buffer1', which is first used for copying
       // input tiles, then re-used to buffer gemm output. Calculate the
       // required buffer size for 'buffer1', based on max buffer size required
       // between copying input tiles and buffering gemm product output.
       //   buffer1: [max(buf1_tile_size, buf1_out_size)]
-      const int64 buffer1_tile_size = tile_spatial_size * num_tiles * in_depth;
-      const int64 buffer1_out_size =
+      const Eigen::DenseIndex buffer1_tile_size = tile_spatial_size * num_tiles * in_depth;
+      const Eigen::DenseIndex buffer1_out_size =
           tile_spatial_size * num_tiles * out_depth * filter_shard_size;
-      const int64 buffer1_size = std::max(buffer1_tile_size, buffer1_out_size);
+      const Eigen::DenseIndex buffer1_size = std::max(buffer1_tile_size, buffer1_out_size);
       Tensor buffer1_tensor;
       OP_REQUIRES_OK(ctx, ctx->allocate_temp(DataTypeToEnum<T>::value,
                                              TensorShape({buffer1_size}),
@@ -1070,11 +1070,11 @@ struct DeepConv2D<CPUDevice, T> {
       // transformed input tiles, then re-used for transformed output tiles.
       // Calculate required buffer size for 'buffer2' as max required buffer
       // between input and output tranform buffer sizes.
-      const int64 buffer2_tile_transform_size =
+      const Eigen::DenseIndex buffer2_tile_transform_size =
           tile_spatial_size * num_tiles * in_depth;
-      const int64 buffer2_out_transform_size =
+      const Eigen::DenseIndex buffer2_out_transform_size =
           out_tile_spatial_size * num_tiles * out_depth * filter_shard_size;
-      const int64 buffer2_size =
+      const Eigen::DenseIndex buffer2_size =
           std::max(buffer2_tile_transform_size, buffer2_out_transform_size);
       Tensor buffer2_tensor;
       OP_REQUIRES_OK(ctx, ctx->allocate_temp(DataTypeToEnum<T>::value,
@@ -1106,35 +1106,35 @@ struct DeepConv2D<CPUDevice, T> {
                                 output_transform_matrix, buffer1, buffer2,
                                 packed_tile_buffer, gemm_output_buffer);
 
-      const int64 row_pad = args.pad_rows;
-      const int64 col_pad = args.pad_cols;
-      const int64 unroll_col_limit = (col_tiles / num_tiles) * num_tiles;
+      const Eigen::DenseIndex row_pad = args.pad_rows;
+      const Eigen::DenseIndex col_pad = args.pad_cols;
+      const Eigen::DenseIndex unroll_col_limit = (col_tiles / num_tiles) * num_tiles;
 
-      const int64 input_image_size = args.in_rows * args.in_cols * in_depth;
-      const int64 output_image_size = args.out_rows * args.out_cols * out_depth;
+      const Eigen::DenseIndex input_image_size = args.in_rows * args.in_cols * in_depth;
+      const Eigen::DenseIndex output_image_size = args.out_rows * args.out_cols * out_depth;
 
-      const int64 tile_stride_rows = transform->output_shape().rows;
-      const int64 tile_stride_cols = transform->output_shape().cols;
+      const Eigen::DenseIndex tile_stride_rows = transform->output_shape().rows;
+      const Eigen::DenseIndex tile_stride_cols = transform->output_shape().cols;
 
-      for (int64 b = batch_start; b < batch_limit; ++b) {
-        const int64 in_base = b * input_image_size;
-        const int64 out_base = b * output_image_size;
+      for (Eigen::DenseIndex b = batch_start; b < batch_limit; ++b) {
+        const Eigen::DenseIndex in_base = b * input_image_size;
+        const Eigen::DenseIndex out_base = b * output_image_size;
 
-        for (int64 tile_r = 0; tile_r < row_tiles; ++tile_r) {
-          const int64 in_r = tile_r * tile_stride_rows - row_pad;
+        for (Eigen::DenseIndex tile_r = 0; tile_r < row_tiles; ++tile_r) {
+          const Eigen::DenseIndex in_r = tile_r * tile_stride_rows - row_pad;
 
           // Process unrolled tiles.
-          for (int64 tile_c = 0; tile_c < unroll_col_limit;
+          for (Eigen::DenseIndex tile_c = 0; tile_c < unroll_col_limit;
                tile_c += num_tiles) {
-            const int64 in_c = tile_c * tile_stride_cols - col_pad;
+            const Eigen::DenseIndex in_c = tile_c * tile_stride_cols - col_pad;
             ComputeConv2D<T>()(args, transform.get(), conv_state, in_r, in_c,
                                num_tiles, packed_filters, input + in_base,
                                output + out_base);
           }
           // Process remaining tiles.
           if (unroll_col_limit < col_tiles) {
-            const int64 rem_tiles = col_tiles - unroll_col_limit;
-            const int64 in_c = unroll_col_limit * tile_stride_cols - col_pad;
+            const Eigen::DenseIndex rem_tiles = col_tiles - unroll_col_limit;
+            const Eigen::DenseIndex in_c = unroll_col_limit * tile_stride_cols - col_pad;
             ComputeConv2D<T>()(args, transform.get(), conv_state, in_r, in_c,
                                rem_tiles, packed_filters, input + in_base,
                                output + out_base);
@@ -1143,7 +1143,7 @@ struct DeepConv2D<CPUDevice, T> {
       }
     };
     auto worker_threads = *(ctx->device()->tensorflow_cpu_worker_threads());
-    const int64 shard_cost = args.out_rows * args.out_cols * args.out_depth *
+    const Eigen::DenseIndex shard_cost = args.out_rows * args.out_cols * args.out_depth *
                              tile_spatial_size * args.in_depth;
     Shard(worker_threads.num_threads, worker_threads.workers, args.batch,
           shard_cost, shard);

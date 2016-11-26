@@ -72,25 +72,25 @@ struct ResizeBilinear<CPUDevice, T> {
                   const float height_scale, const float width_scale,
                   typename TTypes<float, 4>::Tensor output) {
     const int batch = images.dimension(0);
-    const int64 in_height = images.dimension(1);
-    const int64 in_width = images.dimension(2);
+    const Eigen::DenseIndex in_height = images.dimension(1);
+    const Eigen::DenseIndex in_width = images.dimension(2);
     const int channels = images.dimension(3);
 
-    const int64 out_height = output.dimension(1);
-    const int64 out_width = output.dimension(2);
+    const Eigen::DenseIndex out_height = output.dimension(1);
+    const Eigen::DenseIndex out_width = output.dimension(2);
 
     for (int b = 0; b < batch; ++b) {
       for (int y = 0; y < out_height; ++y) {
         const float in_y = y * height_scale;
-        const int64 top_y_index = static_cast<int64>(floorf(in_y));
-        const int64 bottom_y_index =
-            std::min(static_cast<int64>(ceilf(in_y)), in_height - 1);
+        const Eigen::DenseIndex top_y_index = static_cast<Eigen::DenseIndex>(floorf(in_y));
+        const Eigen::DenseIndex bottom_y_index =
+            std::min(static_cast<Eigen::DenseIndex>(ceilf(in_y)), in_height - 1);
         const float y_lerp = in_y - top_y_index;
         for (int x = 0; x < out_width; ++x) {
           const float in_x = x * width_scale;
-          const int64 left_x_index = static_cast<int64>(floorf(in_x));
-          const int64 right_x_index =
-              std::min(static_cast<int64>(ceilf(in_x)), in_width - 1);
+          const Eigen::DenseIndex left_x_index = static_cast<Eigen::DenseIndex>(floorf(in_x));
+          const Eigen::DenseIndex right_x_index =
+              std::min(static_cast<Eigen::DenseIndex>(ceilf(in_x)), in_width - 1);
           const float x_lerp = in_x - left_x_index;
           for (int c = 0; c < channels; ++c) {
             const float top_left(images((Eigen::DenseIndex)b, (Eigen::DenseIndex)top_y_index, (Eigen::DenseIndex)left_x_index, (Eigen::DenseIndex)c));
@@ -154,12 +154,12 @@ struct ResizeBilinearGrad<CPUDevice, T> {
                   const float height_scale, const float width_scale,
                   typename TTypes<T, 4>::Tensor output_grad) {
     const int batch = output_grad.dimension(0);
-    const int64 original_height = output_grad.dimension(1);
-    const int64 original_width = output_grad.dimension(2);
+    const Eigen::DenseIndex original_height = output_grad.dimension(1);
+    const Eigen::DenseIndex original_width = output_grad.dimension(2);
     const int channels = output_grad.dimension(3);
 
-    const int64 resized_height = input_grad.dimension(1);
-    const int64 resized_width = input_grad.dimension(2);
+    const Eigen::DenseIndex resized_height = input_grad.dimension(1);
+    const Eigen::DenseIndex resized_width = input_grad.dimension(2);
 
     output_grad.setZero();
 
@@ -170,22 +170,22 @@ struct ResizeBilinearGrad<CPUDevice, T> {
     //                       +  top_right * (1 - y) * x
     //                       +  bottom_left * y * (1 - x)
     //                       +  bottom_right * y * x
-    for (int64 b = 0; b < batch; ++b) {
-      for (int64 y = 0; y < resized_height; ++y) {
+    for (Eigen::DenseIndex b = 0; b < batch; ++b) {
+      for (Eigen::DenseIndex y = 0; y < resized_height; ++y) {
         const float in_y = y * height_scale;
-        const int64 top_y_index = static_cast<int64>(floorf(in_y));
-        const int64 bottom_y_index =
-            std::min(static_cast<int64>(ceilf(in_y)), original_height - 1);
+        const Eigen::DenseIndex top_y_index = static_cast<Eigen::DenseIndex>(floorf(in_y));
+        const Eigen::DenseIndex bottom_y_index =
+            std::min(static_cast<Eigen::DenseIndex>(ceilf(in_y)), original_height - 1);
         const float y_lerp = in_y - top_y_index;
         const float inverse_y_lerp = (1.0f - y_lerp);
-        for (int64 x = 0; x < resized_width; ++x) {
+        for (Eigen::DenseIndex x = 0; x < resized_width; ++x) {
           const float in_x = x * width_scale;
-          const int64 left_x_index = static_cast<int64>(floorf(in_x));
-          const int64 right_x_index =
-              std::min(static_cast<int64>(ceilf(in_x)), original_width - 1);
+          const Eigen::DenseIndex left_x_index = static_cast<Eigen::DenseIndex>(floorf(in_x));
+          const Eigen::DenseIndex right_x_index =
+              std::min(static_cast<Eigen::DenseIndex>(ceilf(in_x)), original_width - 1);
           const float x_lerp = in_x - left_x_index;
           const float inverse_x_lerp = (1.0f - x_lerp);
-          for (int64 c = 0; c < channels; ++c) {
+          for (Eigen::DenseIndex c = 0; c < channels; ++c) {
             output_grad((Eigen::DenseIndex)b, (Eigen::DenseIndex)top_y_index, (Eigen::DenseIndex)left_x_index, (Eigen::DenseIndex)c) +=
                 T(input_grad((Eigen::DenseIndex)b, (Eigen::DenseIndex)y, (Eigen::DenseIndex)x, (Eigen::DenseIndex)c) * inverse_y_lerp * inverse_x_lerp);
             output_grad((Eigen::DenseIndex)b, (Eigen::DenseIndex)top_y_index, (Eigen::DenseIndex)right_x_index, (Eigen::DenseIndex)c) +=

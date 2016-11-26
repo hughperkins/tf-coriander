@@ -48,7 +48,7 @@ struct MultinomialFunctor {
                   typename TTypes<float>::Flat scratch, int batch_size,
                   int num_classes, int num_samples,
                   const random::PhiloxRandom& gen,
-                  typename TTypes<int64>::Matrix output);
+                  typename TTypes<Eigen::DenseIndex>::Matrix output);
 };
 
 template <typename T>
@@ -60,7 +60,7 @@ struct MultinomialFunctor<CPUDevice, T> {
                   typename TTypes<float>::Flat /* scratch */, int batch_size,
                   int num_classes, int num_samples,
                   const random::PhiloxRandom& gen,
-                  typename TTypes<int64>::Matrix output) {
+                  typename TTypes<Eigen::DenseIndex>::Matrix output) {
     auto worker_threads = *(ctx->device()->tensorflow_cpu_worker_threads());
 
     // The implementation only parallelizes by batch.
@@ -68,7 +68,7 @@ struct MultinomialFunctor<CPUDevice, T> {
     // This takes O(BatchSize * NumSamples * log(NumClasses) + NumClasses) CPU
     // time.
     auto DoWork = [num_samples, num_classes, &gen, &output, &logits](
-        int64 start_row, int64 limit_row) {
+        Eigen::DenseIndex start_row, Eigen::DenseIndex limit_row) {
       // Capturing "gen" by-value would only make a copy for the _shared_
       // lambda.  Since we want to let each worker have its own copy, we pass
       // "gen" by reference and explicitly do a copy assignment here.
@@ -80,12 +80,12 @@ struct MultinomialFunctor<CPUDevice, T> {
 
       std::vector<float> cdf(num_classes);
 
-      for (int64 b = start_row; b < limit_row; ++b) {
+      for (Eigen::DenseIndex b = start_row; b < limit_row; ++b) {
         const auto* logits_row = &logits(b, 0);
 
         // Takes an along-class maximum (for numerical stability).
         T max = std::numeric_limits<T>::lowest();
-        for (int64 j = 0; j < num_classes; ++j) {
+        for (Eigen::DenseIndex j = 0; j < num_classes; ++j) {
           if (std::isfinite(static_cast<float>(logits_row[j]))) {
             max = std::max(max, logits_row[j]);
           }
@@ -95,7 +95,7 @@ struct MultinomialFunctor<CPUDevice, T> {
         // Precompute cumulative probability distribution across classes.
         // Note: This isn't normalized.
         float running_total = 0;
-        for (int64 j = 0; j < num_classes; ++j) {
+        for (Eigen::DenseIndex j = 0; j < num_classes; ++j) {
           if (std::isfinite(static_cast<float>(logits_row[j]))) {
             running_total +=
                 std::exp(static_cast<float>(logits_row[j]) - max_logit);
@@ -103,7 +103,7 @@ struct MultinomialFunctor<CPUDevice, T> {
           cdf[j] = running_total;
         }
         // Generate each sample.
-        for (int64 j = 0; j < num_samples; ++j) {
+        for (Eigen::DenseIndex j = 0; j < num_samples; ++j) {
           float to_find = simple_philox.RandFloat() * running_total;
           auto found_iter = std::upper_bound(cdf.begin(), cdf.end(), to_find);
           output(b, j) = std::distance(cdf.begin(), found_iter);
@@ -111,7 +111,7 @@ struct MultinomialFunctor<CPUDevice, T> {
       }
     };
     // Incredibly rough estimate of clock cycles for DoWork();
-    const int64 cost =
+    const Eigen::DenseIndex cost =
         50 * (num_samples * std::log(num_classes) / std::log(2) + num_classes);
     Shard(worker_threads.num_threads, worker_threads.workers, batch_size, cost,
           DoWork);
@@ -146,7 +146,7 @@ class MultinomialOp : public OpKernel {
                     "num_samples should be nonnegative, got ", num_samples));
 
     for (int i = 0; i < 2; i++) {
-      const int64 dim = logits_t.dim_size(i);
+      const Eigen::DenseIndex dim = logits_t.dim_size(i);
       OP_REQUIRES(ctx, static_cast<int>(dim) == dim,
                   errors::InvalidArgument("logits.shape = ",
                                           logits_t.shape().DebugString(),
@@ -190,7 +190,7 @@ class MultinomialOp : public OpKernel {
           ctx, ctx->eigen_device<Device>(), logits_t.matrix<T>(),
           noises.flat<float>(), scores.flat<float>(), scratch.flat<float>(),
           batch_size, num_classes, num_samples, rng,
-          samples_t->matrix<int64>());
+          samples_t->matrix<Eigen::DenseIndex>());
     }
   }
 

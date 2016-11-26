@@ -36,18 +36,18 @@ namespace tensorflow {
 
 namespace {
 
-gtl::InlinedVector<int64, 4> IntTensorToInt64Vec(const Tensor& tensor) {
-  gtl::InlinedVector<int64, 4> out;
+gtl::InlinedVector<Eigen::DenseIndex, 4> IntTensorToInt64Vec(const Tensor& tensor) {
+  gtl::InlinedVector<Eigen::DenseIndex, 4> out;
   if (tensor.dtype() == DT_INT32) {
-    for (int64 i = 0; i < tensor.NumElements(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < tensor.NumElements(); ++i) {
       out.push_back(tensor.flat<int32>()(i));
     }
   } else if (tensor.dtype() == DT_INT64) {
-    for (int64 i = 0; i < tensor.NumElements(); ++i) {
-      out.push_back(tensor.flat<int64>()(i));
+    for (Eigen::DenseIndex i = 0; i < tensor.NumElements(); ++i) {
+      out.push_back(tensor.flat<Eigen::DenseIndex>()(i));
     }
   } else {
-    LOG(FATAL) << "begin must be either int32 or int64";
+    LOG(FATAL) << "begin must be either int32 or Eigen::DenseIndex";
   }
   return out;
 }
@@ -62,8 +62,8 @@ typedef Eigen::GpuDevice GPUDevice;
 static void SharedValidation(OpKernelContext* context,
                              TensorShape* output_shape, bool* is_identity,
                              bool* slice_dim0,
-                             gtl::InlinedVector<int64, 4>* begin,
-                             gtl::InlinedVector<int64, 4>* size) {
+                             gtl::InlinedVector<Eigen::DenseIndex, 4>* begin,
+                             gtl::InlinedVector<Eigen::DenseIndex, 4>* size) {
   const Tensor& input = context->input(0);
   const Tensor& begin_tensor = context->input(1);
   const Tensor& size_tensor = context->input(2);
@@ -91,8 +91,8 @@ static void SharedValidation(OpKernelContext* context,
   *is_identity = true;
   *slice_dim0 = true;
   for (int i = 0; i < input_dims; ++i) {
-    int64 b = (*begin)[i];
-    int64 s = (*size)[i];
+    Eigen::DenseIndex b = (*begin)[i];
+    Eigen::DenseIndex s = (*size)[i];
     if (input.dim_size(i) == 0) {
       OP_REQUIRES(
           context, b == 0 && s == 0,
@@ -124,8 +124,8 @@ class SliceOp : public OpKernel {
     TensorShape output_shape;
     bool is_identity = true;
     bool slice_dim0 = true;
-    gtl::InlinedVector<int64, 4> begin;
-    gtl::InlinedVector<int64, 4> size;
+    gtl::InlinedVector<Eigen::DenseIndex, 4> begin;
+    gtl::InlinedVector<Eigen::DenseIndex, 4> size;
     SharedValidation(context, &output_shape, &is_identity, &slice_dim0, &begin,
                      &size);
     if (!context->status().ok()) return;
@@ -155,7 +155,7 @@ class SliceOp : public OpKernel {
         // TODO(agarwal): Consider multi-threading this loop for cases where
         // size[0] is very large.
         for (int i = 0; i < size[0]; ++i) {
-          const int64 row = begin[0] + i;
+          const Eigen::DenseIndex row = begin[0] + i;
           if (i + 1 < size[0]) {
             port::prefetch<port::PREFETCH_HINT_T0>(&output(i + 1, 0));
             port::prefetch<port::PREFETCH_HINT_T0>(&input(row + 1, begin[1]));
@@ -186,8 +186,8 @@ class SliceOp : public OpKernel {
 
  private:
   template <int NDIM>
-  void HandleCase(OpKernelContext* context, const gtl::ArraySlice<int64>& begin,
-                  const gtl::ArraySlice<int64>& size, Tensor* result) {
+  void HandleCase(OpKernelContext* context, const gtl::ArraySlice<Eigen::DenseIndex>& begin,
+                  const gtl::ArraySlice<Eigen::DenseIndex>& size, Tensor* result) {
     Eigen::DSizes<Eigen::DenseIndex, NDIM> indices;
     Eigen::DSizes<Eigen::DenseIndex, NDIM> sizes;
     for (int i = 0; i < NDIM; ++i) {

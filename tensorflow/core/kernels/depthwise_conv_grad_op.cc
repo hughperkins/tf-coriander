@@ -57,29 +57,29 @@ typedef Eigen::GpuDevice GPUDevice;
   OP_REQUIRES(                                                                 \
       context, out_backprop.dims() == 4,                                       \
       errors::InvalidArgument(label, ": out_backprop must be 4-dimensional")); \
-  const int64 batch = input_shape.dim_size(0);                                 \
+  const Eigen::DenseIndex batch = input_shape.dim_size(0);                                 \
   OP_REQUIRES(                                                                 \
       context, batch == out_backprop.dim_size(0),                              \
       errors::InvalidArgument(                                                 \
           label, ": input and out_backprop must have the same batch size"));   \
-  const int64 input_rows = input_shape.dim_size(1);                            \
-  const int64 input_cols = input_shape.dim_size(2);                            \
-  const int64 filter_rows = filter_shape.dim_size(0);                          \
-  const int64 filter_cols = filter_shape.dim_size(1);                          \
-  const int64 output_rows = out_backprop.dim_size(1);                          \
-  const int64 output_cols = out_backprop.dim_size(2);                          \
-  const int64 in_depth = input_shape.dim_size(3);                              \
+  const Eigen::DenseIndex input_rows = input_shape.dim_size(1);                            \
+  const Eigen::DenseIndex input_cols = input_shape.dim_size(2);                            \
+  const Eigen::DenseIndex filter_rows = filter_shape.dim_size(0);                          \
+  const Eigen::DenseIndex filter_cols = filter_shape.dim_size(1);                          \
+  const Eigen::DenseIndex output_rows = out_backprop.dim_size(1);                          \
+  const Eigen::DenseIndex output_cols = out_backprop.dim_size(2);                          \
+  const Eigen::DenseIndex in_depth = input_shape.dim_size(3);                              \
   OP_REQUIRES(context, in_depth == filter_shape.dim_size(2),                   \
               errors::InvalidArgument(                                         \
                   label, ": input and filter must have the same in_depth"));   \
-  const int64 depth_multiplier = filter_shape.dim_size(3);                     \
-  const int64 out_depth = out_backprop.dim_size(3);                            \
+  const Eigen::DenseIndex depth_multiplier = filter_shape.dim_size(3);                     \
+  const Eigen::DenseIndex out_depth = out_backprop.dim_size(3);                            \
   OP_REQUIRES(                                                                 \
       context, (depth_multiplier * in_depth) == out_depth,                     \
       errors::InvalidArgument(                                                 \
           label, ": depth_multiplier * in_depth not equal to out_depth"));     \
   const auto stride = strides_[1];                                             \
-  int64 out_rows = 0, out_cols = 0, pad_rows = 0, pad_cols = 0;                \
+  Eigen::DenseIndex out_rows = 0, out_cols = 0, pad_rows = 0, pad_cols = 0;                \
   OP_REQUIRES_OK(context,                                                      \
                  GetWindowedOutputSize(input_rows, filter_rows, stride,        \
                                        padding_, &out_rows, &pad_rows));       \
@@ -145,30 +145,30 @@ typedef Eigen::GpuDevice GPUDevice;
 //
 template <typename T>
 static void CopyOutputBackpropRegion(const DepthwiseArgs& args,
-                                     const int64 padded_filter_inner_dim_size,
-                                     const int64 in_r, const int64 in_c,
+                                     const Eigen::DenseIndex padded_filter_inner_dim_size,
+                                     const Eigen::DenseIndex in_r, const Eigen::DenseIndex in_c,
                                      const T* out_backprop, T* buffer) {
   typedef typename Eigen::internal::packet_traits<T>::type Packet;
-  static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+  static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
 
-  const int64 stride = args.stride;
-  const int64 filter_rows = args.filter_rows;
-  const int64 filter_cols = args.filter_cols;
-  const int64 pad_rows = args.pad_rows;
-  const int64 pad_cols = args.pad_cols;
-  const int64 out_rows = args.out_rows;
-  const int64 out_cols = args.out_cols;
+  const Eigen::DenseIndex stride = args.stride;
+  const Eigen::DenseIndex filter_rows = args.filter_rows;
+  const Eigen::DenseIndex filter_cols = args.filter_cols;
+  const Eigen::DenseIndex pad_rows = args.pad_rows;
+  const Eigen::DenseIndex pad_cols = args.pad_cols;
+  const Eigen::DenseIndex out_rows = args.out_rows;
+  const Eigen::DenseIndex out_cols = args.out_cols;
 
   // Calculate the output spatial region which used point (in_r, in_c) as input.
-  const int64 out_r_start = std::max(
-      static_cast<int64>(0), (in_r - filter_rows + pad_rows + stride) / stride);
-  const int64 out_r_end = std::min(out_rows - 1, (in_r + pad_rows) / stride);
-  const int64 out_c_start = std::max(
-      static_cast<int64>(0), (in_c - filter_cols + pad_cols + stride) / stride);
-  const int64 out_c_end = std::min(out_cols - 1, (in_c + pad_cols) / stride);
+  const Eigen::DenseIndex out_r_start = std::max(
+      static_cast<Eigen::DenseIndex>(0), (in_r - filter_rows + pad_rows + stride) / stride);
+  const Eigen::DenseIndex out_r_end = std::min(out_rows - 1, (in_r + pad_rows) / stride);
+  const Eigen::DenseIndex out_c_start = std::max(
+      static_cast<Eigen::DenseIndex>(0), (in_c - filter_cols + pad_cols + stride) / stride);
+  const Eigen::DenseIndex out_c_end = std::min(out_cols - 1, (in_c + pad_cols) / stride);
 
   // Zero-pad 'buffer' if output region is smaller than filter spatial size.
-  const int64 filter_spatial_size = args.filter_rows * args.filter_cols;
+  const Eigen::DenseIndex filter_spatial_size = args.filter_rows * args.filter_cols;
   if ((out_r_end - out_r_start + 1) < args.filter_rows ||
       (out_c_end - out_c_start + 1) < args.filter_cols) {
     memset(buffer, 0,
@@ -176,31 +176,31 @@ static void CopyOutputBackpropRegion(const DepthwiseArgs& args,
   }
 
   // Calculate vectorized and scalar (residual) lengths for 'in_depth'.
-  const int64 vectorized_size = (args.out_depth / kPacketSize) * kPacketSize;
-  const int64 scalar_size = args.out_depth % kPacketSize;
-  const int64 pad_size = scalar_size > 0 ? kPacketSize - scalar_size : 0;
+  const Eigen::DenseIndex vectorized_size = (args.out_depth / kPacketSize) * kPacketSize;
+  const Eigen::DenseIndex scalar_size = args.out_depth % kPacketSize;
+  const Eigen::DenseIndex pad_size = scalar_size > 0 ? kPacketSize - scalar_size : 0;
 
   for (int out_r = out_r_start; out_r <= out_r_end; ++out_r) {
-    const int64 f_r = in_r + pad_rows - out_r * stride;
+    const Eigen::DenseIndex f_r = in_r + pad_rows - out_r * stride;
     for (int out_c = out_c_start; out_c <= out_c_end; ++out_c) {
-      const int64 f_c = in_c + pad_cols - out_c * stride;
-      const int64 buf_base =
+      const Eigen::DenseIndex f_c = in_c + pad_cols - out_c * stride;
+      const Eigen::DenseIndex buf_base =
           (f_r * filter_cols + f_c) * padded_filter_inner_dim_size;
       // Calculate index into 'out_backprop' for coordinate (out_r, out_c).
       auto* out_bprop =
           out_backprop + (out_r * args.out_cols + out_c) * args.out_depth;
 
       // Copy vectorized portion of inner dimension into 'buffer'.
-      for (int64 d = 0; d < vectorized_size; d += kPacketSize) {
+      for (Eigen::DenseIndex d = 0; d < vectorized_size; d += kPacketSize) {
         auto v = Eigen::internal::ploadu<Packet>(out_bprop + d);
         Eigen::internal::pstoreu<T>(buffer + buf_base + d, v);
       }
       // Copy scalar portion of out_bprop to 'buffer'
-      for (int64 d = 0; d < scalar_size; ++d) {
+      for (Eigen::DenseIndex d = 0; d < scalar_size; ++d) {
         buffer[buf_base + vectorized_size + d] = out_bprop[vectorized_size + d];
       }
       // Pad to vector-register width (if needed).
-      for (int64 d = 0; d < pad_size; ++d) {
+      for (Eigen::DenseIndex d = 0; d < pad_size; ++d) {
         buffer[buf_base + vectorized_size + scalar_size + d] = 0;
       }
     }
@@ -240,37 +240,37 @@ static void CopyOutputBackpropRegion(const DepthwiseArgs& args,
 
 template <typename T>
 static void ComputeBackpropInput(const DepthwiseArgs& args,
-                                 const int64 padded_filter_inner_dim_size,
-                                 const int64 in_r, const int64 in_c,
+                                 const Eigen::DenseIndex padded_filter_inner_dim_size,
+                                 const Eigen::DenseIndex in_r, const Eigen::DenseIndex in_c,
                                  const T* filter, const T* buffer,
                                  T* out_buffer, T* output) {
   typedef typename Eigen::internal::packet_traits<T>::type Packet;
-  static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+  static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
 
-  const int64 in_depth = args.in_depth;
-  const int64 depth_multiplier = args.depth_multiplier;
-  const int64 out_depth = args.out_depth;
-  const int64 filter_spatial_size = args.filter_rows * args.filter_cols;
+  const Eigen::DenseIndex in_depth = args.in_depth;
+  const Eigen::DenseIndex depth_multiplier = args.depth_multiplier;
+  const Eigen::DenseIndex out_depth = args.out_depth;
+  const Eigen::DenseIndex filter_spatial_size = args.filter_rows * args.filter_cols;
 
   // Calculate vectorized and scalar lengths of 'out_depth'.
-  const int64 output_vectorized_size = (out_depth / kPacketSize) * kPacketSize;
-  const int64 output_scalar_size = out_depth % kPacketSize;
+  const Eigen::DenseIndex output_vectorized_size = (out_depth / kPacketSize) * kPacketSize;
+  const Eigen::DenseIndex output_scalar_size = out_depth % kPacketSize;
 
   // Calculate base index at which to begin writing output.
-  const int64 base_output_index = (in_r * args.in_cols + in_c) * in_depth;
+  const Eigen::DenseIndex base_output_index = (in_r * args.in_cols + in_c) * in_depth;
 
   // Calculate vectorized and scalar lengths for 'depth_multiplier'. This is
   // used to efficiently reduce output when 'depth_multiplier' > kPacketSize.
-  const int64 dm_vectorized_size =
+  const Eigen::DenseIndex dm_vectorized_size =
       (depth_multiplier / kPacketSize) * kPacketSize;
-  const int64 dm_scalar_size = depth_multiplier % kPacketSize;
+  const Eigen::DenseIndex dm_scalar_size = depth_multiplier % kPacketSize;
 
   for (int i = 0; i < output_vectorized_size; i += kPacketSize) {
     // Reset accumulator.
     auto vaccum = Eigen::internal::pset1<Packet>(0);
     for (int j = 0; j < filter_spatial_size; ++j) {
       // Calculate index.
-      const int64 index = i + j * padded_filter_inner_dim_size;
+      const Eigen::DenseIndex index = i + j * padded_filter_inner_dim_size;
       // Load filter.
       const auto filter_block = Eigen::internal::ploadu<Packet>(filter + index);
       // Load input.
@@ -290,7 +290,7 @@ static void ComputeBackpropInput(const DepthwiseArgs& args,
   if (output_scalar_size > 0) {
     auto vaccum = Eigen::internal::pset1<Packet>(0);
     for (int j = 0; j < filter_spatial_size; ++j) {
-      const int64 index =
+      const Eigen::DenseIndex index =
           output_vectorized_size + j * padded_filter_inner_dim_size;
       const auto filter_block = Eigen::internal::ploadu<Packet>(filter + index);
       const auto data_block = Eigen::internal::ploadu<Packet>(buffer + index);
@@ -314,15 +314,15 @@ static void ComputeBackpropInput(const DepthwiseArgs& args,
 
   // Iterate over 'in_depth', reduce over 'depth_multiplier', write 'output'.
   if (depth_multiplier > 1) {
-    for (int64 d = 0; d < in_depth; ++d) {
-      const int64 index = d * args.depth_multiplier;
+    for (Eigen::DenseIndex d = 0; d < in_depth; ++d) {
+      const Eigen::DenseIndex index = d * args.depth_multiplier;
       T accum = 0;
-      for (int64 dm = 0; dm < dm_vectorized_size; dm += kPacketSize) {
+      for (Eigen::DenseIndex dm = 0; dm < dm_vectorized_size; dm += kPacketSize) {
         const auto v = Eigen::internal::ploadu<Packet>(out_buffer + index + dm);
         accum += Eigen::internal::predux(v);
       }
       // Copy scalar portion of replicated output.
-      for (int64 dm = 0; dm < dm_scalar_size; ++dm) {
+      for (Eigen::DenseIndex dm = 0; dm < dm_scalar_size; ++dm) {
         accum += out_buffer[index + dm_vectorized_size + dm];
       }
       // Copy to output.
@@ -344,15 +344,15 @@ struct LaunchDepthwiseConvBackpropInputOp<CPUDevice, T> {
   static void launch(OpKernelContext* ctx, const DepthwiseArgs& args,
                      const T* out_backprop, const T* depthwise_filter,
                      T* in_backprop) {
-    static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+    static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
 
     // Pad 'depthwise_filter' to vector register width (if needed).
     const bool pad_filter = (args.out_depth % kPacketSize) == 0 ? false : true;
     Tensor padded_filter;
     if (pad_filter) {
       // Allocate space for padded filter.
-      const int64 filter_spatial_size = args.filter_rows * args.filter_cols;
-      const int64 padded_filter_inner_dim_size =
+      const Eigen::DenseIndex filter_spatial_size = args.filter_rows * args.filter_cols;
+      const Eigen::DenseIndex padded_filter_inner_dim_size =
           ((args.out_depth + kPacketSize - 1) / kPacketSize) * kPacketSize;
       OP_REQUIRES_OK(
           ctx, ctx->allocate_temp(DataTypeToEnum<T>::value,
@@ -368,15 +368,15 @@ struct LaunchDepthwiseConvBackpropInputOp<CPUDevice, T> {
 
     // Computes one shard of depthwise conv2d backprop input.
     auto shard = [&ctx, &args, &out_backprop, &filter_data, &in_backprop](
-        int64 start, int64 limit) {
-      static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+        Eigen::DenseIndex start, Eigen::DenseIndex limit) {
+      static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
 
-      const int64 input_image_size =
+      const Eigen::DenseIndex input_image_size =
           args.in_rows * args.in_cols * args.in_depth;
-      const int64 output_image_size =
+      const Eigen::DenseIndex output_image_size =
           args.out_rows * args.out_cols * args.out_depth;
-      const int64 filter_spatial_size = args.filter_rows * args.filter_cols;
-      const int64 padded_filter_inner_dim_size =
+      const Eigen::DenseIndex filter_spatial_size = args.filter_rows * args.filter_cols;
+      const Eigen::DenseIndex padded_filter_inner_dim_size =
           ((args.out_depth + kPacketSize - 1) / kPacketSize) * kPacketSize;
 
       // Allocate buffer to copy regions from 'out_backprop'.
@@ -396,9 +396,9 @@ struct LaunchDepthwiseConvBackpropInputOp<CPUDevice, T> {
                                   &in_bprop_buffer));
       T* in_bprop_buf = in_bprop_buffer.template flat<T>().data();
 
-      for (int64 b = start; b < limit; ++b) {
-        for (int64 in_r = 0; in_r < args.in_rows; ++in_r) {
-          for (int64 in_c = 0; in_c < args.in_cols; ++in_c) {
+      for (Eigen::DenseIndex b = start; b < limit; ++b) {
+        for (Eigen::DenseIndex in_r = 0; in_r < args.in_rows; ++in_r) {
+          for (Eigen::DenseIndex in_c = 0; in_c < args.in_cols; ++in_c) {
             // Populate 'out_bprop_buf' from local 'out_backprop' region.
             CopyOutputBackpropRegion<T>(
                 args, padded_filter_inner_dim_size, in_r, in_c,
@@ -414,7 +414,7 @@ struct LaunchDepthwiseConvBackpropInputOp<CPUDevice, T> {
       }
     };
 
-    const int64 shard_cost = args.in_rows * args.in_cols * args.out_depth;
+    const Eigen::DenseIndex shard_cost = args.in_rows * args.in_cols * args.out_depth;
     auto worker_threads = *(ctx->device()->tensorflow_cpu_worker_threads());
     Shard(worker_threads.num_threads, worker_threads.workers, args.batch,
           shard_cost, shard);
@@ -614,22 +614,22 @@ REGISTER_KERNEL_BUILDER(
 //
 template <typename T>
 static void ComputeBackpropFilter(const DepthwiseArgs& args,
-                                  const int64 padded_out_depth_size,
-                                  const int64 out_r, const int64 out_c,
+                                  const Eigen::DenseIndex padded_out_depth_size,
+                                  const Eigen::DenseIndex out_r, const Eigen::DenseIndex out_c,
                                   const T* out_backprop, const T* input_buffer,
                                   T* output_buffer) {
   typedef typename Eigen::internal::packet_traits<T>::type Packet;
-  static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+  static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
   // Calculate vectorized size of 'padded_out_depth_size'.
-  const int64 out_depth = args.out_depth;
-  const int64 filter_spatial_size = args.filter_rows * args.filter_cols;
-  const int64 output_vectorized_size =
+  const Eigen::DenseIndex out_depth = args.out_depth;
+  const Eigen::DenseIndex filter_spatial_size = args.filter_rows * args.filter_cols;
+  const Eigen::DenseIndex output_vectorized_size =
       (padded_out_depth_size / kPacketSize) * kPacketSize;
-  const int64 base_output_index = (out_r * args.out_cols + out_c) * out_depth;
+  const Eigen::DenseIndex base_output_index = (out_r * args.out_cols + out_c) * out_depth;
   // Determine whether we can execute fast or slow code path.
-  const int64 output_image_size =
+  const Eigen::DenseIndex output_image_size =
       args.out_rows * args.out_cols * args.out_depth;
-  const int64 output_last_vector_index =
+  const Eigen::DenseIndex output_last_vector_index =
       output_image_size - (filter_spatial_size * padded_out_depth_size);
   const bool fast_path = base_output_index <= output_last_vector_index;
 
@@ -641,7 +641,7 @@ static void ComputeBackpropFilter(const DepthwiseArgs& args,
       const auto out_bprop_block =
           Eigen::internal::ploadu<Packet>(out_backprop + base_output_index + i);
       for (int j = 0; j < filter_spatial_size; ++j) {
-        const int64 index = i + j * padded_out_depth_size;
+        const Eigen::DenseIndex index = i + j * padded_out_depth_size;
         // Load vector register from 'input_buffer'.
         const auto input_block =
             Eigen::internal::ploadu<Packet>(input_buffer + index);
@@ -659,19 +659,19 @@ static void ComputeBackpropFilter(const DepthwiseArgs& args,
     // Slow path (cant do vector reads from non-padded 'out_backprop'.
     for (int i = 0; i < output_vectorized_size; i += kPacketSize) {
       // Calculate safe read size from 'out_backprop'.
-      const int64 out_bprop_index = base_output_index + i;
-      const int64 out_bprop_limit =
+      const Eigen::DenseIndex out_bprop_index = base_output_index + i;
+      const Eigen::DenseIndex out_bprop_limit =
           std::min(output_image_size, out_bprop_index + kPacketSize);
       T out_buf[kPacketSize];
       memset(&out_buf, 0, kPacketSize * sizeof(T));
-      const int64 scalar_size = out_bprop_limit - out_bprop_index;
-      for (int64 j = 0; j < scalar_size; ++j) {
+      const Eigen::DenseIndex scalar_size = out_bprop_limit - out_bprop_index;
+      for (Eigen::DenseIndex j = 0; j < scalar_size; ++j) {
         out_buf[j] = out_backprop[out_bprop_index + j];
       }
       // Load vector register from 'out_buf'.
       const auto out_bprop_block = Eigen::internal::ploadu<Packet>(out_buf);
       for (int j = 0; j < filter_spatial_size; ++j) {
-        const int64 index = i + j * padded_out_depth_size;
+        const Eigen::DenseIndex index = i + j * padded_out_depth_size;
         // Load vector register from 'input_buffer'.
         const auto input_block =
             Eigen::internal::ploadu<Packet>(input_buffer + index);
@@ -698,10 +698,10 @@ struct LaunchDepthwiseConvBackpropFilterOp<CPUDevice, T> {
   static void launch(OpKernelContext* ctx, const DepthwiseArgs& args,
                      const T* out_backprop, const T* input,
                      T* filter_backprop) {
-    static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+    static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
 
-    const int64 filter_spatial_size = args.filter_rows * args.filter_cols;
-    const int64 padded_out_depth_size =
+    const Eigen::DenseIndex filter_spatial_size = args.filter_rows * args.filter_cols;
+    const Eigen::DenseIndex padded_out_depth_size =
         ((args.out_depth + kPacketSize - 1) / kPacketSize) * kPacketSize;
 
     // Allocate output buffers for each image in 'batch' (padded to vector
@@ -716,10 +716,10 @@ struct LaunchDepthwiseConvBackpropFilterOp<CPUDevice, T> {
 
     // Computes one shard of depthwise conv2d backprop filter.
     auto shard = [&ctx, &args, &out_backprop, &input, &output_buffer_data](
-        int64 start, int64 limit) {
-      static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
-      const int64 filter_spatial_size = args.filter_rows * args.filter_cols;
-      const int64 padded_out_depth_size =
+        Eigen::DenseIndex start, Eigen::DenseIndex limit) {
+      static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
+      const Eigen::DenseIndex filter_spatial_size = args.filter_rows * args.filter_cols;
+      const Eigen::DenseIndex padded_out_depth_size =
           ((args.out_depth + kPacketSize - 1) / kPacketSize) * kPacketSize;
 
       // Allocate buffer for local input regions.
@@ -731,11 +731,11 @@ struct LaunchDepthwiseConvBackpropFilterOp<CPUDevice, T> {
                    &input_buffer));
       T* input_buffer_data = input_buffer.template flat<T>().data();
 
-      const int64 input_image_size =
+      const Eigen::DenseIndex input_image_size =
           args.in_rows * args.in_cols * args.in_depth;
-      const int64 output_image_size =
+      const Eigen::DenseIndex output_image_size =
           args.out_rows * args.out_cols * args.out_depth;
-      const int64 padded_filter_size =
+      const Eigen::DenseIndex padded_filter_size =
           filter_spatial_size * padded_out_depth_size;
 
       for (int b = start; b < limit; ++b) {
@@ -757,24 +757,24 @@ struct LaunchDepthwiseConvBackpropFilterOp<CPUDevice, T> {
         }
       }
     };
-    const int64 shard_cost = args.out_rows * args.out_cols * args.out_depth;
+    const Eigen::DenseIndex shard_cost = args.out_rows * args.out_cols * args.out_depth;
     auto worker_threads = *(ctx->device()->tensorflow_cpu_worker_threads());
     Shard(worker_threads.num_threads, worker_threads.workers, args.batch,
           shard_cost, shard);
 
     // Accumulate 'output_buffer' from each shard into 'output'.
-    const int64 out_depth = args.out_depth;
-    const int64 vectorized_size = (out_depth / kPacketSize) * kPacketSize;
-    const int64 scalar_size = out_depth - vectorized_size;
-    const int64 padded_filter_size =
+    const Eigen::DenseIndex out_depth = args.out_depth;
+    const Eigen::DenseIndex vectorized_size = (out_depth / kPacketSize) * kPacketSize;
+    const Eigen::DenseIndex scalar_size = out_depth - vectorized_size;
+    const Eigen::DenseIndex padded_filter_size =
         filter_spatial_size * padded_out_depth_size;
     memset(filter_backprop, 0, filter_spatial_size * out_depth * sizeof(T));
 
-    for (int64 i = 0; i < filter_spatial_size; ++i) {
-      const int64 buffer_base = i * padded_out_depth_size;
-      const int64 output_base = i * out_depth;
+    for (Eigen::DenseIndex i = 0; i < filter_spatial_size; ++i) {
+      const Eigen::DenseIndex buffer_base = i * padded_out_depth_size;
+      const Eigen::DenseIndex output_base = i * out_depth;
       // Write vectorized length of filter's inner dimension to output.
-      for (int64 j = 0; j < vectorized_size; j += kPacketSize) {
+      for (Eigen::DenseIndex j = 0; j < vectorized_size; j += kPacketSize) {
         // Load data from 'filter_backprop' into vector register.
         auto out_block_data = filter_backprop + output_base + j;
         auto out_block = Eigen::internal::ploadu<Packet>(out_block_data);
@@ -791,7 +791,7 @@ struct LaunchDepthwiseConvBackpropFilterOp<CPUDevice, T> {
         Eigen::internal::pstoreu<T>(out_block_data, out_block);
       }
       // Write scalar length of filter's inner dimension to output.
-      for (int64 j = 0; j < scalar_size; ++j) {
+      for (Eigen::DenseIndex j = 0; j < scalar_size; ++j) {
         for (int b = 0; b < args.batch; ++b) {
           const auto* output_buffer =
               output_buffer_data + b * padded_filter_size;

@@ -227,7 +227,7 @@ template <typename Device, typename T>
 class LRNOp : public OpKernel {
  public:
   explicit LRNOp(OpKernelConstruction* context) : OpKernel(context) {
-    int64 depth_radius64;
+    Eigen::DenseIndex depth_radius64;
     OP_REQUIRES_OK(context, context->GetAttr("depth_radius", &depth_radius64));
     OP_REQUIRES(context, FastBoundsCheck(depth_radius64,
                                          std::numeric_limits<int>::max()),
@@ -311,10 +311,10 @@ struct LaunchLRNGrad<CPUDevice, T> {
   void launch(OpKernelContext* context, OpKernel* kernel,
               const Tensor& in_grads, const Tensor& in_image,
               const Tensor& out_image, Tensor* output) {
-    const int64 batch = in_grads.dim_size(0);
-    const int64 rows = in_grads.dim_size(1);
-    const int64 cols = in_grads.dim_size(2);
-    const int64 depth = in_grads.dim_size(3);
+    const Eigen::DenseIndex batch = in_grads.dim_size(0);
+    const Eigen::DenseIndex rows = in_grads.dim_size(1);
+    const Eigen::DenseIndex cols = in_grads.dim_size(2);
+    const Eigen::DenseIndex depth = in_grads.dim_size(3);
     const auto nodes = cols * rows;
     auto grads_shaped = in_grads.shaped<T, 2>({nodes * batch, depth});
     auto in_shaped = in_image.shaped<T, 2>({nodes * batch, depth});
@@ -324,9 +324,9 @@ struct LaunchLRNGrad<CPUDevice, T> {
     out_shaped.setZero();
 
     auto shard = [this, activations, in_shaped, grads_shaped, out_shaped,
-                  depth](int64 begin, int64 end) {
-      for (int64 i = begin; i < end; ++i) {
-        for (int64 j = 0; j < depth; ++j) {
+                  depth](Eigen::DenseIndex begin, Eigen::DenseIndex end) {
+      for (Eigen::DenseIndex i = begin; i < end; ++i) {
+        for (Eigen::DenseIndex j = 0; j < depth; ++j) {
           // Let y be the LRN activations and x be the inputs along the depth
           // dimension. (LRN operates independently along rows, cols, and
           // batch).
@@ -343,16 +343,16 @@ struct LaunchLRNGrad<CPUDevice, T> {
           // However, this is numerically unstable for small values of xi. We
           // compute N explicitly here to avoid that.
 
-          int64 depth_begin = std::max<int64>(0, j - depth_radius_);
-          int64 depth_end = std::min<int64>(depth, j + depth_radius_ + 1);
+          Eigen::DenseIndex depth_begin = std::max<Eigen::DenseIndex>(0, j - depth_radius_);
+          Eigen::DenseIndex depth_end = std::min<Eigen::DenseIndex>(depth, j + depth_radius_ + 1);
 
           T norm(0);
-          for (int64 k = depth_begin; k < depth_end; ++k) {
+          for (Eigen::DenseIndex k = depth_begin; k < depth_end; ++k) {
             norm += in_shaped(i, k) * in_shaped(i, k);
           }
           norm = alpha_ * norm + bias_;
           DCHECK_GT(norm, T(1e-6));
-          for (int64 k = depth_begin; k < depth_end; ++k) {
+          for (Eigen::DenseIndex k = depth_begin; k < depth_end; ++k) {
             T dyi = T(-2) * alpha_ * beta_ * in_shaped(i, k) *
                     activations(i, j) / norm;
             if (k == j) {
@@ -397,10 +397,10 @@ struct LaunchLRNGrad<GPUDevice, T> {
         context, bias_ >= 1e-5,
         errors::InvalidArgument("cuDNN requires bias >= 1e-5, got: ", bias_));
 
-    const int64 batch = in_grads.dim_size(0);
-    const int64 rows = in_grads.dim_size(1);
-    const int64 cols = in_grads.dim_size(2);
-    const int64 depth = in_grads.dim_size(3);
+    const Eigen::DenseIndex batch = in_grads.dim_size(0);
+    const Eigen::DenseIndex rows = in_grads.dim_size(1);
+    const Eigen::DenseIndex cols = in_grads.dim_size(2);
+    const Eigen::DenseIndex depth = in_grads.dim_size(3);
 
     perftools::gputools::dnn::BatchDescriptor dimensions_desc;
     dimensions_desc.set_count(batch)
@@ -446,7 +446,7 @@ template <typename Device, typename T>
 class LRNGradOp : public OpKernel {
  public:
   explicit LRNGradOp(OpKernelConstruction* context) : OpKernel(context) {
-    int64 depth_radius64;
+    Eigen::DenseIndex depth_radius64;
     OP_REQUIRES_OK(context, context->GetAttr("depth_radius", &depth_radius64));
     OP_REQUIRES(context, FastBoundsCheck(depth_radius64,
                                          std::numeric_limits<int>::max()),
@@ -469,10 +469,10 @@ class LRNGradOp : public OpKernel {
 
     OP_REQUIRES(context, in_grads.dims() == 4 && in_image.dims() == 4,
                 errors::InvalidArgument("inputs must be 4-dimensional"));
-    const int64 batch = in_grads.dim_size(0);
-    const int64 rows = in_grads.dim_size(1);
-    const int64 cols = in_grads.dim_size(2);
-    const int64 depth = in_grads.dim_size(3);
+    const Eigen::DenseIndex batch = in_grads.dim_size(0);
+    const Eigen::DenseIndex rows = in_grads.dim_size(1);
+    const Eigen::DenseIndex cols = in_grads.dim_size(2);
+    const Eigen::DenseIndex depth = in_grads.dim_size(3);
     OP_REQUIRES(
         context,
         in_image.dim_size(0) == batch && in_image.dim_size(1) == rows &&

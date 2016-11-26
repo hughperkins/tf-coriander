@@ -64,7 +64,7 @@ TEST_F(RestoreOpTest, RestoreSimple) {
   const std::vector<string> tensor_names = {
       "tensor_bool",  "tensor_int",        "tensor_float",  "tensor_double",
       "tensor_qint8", "tensor_qint32",     "tensor_uint8",  "tensor_int8",
-      "tensor_int16", "tensor_int64",      "tensor_string", "tensor_complex64",
+      "tensor_int16", "tensor_Eigen::DenseIndex",      "tensor_string", "tensor_complex64",
       "tensor_half",  "tensor_float_empty"};
 
   // We first need to write a tensor using the save_op
@@ -145,9 +145,9 @@ TEST_F(RestoreOpTest, RestoreSimple) {
     Tensor input_10 = MakeInput<int16>(TensorShape({7}),
                                        [](int x) -> int16 { return x - 8; });
     inputs.push_back({nullptr, &input_10});
-    // Input #11 is a 1-d int64 tensor
-    Tensor input_11 = MakeInput<int64>(TensorShape({9}),
-                                       [](int x) -> int64 { return x - 9; });
+    // Input #11 is a 1-d Eigen::DenseIndex tensor
+    Tensor input_11 = MakeInput<Eigen::DenseIndex>(TensorShape({9}),
+                                       [](int x) -> Eigen::DenseIndex { return x - 9; });
     inputs.push_back({nullptr, &input_11});
     // Input #12 is a 1-d string tensor
     Tensor input_12 = MakeInput<string>(
@@ -298,7 +298,7 @@ TEST_F(RestoreOpTest, RestoreSimple) {
       EXPECT_EQ(i - 8, output->flat<int16>()(i));
     }
   }
-  // The 1-d int64 tensor
+  // The 1-d Eigen::DenseIndex tensor
   {
     MakeRestoreOp(DT_INT64);
     (*mutable_input(1).tensor).scalar<string>()() = tensor_names[9];
@@ -307,7 +307,7 @@ TEST_F(RestoreOpTest, RestoreSimple) {
     TensorShape expected({9});
     EXPECT_TRUE(output->shape().IsSameSize(expected));
     for (int i = 0; i < 9; ++i) {
-      EXPECT_EQ(i - 9, output->flat<int64>()(i));
+      EXPECT_EQ(i - 9, output->flat<Eigen::DenseIndex>()(i));
     }
   }
   // The 1-d string tensor
@@ -409,7 +409,7 @@ TEST_F(RestoreSliceOpTest, RestoreInt) {
 
     // Input #2 is a 4x16 integer tensor.
     Tensor input_2(DT_INT32, TensorShape({4, 16}));
-    for (int64 i = 0; i < input_2.NumElements(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < input_2.NumElements(); ++i) {
       input_2.flat<int32>()(i) = i + 1;
     }
     inputs.push_back({nullptr, &input_2});
@@ -449,7 +449,7 @@ TEST_F(RestoreSliceOpTest, RestoreInt) {
   Tensor* output = GetOutput(0);
   TensorShape expected({2, 16});
   EXPECT_TRUE(output->shape().IsSameSize(expected));
-  for (int64 i = 0; i < expected.num_elements(); ++i) {
+  for (Eigen::DenseIndex i = 0; i < expected.num_elements(); ++i) {
     EXPECT_EQ(i + 1, output->flat<int32>()(i));
   }
 }

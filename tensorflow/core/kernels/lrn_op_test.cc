@@ -52,27 +52,27 @@ class LRNFloatTest : public OpsTestBase {
 
   bool Compare() {
     const auto& input = GetInput(0);
-    const int64 batch_size = input.dim_size(0);
-    const int64 rows = input.dim_size(1);
-    const int64 cols = input.dim_size(2);
-    const int64 depth = input.dim_size(3);
-    const int64 rest = cols * rows * batch_size;
+    const Eigen::DenseIndex batch_size = input.dim_size(0);
+    const Eigen::DenseIndex rows = input.dim_size(1);
+    const Eigen::DenseIndex cols = input.dim_size(2);
+    const Eigen::DenseIndex depth = input.dim_size(3);
+    const Eigen::DenseIndex rest = cols * rows * batch_size;
 
-    const int64 depth_radius = GetIntAttr("depth_radius");
+    const Eigen::DenseIndex depth_radius = GetIntAttr("depth_radius");
     const float bias = GetFloatAttr("bias");
     const float alpha = GetFloatAttr("alpha");
     const float beta = GetFloatAttr("beta");
 
     Eigen::Tensor<float, 4, Eigen::RowMajor> expected(batch_size, rows, cols,
                                                       depth);
-    auto out = expected.reshape(Eigen::DSizes<int64, 2>{rest, depth});
+    auto out = expected.reshape(Eigen::DSizes<Eigen::DenseIndex, 2>{rest, depth});
     auto in = input.shaped<float, 2>({rest, depth});
 
-    for (int64 i = 0; i < rest; ++i) {
+    for (Eigen::DenseIndex i = 0; i < rest; ++i) {
       Eigen::Tensor<float, 1, Eigen::RowMajor> out_col(depth);
-      for (int64 d = 0; d < depth; ++d) {
+      for (Eigen::DenseIndex d = 0; d < depth; ++d) {
         float denom = 0.0f;
-        for (int64 r = std::max(0ll, d - depth_radius);
+        for (Eigen::DenseIndex r = std::max(0ll, d - depth_radius);
              r < std::min(depth, d + depth_radius + 1); ++r) {
           denom += in(i, r) * in(i, r);
         }

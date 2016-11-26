@@ -61,7 +61,7 @@ TEST_F(SaveOpTest, Simple) {
   const string tensornames[] = {
       "tensor_bool",       "tensor_int",    "tensor_float",  "tensor_double",
       "tensor_qint8",      "tensor_qint32", "tensor_uint8",  "tensor_int8",
-      "tensor_int16",      "tensor_int64",  "tensor_string", "tensor_complex64",
+      "tensor_int16",      "tensor_Eigen::DenseIndex",  "tensor_string", "tensor_complex64",
       "tensor_complex128", "tensor_half"};
 
   MakeOp();
@@ -105,8 +105,8 @@ TEST_F(SaveOpTest, Simple) {
   // Add a 1-d int16 tensor
   AddInput<int16>(TensorShape({7}), [](int x) -> int16 { return x - 8; });
 
-  // Add a 1-d int64 tensor
-  AddInput<int64>(TensorShape({9}), [](int x) -> int64 { return x - 9; });
+  // Add a 1-d Eigen::DenseIndex tensor
+  AddInput<Eigen::DenseIndex>(TensorShape({9}), [](int x) -> Eigen::DenseIndex { return x - 9; });
 
   // Add a 1-d string tensor
   AddInput<string>(TensorShape({2}),
@@ -301,18 +301,18 @@ TEST_F(SaveOpTest, Simple) {
   }
 
   {
-    // The 1-d int64 tensor
+    // The 1-d Eigen::DenseIndex tensor
     TensorShape shape;
     DataType type;
-    EXPECT_TRUE(reader.HasTensor("tensor_int64", &shape, &type));
+    EXPECT_TRUE(reader.HasTensor("tensor_Eigen::DenseIndex", &shape, &type));
     TensorShape expected({9});
     EXPECT_TRUE(shape.IsSameSize(expected));
     EXPECT_EQ(DT_INT64, type);
 
     // We expect the tensor value to be correct.
     TensorSlice s = TensorSlice::ParseOrDie("-");
-    int64 data[9];
-    EXPECT_TRUE(reader.CopySliceData("tensor_int64", s, data));
+    Eigen::DenseIndex data[9];
+    EXPECT_TRUE(reader.CopySliceData("tensor_Eigen::DenseIndex", s, data));
     for (int i = 0; i < 9; ++i) {
       EXPECT_EQ(i - 9, data[i]);
     }
@@ -651,7 +651,7 @@ TEST_F(SaveOpSlices2Test, TwoSlices) {
     EXPECT_TRUE(reader.CopySliceData("small", TensorSlice(reloaded.dims()),
                                      reloaded.flat<float>().data()));
 
-    for (int64 i = 0; i < reloaded.NumElements(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < reloaded.NumElements(); ++i) {
       EXPECT_EQ(static_cast<float>(i) / 10, reloaded.flat<float>().data()[i]);
     }
   }

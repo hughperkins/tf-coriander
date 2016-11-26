@@ -61,7 +61,7 @@ const float SubtleMustCopyUnlessStringOrFloat(const float value) {
 //
 // Sample use case:
 //
-// HashTable<int64, int64> table;  // int64 -> int64.
+// HashTable<Eigen::DenseIndex, Eigen::DenseIndex> table;  // Eigen::DenseIndex -> Eigen::DenseIndex.
 // table.Prepare(10); // Prepare the underlying data structure, the number of
 //                    // elements is required by interface, but not used.
 // // Populate the table, elements could be added in one or multiple calls.
@@ -108,7 +108,7 @@ class HashTable : public InitializableLookupTable {
 
     const auto key_values = keys.flat<K>();
     const auto value_values = values.flat<V>();
-    for (int64 i = 0; i < key_values.size(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < key_values.size(); ++i) {
       const K key = SubtleMustCopyUnlessStringOrFloat(key_values(i));
       const V value = SubtleMustCopyUnlessStringOrFloat(value_values(i));
       const V& previous_value = gtl::LookupOrInsert(table_.get(), key, value);
@@ -127,7 +127,7 @@ class HashTable : public InitializableLookupTable {
     const auto key_values = key.flat<K>();
     auto value_values = value->flat<V>();
 
-    for (int64 i = 0; i < key_values.size(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < key_values.size(); ++i) {
       value_values(i) = gtl::FindWithDefault(
           *table_, SubtleMustCopyUnlessStringOrFloat(key_values(i)),
           default_val);
@@ -147,7 +147,7 @@ class HashTable : public InitializableLookupTable {
 //
 // Sample use case:
 //
-// MutableHashTableOfScalars<int64, int64> table;  // int64 -> int64.
+// MutableHashTableOfScalars<Eigen::DenseIndex, Eigen::DenseIndex> table;  // Eigen::DenseIndex -> Eigen::DenseIndex.
 // // Populate the table, elements could be added in one or multiple calls.
 // table.Insert(key_tensor, value_tensor); // Populate the table.
 //
@@ -170,7 +170,7 @@ class MutableHashTableOfScalars final : public LookupInterface {
     auto value_values = value->flat<V>();
 
     mutex_lock l(mu_);
-    for (int64 i = 0; i < key_values.size(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < key_values.size(); ++i) {
       value_values(i) = gtl::FindWithDefault(
           table_, SubtleMustCopyUnlessStringOrFloat(key_values(i)),
           default_val);
@@ -187,7 +187,7 @@ class MutableHashTableOfScalars final : public LookupInterface {
     if (clear) {
       table_.clear();
     }
-    for (int64 i = 0; i < key_values.size(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < key_values.size(); ++i) {
       const K key = SubtleMustCopyUnlessStringOrFloat(key_values(i));
       const V value = SubtleMustCopyUnlessStringOrFloat(value_values(i));
       gtl::InsertOrUpdate(&table_, key, value);
@@ -205,7 +205,7 @@ class MutableHashTableOfScalars final : public LookupInterface {
 
   Status ExportValues(OpKernelContext* ctx) override {
     mutex_lock l(mu_);
-    int64 size = table_.size();
+    Eigen::DenseIndex size = table_.size();
 
     Tensor* keys;
     Tensor* values;
@@ -216,7 +216,7 @@ class MutableHashTableOfScalars final : public LookupInterface {
 
     auto keys_data = keys->flat<K>();
     auto values_data = values->flat<V>();
-    int64 i = 0;
+    Eigen::DenseIndex i = 0;
     for (auto it = table_.begin(); it != table_.end(); ++it, ++i) {
       keys_data(i) = it->first;
       values_data(i) = it->second;
@@ -260,18 +260,18 @@ class MutableHashTableOfTensors final : public LookupInterface {
     const auto default_flat = default_value.flat<V>();
     const auto key_values = key.flat<K>();
     auto value_values = value->flat_inner_dims<V, 2>();
-    int64 value_dim = value_shape_.dim_size(0);
+    Eigen::DenseIndex value_dim = value_shape_.dim_size(0);
 
     mutex_lock l(mu_);
-    for (int64 i = 0; i < key_values.size(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < key_values.size(); ++i) {
       ValueArray* value_vec = gtl::FindOrNull(
           table_, SubtleMustCopyUnlessStringOrFloat(key_values(i)));
       if (value_vec != nullptr) {
-        for (int64 j = 0; j < value_dim; j++) {
+        for (Eigen::DenseIndex j = 0; j < value_dim; j++) {
           value_values(i, j) = value_vec->at(j);
         }
       } else {
-        for (int64 j = 0; j < value_dim; j++) {
+        for (Eigen::DenseIndex j = 0; j < value_dim; j++) {
           value_values(i, j) = default_flat(j);
         }
       }
@@ -283,16 +283,16 @@ class MutableHashTableOfTensors final : public LookupInterface {
   Status DoInsert(bool clear, const Tensor& keys, const Tensor& values) {
     const auto key_values = keys.flat<K>();
     const auto value_values = values.flat_inner_dims<V, 2>();
-    int64 value_dim = value_shape_.dim_size(0);
+    Eigen::DenseIndex value_dim = value_shape_.dim_size(0);
 
     mutex_lock l(mu_);
     if (clear) {
       table_.clear();
     }
-    for (int64 i = 0; i < key_values.size(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < key_values.size(); ++i) {
       const K key = SubtleMustCopyUnlessStringOrFloat(key_values(i));
       ValueArray value_vec;
-      for (int64 j = 0; j < value_dim; j++) {
+      for (Eigen::DenseIndex j = 0; j < value_dim; j++) {
         V value = value_values(i, j);
         value_vec.push_back(value);
       }
@@ -311,8 +311,8 @@ class MutableHashTableOfTensors final : public LookupInterface {
 
   Status ExportValues(OpKernelContext* ctx) override {
     mutex_lock l(mu_);
-    int64 size = table_.size();
-    int64 value_dim = value_shape_.dim_size(0);
+    Eigen::DenseIndex size = table_.size();
+    Eigen::DenseIndex value_dim = value_shape_.dim_size(0);
 
     Tensor* keys;
     Tensor* values;
@@ -323,12 +323,12 @@ class MutableHashTableOfTensors final : public LookupInterface {
 
     auto keys_data = keys->flat<K>();
     auto values_data = values->matrix<V>();
-    int64 i = 0;
+    Eigen::DenseIndex i = 0;
     for (auto it = table_.begin(); it != table_.end(); ++it, ++i) {
       K key = it->first;
       ValueArray value = it->second;
       keys_data(i) = key;
-      for (int64 j = 0; j < value_dim; j++) {
+      for (Eigen::DenseIndex j = 0; j < value_dim; j++) {
         values_data(i, j) = value[j];
       }
     }
@@ -418,7 +418,7 @@ class LookupTableSizeOp : public OpKernel {
 
     Tensor* out;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("size", TensorShape({}), &out));
-    out->flat<int64>().setConstant(table->size());
+    out->flat<Eigen::DenseIndex>().setConstant(table->size());
   }
 };
 
@@ -476,8 +476,8 @@ REGISTER_KERNEL_BUILDER(Name("LookupTableImport").Device(DEVICE_CPU),
       LookupTableOp<lookup::HashTable<key_dtype, value_dtype>, key_dtype, \
                     value_dtype>)
 
-REGISTER_KERNEL(string, int64);
-REGISTER_KERNEL(int64, string);
+REGISTER_KERNEL(string, Eigen::DenseIndex);
+REGISTER_KERNEL(Eigen::DenseIndex, string);
 
 #undef REGISTER_KERNEL
 
@@ -492,8 +492,8 @@ REGISTER_KERNEL(int64, string);
                     key_dtype, value_dtype>)
 
 REGISTER_KERNEL(string, float);
-REGISTER_KERNEL(string, int64);
-REGISTER_KERNEL(int64, string);
+REGISTER_KERNEL(string, Eigen::DenseIndex);
+REGISTER_KERNEL(Eigen::DenseIndex, string);
 
 #undef REGISTER_KERNEL
 
@@ -508,8 +508,8 @@ REGISTER_KERNEL(int64, string);
                     key_dtype, value_dtype>)
 
 REGISTER_KERNEL(string, float);
-REGISTER_KERNEL(string, int64);
-REGISTER_KERNEL(int64, string);
+REGISTER_KERNEL(string, Eigen::DenseIndex);
+REGISTER_KERNEL(Eigen::DenseIndex, string);
 
 #undef REGISTER_KERNEL
 

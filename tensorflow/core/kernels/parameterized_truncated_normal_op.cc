@@ -55,8 +55,8 @@ using random::SingleSampleAdapter;
 // both tails may have reduced accuracy.
 template <typename Device, typename T>
 struct TruncatedNormalFunctor {
-  void operator()(OpKernelContext* ctx, const Device& d, int64 num_batches,
-                  int64 samples_per_batch, int64 num_elements,
+  void operator()(OpKernelContext* ctx, const Device& d, Eigen::DenseIndex num_batches,
+                  Eigen::DenseIndex samples_per_batch, Eigen::DenseIndex num_elements,
                   typename TTypes<T>::ConstFlat means,
                   typename TTypes<T>::ConstFlat stddevs,
                   typename TTypes<T>::ConstFlat minvals,
@@ -69,8 +69,8 @@ template <typename T>
 struct TruncatedNormalFunctor<CPUDevice, T> {
   static const int kMaxIterations = 100;
 
-  void operator()(OpKernelContext* ctx, const CPUDevice& d, int64 num_batches,
-                  int64 samples_per_batch, int64 num_elements,
+  void operator()(OpKernelContext* ctx, const CPUDevice& d, Eigen::DenseIndex num_batches,
+                  Eigen::DenseIndex samples_per_batch, Eigen::DenseIndex num_elements,
                   typename TTypes<T>::ConstFlat means,
                   typename TTypes<T>::ConstFlat stddevs,
                   typename TTypes<T>::ConstFlat minvals,
@@ -99,7 +99,7 @@ struct TruncatedNormalFunctor<CPUDevice, T> {
       tensorflow::random::Array<T, 4> z;
       tensorflow::random::Array<T, 4> g;
 
-      for (int64 b = start_batch; b < limit_batch; ++b) {
+      for (Eigen::DenseIndex b = start_batch; b < limit_batch; ++b) {
         // We are passed a flat array for each of the parameter tensors.
         // The input is either a scalar broadcasted to all batches or a vector
         // with length num_batches, but the scalar becomes an array of length 1.
@@ -110,9 +110,9 @@ struct TruncatedNormalFunctor<CPUDevice, T> {
 
         // The last batch can be short, if we adjusted num_batches and
         // samples_per_batch.
-        const int64 limit_sample =
+        const Eigen::DenseIndex limit_sample =
             std::min((b + 1) * samples_per_batch, num_elements);
-        int64 sample = b * samples_per_batch;
+        Eigen::DenseIndex sample = b * samples_per_batch;
 
         // On GPU, this check will just fill samples with NAN if it fails.
         OP_REQUIRES(ctx, stddev > T(0) && minval < maxval &&
@@ -222,7 +222,7 @@ struct TruncatedNormalFunctor<CPUDevice, T> {
       }
     };
     // The cost of the initial calculations for the batch.
-    const int64 batchInitCost =
+    const Eigen::DenseIndex batchInitCost =
         // normMin, normMax
         (Eigen::TensorOpCost::AddCost<T>() +
          Eigen::TensorOpCost::MulCost<T>()) *
@@ -237,11 +237,11 @@ struct TruncatedNormalFunctor<CPUDevice, T> {
         Eigen::internal::functor_traits<Eigen::internal::scalar_exp_op<T>>::Cost
         // diff
         + Eigen::TensorOpCost::AddCost<T>();
-    const int64 uniformSampleCost =
+    const Eigen::DenseIndex uniformSampleCost =
         random::PhiloxRandom::kElementCost +
         random::UniformDistribution<random::PhiloxRandom, T>::kElementCost;
     // The cost of a single uniform sampling round.
-    const int64 uniformRejectionSamplingCost =
+    const Eigen::DenseIndex uniformRejectionSamplingCost =
         uniformSampleCost + Eigen::TensorOpCost::MulCost<T>() +
         Eigen::TensorOpCost::AddCost<T>() +
         Eigen::TensorOpCost::MulCost<T>() * 2 +
@@ -251,7 +251,7 @@ struct TruncatedNormalFunctor<CPUDevice, T> {
         Eigen::TensorOpCost::MulCost<T>() + Eigen::TensorOpCost::AddCost<T>();
     // Estimate the cost for an entire batch.
     // Assume we use uniform sampling, and accept the 2nd sample on average.
-    const int64 batchCost =
+    const Eigen::DenseIndex batchCost =
         batchInitCost + uniformRejectionSamplingCost * 2 * samples_per_batch;
     Shard(worker_threads.num_threads, worker_threads.workers, num_batches,
           batchCost, DoWork);

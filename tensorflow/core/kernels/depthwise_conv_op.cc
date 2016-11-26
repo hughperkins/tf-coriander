@@ -80,25 +80,25 @@ struct LaunchDepthwiseConvOp;
 template <typename T>
 struct DepthwiseConv2DKernel {
   static void Run(const DepthwiseArgs& args,
-                  const int64 padded_filter_inner_dim_size, const int64 out_r,
-                  const int64 out_c, const T* filter, const T* input_buffer,
+                  const Eigen::DenseIndex padded_filter_inner_dim_size, const Eigen::DenseIndex out_r,
+                  const Eigen::DenseIndex out_c, const T* filter, const T* input_buffer,
                   T* output) {
     typedef typename Eigen::internal::packet_traits<T>::type Packet;
-    static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+    static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
 
-    const int64 out_depth = args.out_depth;
-    const int64 filter_spatial_size = args.filter_rows * args.filter_cols;
-    const int64 output_scalar_size = out_depth % kPacketSize;
-    const int64 output_vectorized_size =
+    const Eigen::DenseIndex out_depth = args.out_depth;
+    const Eigen::DenseIndex filter_spatial_size = args.filter_rows * args.filter_cols;
+    const Eigen::DenseIndex output_scalar_size = out_depth % kPacketSize;
+    const Eigen::DenseIndex output_vectorized_size =
         (out_depth / kPacketSize) * kPacketSize;
-    const int64 base_output_index = (out_r * args.out_cols + out_c) * out_depth;
+    const Eigen::DenseIndex base_output_index = (out_r * args.out_cols + out_c) * out_depth;
 
     for (int i = 0; i < output_vectorized_size; i += kPacketSize) {
       // Reset accumulator.
       auto vaccum = Eigen::internal::pset1<Packet>(0);
       for (int j = 0; j < filter_spatial_size; ++j) {
         // Calculate index.
-        const int64 index = i + j * padded_filter_inner_dim_size;
+        const Eigen::DenseIndex index = i + j * padded_filter_inner_dim_size;
         // Load filter.
         // TODO(andydavis) Unroll 'out_c' loop in caller so we can load
         // multiple inputs here to amortize the cost of each filter block load.
@@ -118,7 +118,7 @@ struct DepthwiseConv2DKernel {
     if (output_scalar_size > 0) {
       auto vaccum = Eigen::internal::pset1<Packet>(0);
       for (int j = 0; j < filter_spatial_size; ++j) {
-        const int64 index =
+        const Eigen::DenseIndex index =
             output_vectorized_size + j * padded_filter_inner_dim_size;
         const auto filter_block =
             Eigen::internal::ploadu<Packet>(filter + index);
@@ -130,7 +130,7 @@ struct DepthwiseConv2DKernel {
       // Load accumulator into an array and loop through output.
       T out_buf[kPacketSize];
       Eigen::internal::pstoreu<T>(out_buf, vaccum);
-      const int64 last_output_index =
+      const Eigen::DenseIndex last_output_index =
           base_output_index + output_vectorized_size;
       for (int j = 0; j < output_scalar_size; ++j) {
         output[last_output_index + j] = out_buf[j];
@@ -156,15 +156,15 @@ struct LaunchDepthwiseConvOp<CPUDevice, T> {
 
   static void launch(OpKernelContext* ctx, const DepthwiseArgs& args,
                      const T* input, const T* depthwise_filter, T* output) {
-    static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
+    static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
 
     // Pad 'depthwise_filter' to vector register width (if needed).
     const bool pad_filter = (args.out_depth % kPacketSize) == 0 ? false : true;
     Tensor padded_filter;
     if (pad_filter) {
       // Allocate space for padded filter.
-      const int64 filter_spatial_size = args.filter_rows * args.filter_cols;
-      const int64 padded_filter_inner_dim_size =
+      const Eigen::DenseIndex filter_spatial_size = args.filter_rows * args.filter_cols;
+      const Eigen::DenseIndex padded_filter_inner_dim_size =
           ((args.out_depth + kPacketSize - 1) / kPacketSize) * kPacketSize;
       OP_REQUIRES_OK(
           ctx, ctx->allocate_temp(DataTypeToEnum<T>::value,
@@ -179,15 +179,15 @@ struct LaunchDepthwiseConvOp<CPUDevice, T> {
         pad_filter ? padded_filter.template flat<T>().data() : depthwise_filter;
 
     // Computes one shard of depthwise conv2d output.
-    auto shard = [&ctx, &args, &input, &filter_data, &output](int64 start,
-                                                              int64 limit) {
-      static const int64 kPacketSize = (sizeof(Packet) / sizeof(T));
-      const int64 input_image_size =
+    auto shard = [&ctx, &args, &input, &filter_data, &output](Eigen::DenseIndex start,
+                                                              Eigen::DenseIndex limit) {
+      static const Eigen::DenseIndex kPacketSize = (sizeof(Packet) / sizeof(T));
+      const Eigen::DenseIndex input_image_size =
           args.in_rows * args.in_cols * args.in_depth;
-      const int64 output_image_size =
+      const Eigen::DenseIndex output_image_size =
           args.out_rows * args.out_cols * args.out_depth;
-      const int64 filter_spatial_size = args.filter_rows * args.filter_cols;
-      const int64 padded_filter_inner_dim_size =
+      const Eigen::DenseIndex filter_spatial_size = args.filter_rows * args.filter_cols;
+      const Eigen::DenseIndex padded_filter_inner_dim_size =
           ((args.out_depth + kPacketSize - 1) / kPacketSize) * kPacketSize;
 
       // Allocate buffer for local input regions.
@@ -199,12 +199,12 @@ struct LaunchDepthwiseConvOp<CPUDevice, T> {
                                   &input_buffer));
       T* input_buffer_data = input_buffer.template flat<T>().data();
 
-      for (int64 b = start; b < limit; ++b) {
-        const int64 in_base = b * input_image_size;
-        const int64 out_base = b * output_image_size;
+      for (Eigen::DenseIndex b = start; b < limit; ++b) {
+        const Eigen::DenseIndex in_base = b * input_image_size;
+        const Eigen::DenseIndex out_base = b * output_image_size;
 
-        for (int64 out_r = 0; out_r < args.out_rows; ++out_r) {
-          for (int64 out_c = 0; out_c < args.out_cols; ++out_c) {
+        for (Eigen::DenseIndex out_r = 0; out_r < args.out_rows; ++out_r) {
+          for (Eigen::DenseIndex out_c = 0; out_c < args.out_cols; ++out_c) {
             // Populate 'input_buffer_data' with data from local input region.
             functor::DepthwiseInputCopyOp<T>()(
                 args, padded_filter_inner_dim_size, out_r, out_c,
@@ -220,8 +220,8 @@ struct LaunchDepthwiseConvOp<CPUDevice, T> {
     };
 
     // TODO(andydavis) Shard over batch X out_rows (instead of just batch).
-    const int64 total_shards = args.batch;
-    const int64 shard_cost = args.out_rows * args.out_cols * args.out_depth;
+    const Eigen::DenseIndex total_shards = args.batch;
+    const Eigen::DenseIndex shard_cost = args.out_rows * args.out_cols * args.out_depth;
     auto worker_threads = *(ctx->device()->tensorflow_cpu_worker_threads());
     Shard(worker_threads.num_threads, worker_threads.workers, total_shards,
           shard_cost, shard);
@@ -331,7 +331,7 @@ class DepthwiseConv2dNativeOp : public BinaryOp<T> {
     // batch or depth dimension).
     const int32 stride = strides_[1];
 
-    int64 out_rows = 0, out_cols = 0, pad_rows = 0, pad_cols = 0;
+    Eigen::DenseIndex out_rows = 0, out_cols = 0, pad_rows = 0, pad_cols = 0;
     OP_REQUIRES_OK(context,
                    GetWindowedOutputSize(input_rows, filter_rows, stride,
                                          padding_, &out_rows, &pad_rows));

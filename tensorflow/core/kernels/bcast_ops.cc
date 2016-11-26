@@ -44,7 +44,7 @@ class BCastGradArgsOp : public OpKernel {
                   errors::InvalidArgument("In[", i, "] must be a vector.",
                                           in.shape().DebugString()));
       BCast::Vec vec;
-      for (int64 i = 0; i < in.NumElements(); ++i) {
+      for (Eigen::DenseIndex i = 0; i < in.NumElements(); ++i) {
         vec.push_back(in.vec<int32>()(i));
       }
       shapes.push_back(vec);
@@ -62,10 +62,10 @@ class BCastGradArgsOp : public OpKernel {
 
  private:
   void Output(OpKernelContext* ctx, int idx, const BCast::Vec& v) {
-    const int64 len = v.size();
+    const Eigen::DenseIndex len = v.size();
     Tensor* o = nullptr;
     OP_REQUIRES_OK(ctx, ctx->allocate_output(idx, TensorShape({len}), &o));
-    for (int64 i = 0; i < len; ++i) {
+    for (Eigen::DenseIndex i = 0; i < len; ++i) {
       o->flat<int32>()(i) = static_cast<int32>(v[i]);
     }
   }

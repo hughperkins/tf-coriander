@@ -74,11 +74,11 @@ class ConcatOp : public OpKernel {
     // Prod_i(yi) and x = ((n > 0) ? Prod_i(xi) : 1).
     ConstMatrixVector inputs_flat;
     inputs_flat.reserve(N);
-    int64 inputs_flat_dim0 = 1;
+    Eigen::DenseIndex inputs_flat_dim0 = 1;
     for (int d = 0; d < concat_dim; ++d) {
       inputs_flat_dim0 *= input_shape.dim_size(d);
     }
-    int64 output_concat_dim = 0;
+    Eigen::DenseIndex output_concat_dim = 0;
     const bool input_is_scalar = IsLegacyScalar(input_shape);
     for (int i = 0; i < N; ++i) {
       const auto in = values[i];
@@ -101,7 +101,7 @@ class ConcatOp : public OpKernel {
                 in.shape().DebugString()));
       }
       if (in.NumElements() > 0) {
-        int64 inputs_flat_dim1 = in.NumElements() / inputs_flat_dim0;
+        Eigen::DenseIndex inputs_flat_dim1 = in.NumElements() / inputs_flat_dim0;
         inputs_flat.emplace_back(new typename TTypes<T, 2>::ConstMatrix(
             in.shaped<T, 2>({inputs_flat_dim0, inputs_flat_dim1})));
       }
@@ -119,7 +119,7 @@ class ConcatOp : public OpKernel {
     Tensor* output = nullptr;
     OP_REQUIRES_OK(c, c->allocate_output(0, output_shape, &output));
     if (output->NumElements() > 0) {
-      int64 output_dim1 = output->NumElements() / inputs_flat_dim0;
+      Eigen::DenseIndex output_dim1 = output->NumElements() / inputs_flat_dim0;
       auto output_flat = output->shaped<T, 2>({inputs_flat_dim0, output_dim1});
 #if GOOGLE_CUDA
       if (std::is_same<Device, GPUDevice>::value) {
@@ -214,8 +214,8 @@ class ConcatOffsetOp : public OpKernel {
     const int32 N = ctx->num_inputs() - 1;
     const Tensor& inp0 = ctx->input(1);
     auto inp0_vec = inp0.vec<int32>();
-    const int64 cdim = internal::SubtleMustCopy(concat_dim.scalar<int32>()());
-    const int64 dims = inp0.NumElements();
+    const Eigen::DenseIndex cdim = internal::SubtleMustCopy(concat_dim.scalar<int32>()());
+    const Eigen::DenseIndex dims = inp0.NumElements();
     OP_REQUIRES(ctx, FastBoundsCheck(cdim, dims),
                 errors::InvalidArgument("Concat dim is out of range: ", cdim,
                                         " vs. ", dims));
@@ -230,7 +230,7 @@ class ConcatOffsetOp : public OpKernel {
       Tensor* out = nullptr;
       OP_REQUIRES_OK(ctx, ctx->allocate_output(i, {dims}, &out));
       auto out_vec = out->vec<int32>();
-      for (int64 j = 0; j < dims; ++j) {
+      for (Eigen::DenseIndex j = 0; j < dims; ++j) {
         if (j == cdim) {
           out_vec(j) = offset;
           offset += inp_vec(j);

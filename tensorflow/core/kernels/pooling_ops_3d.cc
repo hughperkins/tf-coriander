@@ -45,9 +45,9 @@ struct LaunchPoolingOp;
 template <typename T>
 struct LaunchPoolingOp<CPUDevice, T, AVG> {
   static void launch(OpKernelContext* context, const Tensor& tensor_in,
-                     const std::array<int64, 3>& window,
-                     const std::array<int64, 3>& stride,
-                     const std::array<int64, 3>& padding, Padding padding_type,
+                     const std::array<Eigen::DenseIndex, 3>& window,
+                     const std::array<Eigen::DenseIndex, 3>& stride,
+                     const std::array<Eigen::DenseIndex, 3>& padding, Padding padding_type,
                      Tensor* output) {
     output->tensor<T, 5>().device(context->eigen_device<CPUDevice>()) =
         Eigen::CuboidAvgPooling(tensor_in.tensor<T, 5>(), window[0], window[1],
@@ -59,9 +59,9 @@ struct LaunchPoolingOp<CPUDevice, T, AVG> {
 template <typename T>
 struct LaunchPoolingOp<CPUDevice, T, MAX> {
   static void launch(OpKernelContext* context, const Tensor& tensor_in,
-                     const std::array<int64, 3>& window,
-                     const std::array<int64, 3>& stride,
-                     const std::array<int64, 3>& padding, Padding padding_type,
+                     const std::array<Eigen::DenseIndex, 3>& window,
+                     const std::array<Eigen::DenseIndex, 3>& stride,
+                     const std::array<Eigen::DenseIndex, 3>& padding, Padding padding_type,
                      Tensor* output) {
     output->tensor<T, 5>().device(context->eigen_device<CPUDevice>()) =
         Eigen::CuboidMaxPooling(tensor_in.tensor<T, 5>(), window[0], window[1],
@@ -96,15 +96,15 @@ class Pooling3DOp : public UnaryOp<T> {
 
     OP_REQUIRES(context, tensor_in.dims() == 5,
                 errors::InvalidArgument("tensor_in must be 5-dimensional"));
-    const int64 depth = tensor_in.dim_size(4);
-    const int64 in_batch = tensor_in.dim_size(0);
+    const Eigen::DenseIndex depth = tensor_in.dim_size(4);
+    const Eigen::DenseIndex in_batch = tensor_in.dim_size(0);
 
     // Dimension order for these arrays is: x, y, z.
-    std::array<int64, 3> input_size{
+    std::array<Eigen::DenseIndex, 3> input_size{
         {tensor_in.dim_size(3), tensor_in.dim_size(2), tensor_in.dim_size(1)}};
-    std::array<int64, 3> window{{ksize_[3], ksize_[2], ksize_[1]}};
-    std::array<int64, 3> stride{{stride_[3], stride_[2], stride_[1]}};
-    std::array<int64, 3> padding, out;
+    std::array<Eigen::DenseIndex, 3> window{{ksize_[3], ksize_[2], ksize_[1]}};
+    std::array<Eigen::DenseIndex, 3> stride{{stride_[3], stride_[2], stride_[1]}};
+    std::array<Eigen::DenseIndex, 3> padding, out;
 
     OP_REQUIRES_OK(context, Get3dOutputSize(input_size, window, stride,
                                             padding_, &out, &padding));
@@ -135,12 +135,12 @@ template <typename T>
 struct LaunchMaxPooling3dGradOp<CPUDevice, T> {
   static void launch(OpKernelContext* context, const Tensor& tensor_in,
                      const Tensor& tensor_out, const Tensor& out_backprop,
-                     const std::array<int64, 3>& window,
-                     const std::array<int64, 3>& stride,
-                     const std::array<int64, 3>& out,
-                     const std::array<int64, 3>& padding, Tensor* output) {
+                     const std::array<Eigen::DenseIndex, 3>& window,
+                     const std::array<Eigen::DenseIndex, 3>& stride,
+                     const std::array<Eigen::DenseIndex, 3>& out,
+                     const std::array<Eigen::DenseIndex, 3>& padding, Tensor* output) {
     output->flat<T>().setZero();
-    for (int64 p = 0; p < out_backprop.dim_size(3); ++p) {
+    for (Eigen::DenseIndex p = 0; p < out_backprop.dim_size(3); ++p) {
       // Calculate broadcast size for planes/rows/cols. For SAME padding,
       // current index could be in the padding area, and
       //   p * stride_planes + window_planes
@@ -150,18 +150,18 @@ struct LaunchMaxPooling3dGradOp<CPUDevice, T> {
       // The same procedure is repeated for every spatial dimension in the
       // nested loops below.
       int pindex, psize;
-      std::array<int64, 3> input_size{{tensor_in.dim_size(3),
+      std::array<Eigen::DenseIndex, 3> input_size{{tensor_in.dim_size(3),
                                        tensor_in.dim_size(2),
                                        tensor_in.dim_size(1)}};
       OP_REQUIRES_OK(context,
                      GetBroadcastSize(p, input_size[0], window[0], stride[0],
                                       padding[0], &pindex, &psize));
-      for (int64 r = 0; r < out_backprop.dim_size(2); ++r) {
+      for (Eigen::DenseIndex r = 0; r < out_backprop.dim_size(2); ++r) {
         int rindex, rsize;
         OP_REQUIRES_OK(context,
                        GetBroadcastSize(r, input_size[1], window[1], stride[1],
                                         padding[1], &rindex, &rsize));
-        for (int64 c = 0; c < out_backprop.dim_size(1); ++c) {
+        for (Eigen::DenseIndex c = 0; c < out_backprop.dim_size(1); ++c) {
           int cindex, csize;
           OP_REQUIRES_OK(
               context, GetBroadcastSize(c, input_size[2], window[2], stride[2],
@@ -264,12 +264,12 @@ class MaxPooling3dGradOp : public OpKernel {
     OP_REQUIRES_OK(context,
                    context->allocate_output(0, output_shape, &input_backprop));
 
-    std::array<int64, 3> input_size = {{output_shape.dim_size(3),
+    std::array<Eigen::DenseIndex, 3> input_size = {{output_shape.dim_size(3),
                                         output_shape.dim_size(2),
                                         output_shape.dim_size(1)}};
-    std::array<int64, 3> window = {{ksize_[3], ksize_[2], ksize_[1]}};
-    std::array<int64, 3> stride = {{stride_[3], stride_[2], stride_[1]}};
-    std::array<int64, 3> out, padding;
+    std::array<Eigen::DenseIndex, 3> window = {{ksize_[3], ksize_[2], ksize_[1]}};
+    std::array<Eigen::DenseIndex, 3> stride = {{stride_[3], stride_[2], stride_[1]}};
+    std::array<Eigen::DenseIndex, 3> out, padding;
 
     OP_REQUIRES_OK(context, Get3dOutputSize(input_size, window, stride,
                                             padding_, &out, &padding));
@@ -296,15 +296,15 @@ struct LaunchAvgPooling3dGradOp<CPUDevice, T> {
   static void launch(OpKernelContext* context,
                      const TensorShape& tensor_in_shape,
                      const Tensor& out_backprop,
-                     const std::array<int64, 3>& window,
-                     const std::array<int64, 3>& stride,
-                     const std::array<int64, 3>& output_shape,
-                     const std::array<int64, 3>& padding, Tensor* output) {
+                     const std::array<Eigen::DenseIndex, 3>& window,
+                     const std::array<Eigen::DenseIndex, 3>& stride,
+                     const std::array<Eigen::DenseIndex, 3>& output_shape,
+                     const std::array<Eigen::DenseIndex, 3>& padding, Tensor* output) {
     output->flat<T>().setZero();
-    std::array<int64, 3> input_size = {{tensor_in_shape.dim_size(3),
+    std::array<Eigen::DenseIndex, 3> input_size = {{tensor_in_shape.dim_size(3),
                                         tensor_in_shape.dim_size(2),
                                         tensor_in_shape.dim_size(1)}};
-    for (int64 p = 0; p < out_backprop.dim_size(3); ++p) {
+    for (Eigen::DenseIndex p = 0; p < out_backprop.dim_size(3); ++p) {
       // Calculate broadcast size for planes/rows/cols. For SAME padding,
       // current index could be in the padding area, and
       //   p * stride_planes + window_planes
@@ -317,12 +317,12 @@ struct LaunchAvgPooling3dGradOp<CPUDevice, T> {
       OP_REQUIRES_OK(context,
                      GetBroadcastSize(p, input_size[0], window[0], stride[0],
                                       padding[0], &pindex, &psize));
-      for (int64 r = 0; r < out_backprop.dim_size(2); ++r) {
+      for (Eigen::DenseIndex r = 0; r < out_backprop.dim_size(2); ++r) {
         int rindex, rsize;
         OP_REQUIRES_OK(context,
                        GetBroadcastSize(r, input_size[1], window[1], stride[1],
                                         padding[1], &rindex, &rsize));
-        for (int64 c = 0; c < out_backprop.dim_size(1); ++c) {
+        for (Eigen::DenseIndex c = 0; c < out_backprop.dim_size(1); ++c) {
           int cindex, csize;
           OP_REQUIRES_OK(
               context, GetBroadcastSize(c, input_size[2], window[2], stride[2],
@@ -400,7 +400,7 @@ class AvgPooling3dGradOp : public OpKernel {
 
     TensorShape output_shape;
     auto shape_vec = tensor_in_shape.vec<int32>();
-    for (int64 i = 0; i < tensor_in_shape.NumElements(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < tensor_in_shape.NumElements(); ++i) {
       output_shape.AddDim(shape_vec(i));
     }
 
@@ -408,12 +408,12 @@ class AvgPooling3dGradOp : public OpKernel {
     OP_REQUIRES_OK(context, context->allocate_output(0, output_shape, &output));
 
     // Dimension order for these arrays is x, y, z.
-    std::array<int64, 3> input_size = {{output_shape.dim_size(3),
+    std::array<Eigen::DenseIndex, 3> input_size = {{output_shape.dim_size(3),
                                         output_shape.dim_size(2),
                                         output_shape.dim_size(1)}};
-    std::array<int64, 3> window = {{ksize_[3], ksize_[2], ksize_[1]}};
-    std::array<int64, 3> stride = {{stride_[3], stride_[2], stride_[1]}};
-    std::array<int64, 3> padding, out;
+    std::array<Eigen::DenseIndex, 3> window = {{ksize_[3], ksize_[2], ksize_[1]}};
+    std::array<Eigen::DenseIndex, 3> stride = {{stride_[3], stride_[2], stride_[1]}};
+    std::array<Eigen::DenseIndex, 3> padding, out;
 
     OP_REQUIRES_OK(context, Get3dOutputSize(input_size, window, stride,
                                             padding_, &out, &padding));
@@ -440,9 +440,9 @@ REGISTER_KERNEL_BUILDER(Name("AvgPool3DGrad")
 template <typename T>
 struct LaunchPoolingOp<GPUDevice, T, AVG> {
   static void launch(OpKernelContext* context, const Tensor& tensor_in,
-                     const std::array<int64, 3>& window,
-                     const std::array<int64, 3>& stride,
-                     const std::array<int64, 3>& padding, Padding padding_type,
+                     const std::array<Eigen::DenseIndex, 3>& window,
+                     const std::array<Eigen::DenseIndex, 3>& stride,
+                     const std::array<Eigen::DenseIndex, 3>& padding, Padding padding_type,
                      Tensor* output) {
     DnnPooling3dOp<T>::Compute(context,
                                perftools::gputools::dnn::PoolingMode::kAverage,
@@ -453,9 +453,9 @@ struct LaunchPoolingOp<GPUDevice, T, AVG> {
 template <typename T>
 struct LaunchPoolingOp<GPUDevice, T, MAX> {
   static void launch(OpKernelContext* context, const Tensor& tensor_in,
-                     const std::array<int64, 3>& window,
-                     const std::array<int64, 3>& stride,
-                     const std::array<int64, 3>& padding, Padding padding_type,
+                     const std::array<Eigen::DenseIndex, 3>& window,
+                     const std::array<Eigen::DenseIndex, 3>& stride,
+                     const std::array<Eigen::DenseIndex, 3>& padding, Padding padding_type,
                      Tensor* output) {
     DnnPooling3dOp<T>::Compute(context,
                                perftools::gputools::dnn::PoolingMode::kMaximum,
@@ -474,10 +474,10 @@ template <typename T>
 struct LaunchMaxPooling3dGradOp<GPUDevice, T> {
   static void launch(OpKernelContext* context, const Tensor& tensor_in,
                      const Tensor& tensor_out, const Tensor& out_backprop,
-                     const std::array<int64, 3>& window,
-                     const std::array<int64, 3>& stride,
-                     const std::array<int64, 3>& out,
-                     const std::array<int64, 3>& padding,
+                     const std::array<Eigen::DenseIndex, 3>& window,
+                     const std::array<Eigen::DenseIndex, 3>& stride,
+                     const std::array<Eigen::DenseIndex, 3>& out,
+                     const std::array<Eigen::DenseIndex, 3>& padding,
                      Tensor* input_backprop) {
     const TensorShape output_shape = tensor_in.shape();
     DnnPooling3dGradOp<T>::Compute(
@@ -496,10 +496,10 @@ struct LaunchAvgPooling3dGradOp<GPUDevice, T> {
   static void launch(OpKernelContext* context,
                      const TensorShape& tensor_in_shape,
                      const Tensor& out_backprop,
-                     const std::array<int64, 3>& window,
-                     const std::array<int64, 3>& stride,
-                     const std::array<int64, 3>& out,
-                     const std::array<int64, 3>& padding, Tensor* output) {
+                     const std::array<Eigen::DenseIndex, 3>& window,
+                     const std::array<Eigen::DenseIndex, 3>& stride,
+                     const std::array<Eigen::DenseIndex, 3>& out,
+                     const std::array<Eigen::DenseIndex, 3>& padding, Tensor* output) {
     DnnPooling3dGradOp<T>::Compute(
         context, perftools::gputools::dnn::PoolingMode::kAverage, window,
         stride, padding, out, out_backprop, tensor_in_shape, nullptr, nullptr,

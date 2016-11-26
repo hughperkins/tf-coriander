@@ -61,7 +61,7 @@ class MatrixSetDiagOp : public OpKernel {
 
     // Check to make sure the last dimension of diag is equal to the smaller of
     // the last two dimensions of input.
-    const int64 min_dim = std::min(input_shape.dim_size(rank - 1),
+    const Eigen::DenseIndex min_dim = std::min(input_shape.dim_size(rank - 1),
                                    input_shape.dim_size(rank - 2));
     TensorShape expected_diag_shape = input_shape;
     expected_diag_shape.RemoveDim(rank - 1);
@@ -123,8 +123,8 @@ struct MatrixSetDiag<CPUDevice, T> {
                       typename TTypes<T>::Scalar scratch,
                       typename TTypes<T, 3>::Tensor output) {
     output.device(d) = input;
-    for (int64 r = 0; r < output.dimension(0); ++r) {
-      for (int64 d = 0; d < diag.dimension(1); ++d) {
+    for (Eigen::DenseIndex r = 0; r < output.dimension(0); ++r) {
+      for (Eigen::DenseIndex d = 0; d < diag.dimension(1); ++d) {
         output((Eigen::DenseIndex)r, (Eigen::DenseIndex)d, (Eigen::DenseIndex)d) = diag((Eigen::DenseIndex)r, (Eigen::DenseIndex)d);
       }
     }

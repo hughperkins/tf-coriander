@@ -55,7 +55,7 @@ class DecodeCSVOp : public OpKernel {
     }
 
     auto records_t = records->flat<string>();
-    int64 records_size = records_t.size();
+    Eigen::DenseIndex records_size = records_t.size();
 
     OpOutputList output;
     OP_REQUIRES_OK(ctx, ctx->output_list("output", &output));
@@ -65,7 +65,7 @@ class DecodeCSVOp : public OpKernel {
       output.allocate(i, records->shape(), &out);
     }
 
-    for (int64 i = 0; i < records_size; ++i) {
+    for (Eigen::DenseIndex i = 0; i < records_size; ++i) {
       const StringPiece record(records_t(i));
       std::vector<string> fields;
       ExtractFields(ctx, record, &fields);
@@ -107,14 +107,14 @@ class DecodeCSVOp : public OpKernel {
                               "Field ", f,
                               " is required but missing in record ", i, "!"));
 
-              output[f]->flat<int64>()(i) = record_defaults[f].flat<int64>()(0);
+              output[f]->flat<Eigen::DenseIndex>()(i) = record_defaults[f].flat<Eigen::DenseIndex>()(0);
             } else {
-              int64 value;
+              Eigen::DenseIndex value;
               OP_REQUIRES(ctx, strings::safe_strto64(fields[f], &value),
                           errors::InvalidArgument("Field ", f, " in record ", i,
-                                                  " is not a valid int64: ",
+                                                  " is not a valid Eigen::DenseIndex: ",
                                                   fields[f]));
-              output[f]->flat<int64>()(i) = value;
+              output[f]->flat<Eigen::DenseIndex>()(i) = value;
             }
             break;
           }
@@ -167,7 +167,7 @@ class DecodeCSVOp : public OpKernel {
 
   void ExtractFields(OpKernelContext* ctx, StringPiece input,
                      std::vector<string>* result) {
-    int64 current_idx = 0;
+    Eigen::DenseIndex current_idx = 0;
     if (!input.empty()) {
       while (static_cast<size_t>(current_idx) < input.size()) {
         if (input[current_idx] == '\n' || input[current_idx] == '\r') {

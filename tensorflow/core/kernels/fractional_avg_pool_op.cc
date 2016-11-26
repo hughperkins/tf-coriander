@@ -75,8 +75,8 @@ class FractionalAvgPoolOp : public OpKernel {
     }
 
     // Generate pooling sequence.
-    std::vector<int64> row_cum_seq;
-    std::vector<int64> col_cum_seq;
+    std::vector<Eigen::DenseIndex> row_cum_seq;
+    std::vector<Eigen::DenseIndex> col_cum_seq;
     if (deterministic_) {
       if (pooling_region_generated_) {
         row_cum_seq = row_cum_seq_;
@@ -108,12 +108,12 @@ class FractionalAvgPoolOp : public OpKernel {
     Tensor* output_row_seq_tensor = nullptr;
     OP_REQUIRES_OK(context,
                    context->allocate_output(
-                       1, TensorShape({static_cast<int64>(row_cum_seq.size())}),
+                       1, TensorShape({static_cast<Eigen::DenseIndex>(row_cum_seq.size())}),
                        &output_row_seq_tensor));
     Tensor* output_col_seq_tensor = nullptr;
     OP_REQUIRES_OK(context,
                    context->allocate_output(
-                       2, TensorShape({static_cast<int64>(col_cum_seq.size())}),
+                       2, TensorShape({static_cast<Eigen::DenseIndex>(col_cum_seq.size())}),
                        &output_col_seq_tensor));
 
     ConstEigenMatrixMap in_mat(
@@ -129,8 +129,8 @@ class FractionalAvgPoolOp : public OpKernel {
     out_mat.setZero();
     out_count.setZero();
 
-    auto output_row_seq_flat = output_row_seq_tensor->flat<int64>();
-    auto output_col_seq_flat = output_col_seq_tensor->flat<int64>();
+    auto output_row_seq_flat = output_row_seq_tensor->flat<Eigen::DenseIndex>();
+    auto output_col_seq_flat = output_col_seq_tensor->flat<Eigen::DenseIndex>();
 
     // Set output tensors.
     for (int i = 0; i < row_cum_seq.size(); ++i) {
@@ -146,29 +146,29 @@ class FractionalAvgPoolOp : public OpKernel {
     // 1: row / row
     // 2: col / col
     // 3: depth / channel
-    const int64 row_max = input_size_[1] - 1;
-    const int64 col_max = input_size_[2] - 1;
-    for (int64 b = 0; b < input_size_[0]; ++b) {
+    const Eigen::DenseIndex row_max = input_size_[1] - 1;
+    const Eigen::DenseIndex col_max = input_size_[2] - 1;
+    for (Eigen::DenseIndex b = 0; b < input_size_[0]; ++b) {
       // row sequence.
-      for (int64 hs = 0; hs < row_cum_seq.size() - 1; ++hs) {
+      for (Eigen::DenseIndex hs = 0; hs < row_cum_seq.size() - 1; ++hs) {
         // row start and end.
-        const int64 row_start = row_cum_seq[hs];
-        int64 row_end =
+        const Eigen::DenseIndex row_start = row_cum_seq[hs];
+        Eigen::DenseIndex row_end =
             overlapping_ ? row_cum_seq[hs + 1] : row_cum_seq[hs + 1] - 1;
         row_end = std::min(row_end, row_max);
 
         // col sequence.
-        for (int64 ws = 0; ws < col_cum_seq.size() - 1; ++ws) {
-          const int64 out_offset =
+        for (Eigen::DenseIndex ws = 0; ws < col_cum_seq.size() - 1; ++ws) {
+          const Eigen::DenseIndex out_offset =
               (b * output_size_[1] + hs) * output_size_[2] + ws;
           // col start and end.
-          const int64 col_start = col_cum_seq[ws];
-          int64 col_end =
+          const Eigen::DenseIndex col_start = col_cum_seq[ws];
+          Eigen::DenseIndex col_end =
               overlapping_ ? col_cum_seq[ws + 1] : col_cum_seq[ws + 1] - 1;
           col_end = std::min(col_end, col_max);
-          for (int64 h = row_start; h <= row_end; ++h) {
-            for (int64 w = col_start; w <= col_end; ++w) {
-              const int64 in_offset =
+          for (Eigen::DenseIndex h = row_start; h <= row_end; ++h) {
+            for (Eigen::DenseIndex w = col_start; w <= col_end; ++w) {
+              const Eigen::DenseIndex in_offset =
                   (b * input_size_[1] + h) * input_size_[2] + w;
               out_mat.col(out_offset) += in_mat.col(in_offset);
               out_count(out_offset)++;
@@ -185,8 +185,8 @@ class FractionalAvgPoolOp : public OpKernel {
   bool deterministic_;
   // meaningful only when deterministic_ is true.
   mutex mu_;
-  std::vector<int64> row_cum_seq_;
-  std::vector<int64> col_cum_seq_;
+  std::vector<Eigen::DenseIndex> row_cum_seq_;
+  std::vector<Eigen::DenseIndex> col_cum_seq_;
   bool pooling_region_generated_;
 
   std::vector<int32> input_size_;
@@ -203,7 +203,7 @@ class FractionalAvgPoolOp : public OpKernel {
       FractionalAvgPoolOp<type>)
 
 REGISTER_FRACTIONALAVGPOOL(int32);
-REGISTER_FRACTIONALAVGPOOL(int64);
+REGISTER_FRACTIONALAVGPOOL(Eigen::DenseIndex);
 REGISTER_FRACTIONALAVGPOOL(float);
 REGISTER_FRACTIONALAVGPOOL(double);
 
@@ -248,19 +248,19 @@ class FractionalAvgPoolGradOp : public OpKernel {
     const Tensor& row_seq_tensor = context->input(2);
     const Tensor& col_seq_tensor = context->input(3);
 
-    const int64 out_batch = out_backprop.dim_size(0);
-    const int64 out_rows = out_backprop.dim_size(1);
-    const int64 out_cols = out_backprop.dim_size(2);
-    const int64 out_depth = out_backprop.dim_size(3);
+    const Eigen::DenseIndex out_batch = out_backprop.dim_size(0);
+    const Eigen::DenseIndex out_rows = out_backprop.dim_size(1);
+    const Eigen::DenseIndex out_cols = out_backprop.dim_size(2);
+    const Eigen::DenseIndex out_depth = out_backprop.dim_size(3);
 
-    auto row_seq_tensor_flat = row_seq_tensor.flat<int64>();
-    auto col_seq_tensor_flat = col_seq_tensor.flat<int64>();
-    auto orig_input_tensor_shape_flat = orig_input_tensor_shape.flat<int64>();
+    auto row_seq_tensor_flat = row_seq_tensor.flat<Eigen::DenseIndex>();
+    auto col_seq_tensor_flat = col_seq_tensor.flat<Eigen::DenseIndex>();
+    auto orig_input_tensor_shape_flat = orig_input_tensor_shape.flat<Eigen::DenseIndex>();
 
-    const int64 in_batch = orig_input_tensor_shape_flat(0);
-    const int64 in_rows = orig_input_tensor_shape_flat(1);
-    const int64 in_cols = orig_input_tensor_shape_flat(2);
-    const int64 in_depth = orig_input_tensor_shape_flat(3);
+    const Eigen::DenseIndex in_batch = orig_input_tensor_shape_flat(0);
+    const Eigen::DenseIndex in_rows = orig_input_tensor_shape_flat(1);
+    const Eigen::DenseIndex in_cols = orig_input_tensor_shape_flat(2);
+    const Eigen::DenseIndex in_depth = orig_input_tensor_shape_flat(3);
 
     constexpr int tensor_in_and_out_dims = 4;
     // Transform orig_input_tensor_shape into TensorShape
@@ -284,30 +284,30 @@ class FractionalAvgPoolGradOp : public OpKernel {
                                          out_cols * out_rows * out_batch);
     // Loop through each element of out_backprop and evenly distribute the
     // element to the corresponding pooling cell.
-    const int64 in_max_row_index = in_rows - 1;
-    const int64 in_max_col_index = in_cols - 1;
-    for (int64 b = 0; b < out_batch; ++b) {
-      for (int64 r = 0; r < out_rows; ++r) {
-        const int64 in_row_start = row_seq_tensor_flat(r);
-        int64 in_row_end = overlapping_ ? row_seq_tensor_flat(r + 1)
+    const Eigen::DenseIndex in_max_row_index = in_rows - 1;
+    const Eigen::DenseIndex in_max_col_index = in_cols - 1;
+    for (Eigen::DenseIndex b = 0; b < out_batch; ++b) {
+      for (Eigen::DenseIndex r = 0; r < out_rows; ++r) {
+        const Eigen::DenseIndex in_row_start = row_seq_tensor_flat(r);
+        Eigen::DenseIndex in_row_end = overlapping_ ? row_seq_tensor_flat(r + 1)
                                         : row_seq_tensor_flat(r + 1) - 1;
         in_row_end = std::min(in_row_end, in_max_row_index);
-        for (int64 c = 0; c < out_cols; ++c) {
-          const int64 in_col_start = col_seq_tensor_flat(c);
-          int64 in_col_end = overlapping_ ? col_seq_tensor_flat(c + 1)
+        for (Eigen::DenseIndex c = 0; c < out_cols; ++c) {
+          const Eigen::DenseIndex in_col_start = col_seq_tensor_flat(c);
+          Eigen::DenseIndex in_col_end = overlapping_ ? col_seq_tensor_flat(c + 1)
                                           : col_seq_tensor_flat(c + 1) - 1;
           in_col_end = std::min(in_col_end, in_max_col_index);
 
-          const int64 num_elements_in_pooling_cell =
+          const Eigen::DenseIndex num_elements_in_pooling_cell =
               (in_row_end - in_row_start + 1) * (in_col_end - in_col_start + 1);
-          const int64 out_index = (b * out_rows + r) * out_cols + c;
+          const Eigen::DenseIndex out_index = (b * out_rows + r) * out_cols + c;
           // Now we can evenly distribute out_backprop(b, h, w, *) to
           // in_backprop(b, hs:he, ws:we, *).
-          for (int64 in_r = in_row_start; in_r <= in_row_end; ++in_r) {
-            for (int64 in_c = in_col_start; in_c <= in_col_end; ++in_c) {
-              const int64 in_index = (b * in_rows + in_r) * in_cols + in_c;
+          for (Eigen::DenseIndex in_r = in_row_start; in_r <= in_row_end; ++in_r) {
+            for (Eigen::DenseIndex in_c = in_col_start; in_c <= in_col_end; ++in_c) {
+              const Eigen::DenseIndex in_index = (b * in_rows + in_r) * in_cols + in_c;
               // Walk through each channel (depth).
-              for (int64 d = 0; d < out_depth; ++d) {
+              for (Eigen::DenseIndex d = 0; d < out_depth; ++d) {
                 const double out_backprop_element = static_cast<double>(
                     out_backprop_mat.coeffRef(d, out_index));
                 double& in_backprop_ref =
@@ -327,7 +327,7 @@ class FractionalAvgPoolGradOp : public OpKernel {
                    context->allocate_output(0, in_shape, &in_backprop_tensor));
     auto in_backprop_tensor_flat = in_backprop_tensor->flat<T>();
     auto in_backprop_tensor_temp_flat = in_backprop_tensor_temp.flat<double>();
-    for (int64 i = 0; i < in_backprop_tensor_flat.size(); ++i) {
+    for (Eigen::DenseIndex i = 0; i < in_backprop_tensor_flat.size(); ++i) {
       in_backprop_tensor_flat(i) =
           static_cast<T>(in_backprop_tensor_temp_flat(i));
     }
@@ -344,7 +344,7 @@ class FractionalAvgPoolGradOp : public OpKernel {
                           FractionalAvgPoolGradOp<type>)
 
 REGISTER_FRACTIONALAVGPOOLGRAD(int32);
-REGISTER_FRACTIONALAVGPOOLGRAD(int64);
+REGISTER_FRACTIONALAVGPOOLGRAD(Eigen::DenseIndex);
 REGISTER_FRACTIONALAVGPOOLGRAD(float);
 REGISTER_FRACTIONALAVGPOOLGRAD(double);
 

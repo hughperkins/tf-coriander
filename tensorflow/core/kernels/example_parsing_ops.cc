@@ -392,16 +392,16 @@ class SingleSequenceExampleParserOp : public OpKernel {
                                     "  Feature is: ", ProtoDebugString(f)));
 
         Tensor feature_values = FeatureSparseCopy(0, key, dtype, f);
-        const int64 num_elements = feature_values.NumElements();
+        const Eigen::DenseIndex num_elements = feature_values.NumElements();
         TensorShape indices_shape({num_elements, 1});
         Tensor* sp_indices_d = nullptr;
         Tensor* sp_shape_d = nullptr;
         context_sparse_indices.allocate(d, indices_shape, &sp_indices_d);
         context_sparse_values.set(d, feature_values);
         context_sparse_shapes.allocate(d, TensorShape({1}), &sp_shape_d);
-        auto shape_t = sp_shape_d->vec<int64>();
+        auto shape_t = sp_shape_d->vec<Eigen::DenseIndex>();
         shape_t(0) = num_elements;
-        auto indices_t = sp_indices_d->matrix<int64>();
+        auto indices_t = sp_indices_d->matrix<Eigen::DenseIndex>();
         std::iota(indices_t.data(), indices_t.data() + num_elements, 0);
       } else {
         TensorShape indices_shape({0, 1});
@@ -412,7 +412,7 @@ class SingleSequenceExampleParserOp : public OpKernel {
         context_sparse_indices.allocate(d, indices_shape, &sp_indices_d);
         context_sparse_values.allocate(d, values_shape, &sp_values_d);
         context_sparse_shapes.allocate(d, TensorShape({1}), &sp_shape_d);
-        auto shape_t = sp_shape_d->vec<int64>();
+        auto shape_t = sp_shape_d->vec<Eigen::DenseIndex>();
         shape_t(0) = 0;
       }
     }
@@ -455,7 +455,7 @@ class SingleSequenceExampleParserOp : public OpKernel {
       Tensor* out = nullptr;
       feature_list_dense_values.allocate(d, out_shape, &out);
 
-      for (int64 t = 0; t < fl.feature_size(); ++t) {
+      for (Eigen::DenseIndex t = 0; t < fl.feature_size(); ++t) {
         const Feature& f = fl.feature(t);
         bool types_match;
         OP_REQUIRES_OK(ctx, CheckTypesMatch(f, dtype, &types_match));
@@ -480,11 +480,11 @@ class SingleSequenceExampleParserOp : public OpKernel {
           (feature_list_found != feature_list_dict.end());
 
       std::vector<Tensor> sparse_values_tmp;
-      int64 feature_list_size = 0;
+      Eigen::DenseIndex feature_list_size = 0;
       if (feature_list_has_data) {
         const FeatureList& fl = feature_list_found->second;
         feature_list_size = fl.feature_size();
-        for (int64 t = 0; t < feature_list_size; ++t) {
+        for (Eigen::DenseIndex t = 0; t < feature_list_size; ++t) {
           const Feature& f = fl.feature(t);
           bool types_match;
           OP_REQUIRES_OK(ctx, CheckTypesMatch(f, dtype, &types_match));
@@ -500,11 +500,11 @@ class SingleSequenceExampleParserOp : public OpKernel {
         sparse_values_tmp.push_back(Tensor(dtype, TensorShape({0})));
       }
 
-      int64 total_num_features = 0;
-      int64 max_num_features = 0;
+      Eigen::DenseIndex total_num_features = 0;
+      Eigen::DenseIndex max_num_features = 0;
       for (int t = 0; t < feature_list_size; ++t) {
         const Tensor& v = sparse_values_tmp[t];
-        const int64 num_elements = v.shape().num_elements();
+        const Eigen::DenseIndex num_elements = v.shape().num_elements();
         total_num_features += num_elements;
         max_num_features = std::max(max_num_features, num_elements);
       }
@@ -517,14 +517,14 @@ class SingleSequenceExampleParserOp : public OpKernel {
       feature_list_sparse_indices.allocate(d, indices_shape, &sp_indices_d);
       feature_list_sparse_values.allocate(d, values_shape, &sp_values_d);
       feature_list_sparse_shapes.allocate(d, TensorShape({2}), &sp_shape_d);
-      auto shape_t = sp_shape_d->vec<int64>();
+      auto shape_t = sp_shape_d->vec<Eigen::DenseIndex>();
       shape_t(0) = feature_list_size;
       shape_t(1) = max_num_features;
 
-      int64 offset = 0;
+      Eigen::DenseIndex offset = 0;
 
       for (int t = 0; t < feature_list_size; ++t) {
-        const int64 num_elements = CopyIntoSparseTensor(
+        const Eigen::DenseIndex num_elements = CopyIntoSparseTensor(
             sparse_values_tmp[t], t, offset, sp_indices_d, sp_values_d);
         offset += num_elements;
       }

@@ -34,10 +34,10 @@ namespace tensorflow {
 
 struct ReduceDetails {
   // The dimensions to call Reorder() with.
-  std::vector<int64> reorder_dims;
+  std::vector<Eigen::DenseIndex> reorder_dims;
 
   // The dimensions to call group() with after Reorder().
-  std::vector<int64> group_by_dims;
+  std::vector<Eigen::DenseIndex> group_by_dims;
 
   // The shape after reduction.
   TensorShape reduced_shape;
@@ -58,14 +58,14 @@ ReduceDetails SparseTensorReduceHelper(const SparseTensor &sp,
 
   std::vector<int32> reduction_axes(axes_slice.begin(), axes_slice.end());
   int ndims = sp.shape().dims();
-  for (int64 i = 0; i < reduction_axes.size(); ++i) {
+  for (Eigen::DenseIndex i = 0; i < reduction_axes.size(); ++i) {
     reduction_axes[i] = (reduction_axes[i] + ndims) % ndims;
   }
   std::sort(reduction_axes.begin(), reduction_axes.end());
 
   // (0) Calculate the grouping dimensions:
   // group_by_dims == {0, .., NDIMS-1} \ reduction_axes.
-  std::vector<int64> perm(ndims);
+  std::vector<Eigen::DenseIndex> perm(ndims);
   std::iota(perm.begin(), perm.end(), 0);
 
   // Requires perm and reduction_axes_ be sorted; group_by_dims will be
@@ -82,7 +82,7 @@ ReduceDetails SparseTensorReduceHelper(const SparseTensor &sp,
                       std::back_inserter(reduction.reorder_dims));
 
   // (1) Calculate the shape after reduction.
-  std::vector<int64> out_dim_sizes;
+  std::vector<Eigen::DenseIndex> out_dim_sizes;
   if (keep_dims) {
     out_dim_sizes.reserve(ndims);
     auto beg = reduction.group_by_dims.begin();
@@ -117,7 +117,7 @@ Status ValidateInputs(const Tensor *shape_t, const Tensor *reduction_axes_t) {
   }
 
   const auto reduction_axes_flat = reduction_axes_t->flat<int32>();
-  for (int64 i = 0; i < reduction_axes_flat.size(); i++) {
+  for (Eigen::DenseIndex i = 0; i < reduction_axes_flat.size(); i++) {
     int32 axis = reduction_axes_flat(i);
     if (axis < -shape_t->NumElements() || axis >= shape_t->NumElements()) {
       return errors::InvalidArgument("Invalid reduction dimension ", axis,
@@ -150,7 +150,7 @@ class SparseReduceSumOp : public OpKernel {
     // surprises of this kernel being stateful, we work around the above by
     // making deep copies here.  Remove this if/when we change Reorder()'s
     // semantics.
-    const auto shape_vec = shape_t->vec<int64>();
+    const auto shape_vec = shape_t->vec<Eigen::DenseIndex>();
     SparseTensor sp(tensor::DeepCopy(*indices_t), tensor::DeepCopy(*values_t),
                     TensorShape(shape_vec));
     ReduceDetails reduction = SparseTensorReduceHelper(
@@ -169,7 +169,7 @@ class SparseReduceSumOp : public OpKernel {
 
     // Compute strides, and use it to convert coords to flat index.  The
     // coordinates returned by .group() have the same ndims as group_by_dims.
-    gtl::InlinedVector<int64, 8> output_strides(reduction.group_by_dims.size());
+    gtl::InlinedVector<Eigen::DenseIndex, 8> output_strides(reduction.group_by_dims.size());
     if (!output_strides.empty()) {  // Do this iff we don't reduce all.
       output_strides.back() = 1;
       for (int d = output_strides.size() - 2; d >= 0; --d) {
@@ -178,13 +178,13 @@ class SparseReduceSumOp : public OpKernel {
       }
     }
 
-    auto CoordinatesToFlatIndex = [](ArraySlice<int64> coords,
-                                     ArraySlice<int64> strides) {
+    auto CoordinatesToFlatIndex = [](ArraySlice<Eigen::DenseIndex> coords,
+                                     ArraySlice<Eigen::DenseIndex> strides) {
       if (strides.empty()) {  // Reduce all.
         return 0LL;
       }
       CHECK_EQ(coords.size(), strides.size());
-      int64 idx = 0;
+      Eigen::DenseIndex idx = 0;
       for (int i = 0; i < coords.size(); ++i) {
         idx += coords[i] * strides[i];
       }
@@ -196,7 +196,7 @@ class SparseReduceSumOp : public OpKernel {
     sp.Reorder<T>(reduction.reorder_dims);
     for (const auto &g : sp.group(reduction.group_by_dims)) {
       group_sum.device(ctx->eigen_cpu_device()) = g.template values<T>().sum();
-      const int64 idx = CoordinatesToFlatIndex(g.group(), output_strides);
+      const Eigen::DenseIndex idx = CoordinatesToFlatIndex(g.group(), output_strides);
       out_flat(idx) = group_sum();
       VLOG(2) << "coords: " << str_util::Join(g.group(), ",")
               << "; idx: " << idx << "; group sum: " << group_sum();
@@ -232,13 +232,13 @@ class SparseReduceSumSparseOp : public OpKernel {
     OP_REQUIRES_OK(ctx, ValidateInputs(shape_t, reduction_axes_t));
 
     SparseTensor sp(tensor::DeepCopy(*indices_t), tensor::DeepCopy(*values_t),
-                    TensorShape(shape_t->vec<int64>()));
+                    TensorShape(shape_t->vec<Eigen::DenseIndex>()));
     ReduceDetails reduction = SparseTensorReduceHelper(
         sp, reduction_axes_t->flat<int32>(), keep_dims_);
 
     sp.Reorder<T>(reduction.reorder_dims);
     // Count nnzs in the output SparseTensor.
-    int64 nnz = 0;
+    Eigen::DenseIndex nnz = 0;
     auto iter = sp.group(reduction.group_by_dims);
     for (auto it = iter.begin(); it != iter.end(); ++it) {
       nnz++;
@@ -249,8 +249,8 @@ class SparseReduceSumSparseOp : public OpKernel {
                    ctx->allocate_output(
                        0, TensorShape({nnz, reduction.reduced_shape.dims()}),
                        &out_indices_t));
-    typename TTypes<int64>::Matrix out_indices_mat =
-        out_indices_t->matrix<int64>();
+    typename TTypes<Eigen::DenseIndex>::Matrix out_indices_mat =
+        out_indices_t->matrix<Eigen::DenseIndex>();
     // For keep_dims. We don't explicitly set dim fields for reduced dims below.
     out_indices_mat.setZero();
 
@@ -263,11 +263,11 @@ class SparseReduceSumSparseOp : public OpKernel {
     OP_REQUIRES_OK(ctx, ctx->allocate_temp(DataTypeToEnum<T>::value,
                                            TensorShape({}), &tmp_group_sum));
     auto group_sum = tmp_group_sum.scalar<T>();
-    int64 i = 0;
+    Eigen::DenseIndex i = 0;
     for (const auto &g : sp.group(reduction.group_by_dims)) {
       group_sum.device(ctx->eigen_cpu_device()) = g.template values<T>().sum();
-      std::vector<int64> group = g.group();
-      for (int64 j = 0; j < group.size(); j++) {
+      std::vector<Eigen::DenseIndex> group = g.group();
+      for (Eigen::DenseIndex j = 0; j < group.size(); j++) {
         if (keep_dims_) {
           out_indices_mat(i, reduction.group_by_dims[j]) = group[j];
         } else {
@@ -284,7 +284,7 @@ class SparseReduceSumSparseOp : public OpKernel {
     OP_REQUIRES_OK(ctx, ctx->allocate_output(
                             2, TensorShape({reduction.reduced_shape.dims()}),
                             &out_shape_t));
-    auto out_shape_flat = out_shape_t->flat<int64>();
+    auto out_shape_flat = out_shape_t->flat<Eigen::DenseIndex>();
     auto out_dim_sizes = reduction.reduced_shape.dim_sizes();
     std::copy(out_dim_sizes.begin(), out_dim_sizes.end(), &out_shape_flat(0));
   }

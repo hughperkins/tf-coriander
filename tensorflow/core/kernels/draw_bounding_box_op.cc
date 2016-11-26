@@ -35,7 +35,7 @@ class DrawBoundingBoxesOp : public OpKernel {
   void Compute(OpKernelContext* context) override {
     const Tensor& images = context->input(0);
     const Tensor& boxes = context->input(1);
-    const int64 depth = images.dim_size(3);
+    const Eigen::DenseIndex depth = images.dim_size(3);
 
     OP_REQUIRES(context, images.dims() == 4,
                 errors::InvalidArgument("The rank of the images should be 4"));
@@ -50,10 +50,10 @@ class DrawBoundingBoxesOp : public OpKernel {
         errors::InvalidArgument("Channel depth should be either 1 (GRY), "
                                 "3 (RGB), or 4 (RGBA)"));
 
-    const int64 batch_size = images.dim_size(0);
-    const int64 height = images.dim_size(1);
-    const int64 width = images.dim_size(2);
-    const int64 color_table_length = 10;
+    const Eigen::DenseIndex batch_size = images.dim_size(0);
+    const Eigen::DenseIndex height = images.dim_size(1);
+    const Eigen::DenseIndex width = images.dim_size(2);
+    const Eigen::DenseIndex color_table_length = 10;
 
     // 0: yellow
     // 1: blue
@@ -74,7 +74,7 @@ class DrawBoundingBoxesOp : public OpKernel {
     // Reset first color channel to 1 if image is GRY.
     // For GRY images, this means all bounding boxes will be white.
     if (depth == 1) {
-      for (int64 i = 0; i < color_table_length; i++) {
+      for (Eigen::DenseIndex i = 0; i < color_table_length; i++) {
         color_table[i][0] = 1;
       }
     }
@@ -87,27 +87,27 @@ class DrawBoundingBoxesOp : public OpKernel {
     output->tensor<T, 4>() = images.tensor<T, 4>();
     auto canvas = output->tensor<T, 4>();
 
-    for (int64 b = 0; b < batch_size; ++b) {
-      const int64 num_boxes = boxes.dim_size(1);
+    for (Eigen::DenseIndex b = 0; b < batch_size; ++b) {
+      const Eigen::DenseIndex num_boxes = boxes.dim_size(1);
       const auto tboxes = boxes.tensor<T, 3>();
-      for (int64 bb = 0; bb < num_boxes; ++bb) {
-        int64 color_index = bb % color_table_length;
-        const int64 min_box_row =
+      for (Eigen::DenseIndex bb = 0; bb < num_boxes; ++bb) {
+        Eigen::DenseIndex color_index = bb % color_table_length;
+        const Eigen::DenseIndex min_box_row =
             static_cast<float>(tboxes(b, bb, 0)) * (height - 1);
-        const int64 min_box_row_clamp =
-            std::max<int64>(min_box_row, 0);
-        const int64 max_box_row =
+        const Eigen::DenseIndex min_box_row_clamp =
+            std::max<Eigen::DenseIndex>(min_box_row, 0);
+        const Eigen::DenseIndex max_box_row =
             static_cast<float>(tboxes(b, bb, 2)) * (height - 1);
-        const int64 max_box_row_clamp =
-            std::min<int64>(max_box_row, height - 1);
-        const int64 min_box_col =
+        const Eigen::DenseIndex max_box_row_clamp =
+            std::min<Eigen::DenseIndex>(max_box_row, height - 1);
+        const Eigen::DenseIndex min_box_col =
             static_cast<float>(tboxes(b, bb, 1)) * (width - 1);
-        const int64 min_box_col_clamp =
-            std::max<int64>(min_box_col, 0);
-        const int64 max_box_col =
+        const Eigen::DenseIndex min_box_col_clamp =
+            std::max<Eigen::DenseIndex>(min_box_col, 0);
+        const Eigen::DenseIndex max_box_col =
             static_cast<float>(tboxes(b, bb, 3)) * (width - 1);
-        const int64 max_box_col_clamp =
-            std::min<int64>(max_box_col, width - 1);
+        const Eigen::DenseIndex max_box_col_clamp =
+            std::min<Eigen::DenseIndex>(max_box_col, width - 1);
 
         if (min_box_row > max_box_row || min_box_col > max_box_col) {
           LOG(WARNING) << "Bounding box (" << min_box_row
@@ -149,32 +149,32 @@ class DrawBoundingBoxesOp : public OpKernel {
 
         // Draw top line.
         if (min_box_row >= 0) {
-          for (int64 j = min_box_col_clamp; j <= max_box_col_clamp; ++j)
-            for (int64 c = 0; c < depth; c++) {
+          for (Eigen::DenseIndex j = min_box_col_clamp; j <= max_box_col_clamp; ++j)
+            for (Eigen::DenseIndex c = 0; c < depth; c++) {
               canvas((Eigen::DenseIndex)b, (Eigen::DenseIndex)min_box_row, (Eigen::DenseIndex)j, (Eigen::DenseIndex)c) =
                   static_cast<T>(color_table[color_index][c]);
             }
         }
         // Draw bottom line.
         if (max_box_row < height) {
-          for (int64 j = min_box_col_clamp; j <= max_box_col_clamp; ++j)
-            for (int64 c = 0; c < depth; c++) {
+          for (Eigen::DenseIndex j = min_box_col_clamp; j <= max_box_col_clamp; ++j)
+            for (Eigen::DenseIndex c = 0; c < depth; c++) {
               canvas((Eigen::DenseIndex)b, (Eigen::DenseIndex)max_box_row, (Eigen::DenseIndex)j, (Eigen::DenseIndex)c) =
                   static_cast<T>(color_table[color_index][c]);
             }
         }
         // Draw left line.
         if (min_box_col >= 0) {
-          for (int64 i = min_box_row_clamp; i <= max_box_row_clamp; ++i)
-            for (int64 c = 0; c < depth; c++) {
+          for (Eigen::DenseIndex i = min_box_row_clamp; i <= max_box_row_clamp; ++i)
+            for (Eigen::DenseIndex c = 0; c < depth; c++) {
               canvas((Eigen::DenseIndex)b, (Eigen::DenseIndex)i, (Eigen::DenseIndex)min_box_col, (Eigen::DenseIndex)c) =
                   static_cast<T>(color_table[color_index][c]);
             }
         }
         // Draw right line.
         if (max_box_col < width) {
-          for (int64 i = min_box_row_clamp; i <= max_box_row_clamp; ++i)
-            for (int64 c = 0; c < depth; c++) {
+          for (Eigen::DenseIndex i = min_box_row_clamp; i <= max_box_row_clamp; ++i)
+            for (Eigen::DenseIndex c = 0; c < depth; c++) {
               canvas((Eigen::DenseIndex)b, (Eigen::DenseIndex)i, (Eigen::DenseIndex)max_box_col, (Eigen::DenseIndex)c) =
                   static_cast<T>(color_table[color_index][c]);
             }

@@ -24,19 +24,19 @@ template <typename Device, typename T>
 void TransposeSimple(const Device& d, const Tensor& in,
                      const gtl::ArraySlice<int32> perm, Tensor* out) {
   const int ndims = in.dims();
-  gtl::InlinedVector<int64, 8> in_strides(ndims);
+  gtl::InlinedVector<Eigen::DenseIndex, 8> in_strides(ndims);
   ComputeStride(in.shape(), in_strides.data());
-  gtl::InlinedVector<int64, 8> out_strides(ndims);
+  gtl::InlinedVector<Eigen::DenseIndex, 8> out_strides(ndims);
   ComputeStride(out->shape(), out_strides.data());
-  const int64 nelem = in.NumElements();
+  const Eigen::DenseIndex nelem = in.NumElements();
   const T* p = reinterpret_cast<const T*>(in.tensor_data().data());
   T* q = reinterpret_cast<T*>(const_cast<char*>((out->tensor_data().data())));
 
   // TODO(zhifengc): Shard by range.
   // TODO(zhifengc): Avoids the division.
-  for (int64 o_idx = 0; o_idx < nelem; ++o_idx) {
-    int64 i_idx = 0;
-    int64 t = o_idx;
+  for (Eigen::DenseIndex o_idx = 0; o_idx < nelem; ++o_idx) {
+    Eigen::DenseIndex i_idx = 0;
+    Eigen::DenseIndex t = o_idx;
     for (int i = 0; i < ndims; ++i) {
       i_idx += (t / out_strides[i]) * in_strides[perm[i]];
       t = t % out_strides[i];
@@ -97,7 +97,7 @@ Status DoTranspose<Device>(const Device& d, const Tensor& in,
     case DT_COMPLEX64:
     case DT_DOUBLE:
     case DT_INT64:
-      internal::Transpose<Device, uint64>(d, in, perm, out);
+      internal::Transpose<Device, uEigen::DenseIndex>(d, in, perm, out);
       break;
 
     case DT_COMPLEX128:

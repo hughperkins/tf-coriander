@@ -97,8 +97,8 @@ void LinearAlgebraOp<Scalar>::Compute(OpKernelContext* context) {
 
   // Process the individual matrix problems in parallel using a threadpool.
   auto shard = [this, &inputs, &input_matrix_shapes, &outputs,
-                &output_matrix_shapes, context](int64 begin, int64 end) {
-    for (int64 i = begin; i < end; ++i) {
+                &output_matrix_shapes, context](Eigen::DenseIndex begin, Eigen::DenseIndex end) {
+    for (Eigen::DenseIndex i = begin; i < end; ++i) {
       ComputeTensorSlice(context, i, inputs, input_matrix_shapes, outputs,
                          output_matrix_shapes);
     }
@@ -143,8 +143,8 @@ void LinearAlgebraOp<Scalar>::AnalyzeInputs(OpKernelContext* context,
 
     const int row_dimension = input_rank - 2;
     const int col_dimension = input_rank - 1;
-    const int64 num_rows = in.dim_size(row_dimension);
-    const int64 num_cols = in.dim_size(col_dimension);
+    const Eigen::DenseIndex num_rows = in.dim_size(row_dimension);
+    const Eigen::DenseIndex num_cols = in.dim_size(col_dimension);
     // TODO(rmlarsen): Use emplace_back when it is added to InlinedVector. Same
     // in several places below.
     input_matrix_shapes->push_back(TensorShape({num_rows, num_cols}));
@@ -198,7 +198,7 @@ void LinearAlgebraOp<Scalar>::PrepareOutputs(
 
 template <typename Scalar>
 void LinearAlgebraOp<Scalar>::ComputeTensorSlice(
-    OpKernelContext* context, int64 matrix_index, const TensorInputs& inputs,
+    OpKernelContext* context, Eigen::DenseIndex matrix_index, const TensorInputs& inputs,
     const TensorShapes& input_matrix_shapes, const TensorOutputs& outputs,
     const TensorShapes& output_matrix_shapes) {
   ConstMatrixMaps matrix_inputs;

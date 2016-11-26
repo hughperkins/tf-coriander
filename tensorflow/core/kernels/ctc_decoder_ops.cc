@@ -68,8 +68,8 @@ class CTCDecodeHelper {
       return errors::InvalidArgument("inputs is not a 3-Tensor");
     }
 
-    const int64 max_time = inputs_shape.dim_size(0);
-    const int64 batch_size = inputs_shape.dim_size(1);
+    const Eigen::DenseIndex max_time = inputs_shape.dim_size(0);
+    const Eigen::DenseIndex batch_size = inputs_shape.dim_size(1);
 
     if (max_time == 0) {
       return errors::InvalidArgument("max_time is 0");
@@ -113,8 +113,8 @@ class CTCDecodeHelper {
       OpOutputList* decoded_indices, OpOutputList* decoded_values,
       OpOutputList* decoded_shape) const {
     // Calculate the total number of entries for each path
-    const int64 batch_size = sequences.size();
-    std::vector<int64> num_entries(top_paths_, 0);
+    const Eigen::DenseIndex batch_size = sequences.size();
+    std::vector<Eigen::DenseIndex> num_entries(top_paths_, 0);
 
     // Calculate num_entries per path
     for (const auto& batch_s : sequences) {
@@ -129,7 +129,7 @@ class CTCDecodeHelper {
       Tensor* p_values = nullptr;
       Tensor* p_shape = nullptr;
 
-      const int64 p_num = num_entries[p];
+      const Eigen::DenseIndex p_num = num_entries[p];
 
       Status s =
           decoded_indices->allocate(p, TensorShape({p_num, 2}), &p_indices);
@@ -139,19 +139,19 @@ class CTCDecodeHelper {
       s = decoded_shape->allocate(p, TensorShape({2}), &p_shape);
       if (!s.ok()) return s;
 
-      auto indices_t = p_indices->matrix<int64>();
-      auto values_t = p_values->vec<int64>();
-      auto shape_t = p_shape->vec<int64>();
+      auto indices_t = p_indices->matrix<Eigen::DenseIndex>();
+      auto values_t = p_values->vec<Eigen::DenseIndex>();
+      auto shape_t = p_shape->vec<Eigen::DenseIndex>();
 
-      int64 max_decoded = 0;
-      int64 offset = 0;
+      Eigen::DenseIndex max_decoded = 0;
+      Eigen::DenseIndex offset = 0;
 
-      for (int64 b = 0; b < batch_size; ++b) {
+      for (Eigen::DenseIndex b = 0; b < batch_size; ++b) {
         auto& p_batch = sequences[b][p];
-        int64 num_decoded = p_batch.size();
+        Eigen::DenseIndex num_decoded = p_batch.size();
         max_decoded = std::max(max_decoded, num_decoded);
         std::copy_n(p_batch.begin(), num_decoded, &values_t(offset));
-        for (int64 t = 0; t < num_decoded; ++t, ++offset) {
+        for (Eigen::DenseIndex t = 0; t < num_decoded; ++t, ++offset) {
           indices_t(offset, 0) = b;
           indices_t(offset, 1) = t;
         }
@@ -188,9 +188,9 @@ class CTCGreedyDecoderOp : public OpKernel {
     const TensorShape& inputs_shape = inputs->shape();
 
     std::vector<TTypes<float>::UnalignedConstMatrix> input_list_t;
-    const int64 max_time = inputs_shape.dim_size(0);
-    const int64 batch_size = inputs_shape.dim_size(1);
-    const int64 num_classes_raw = inputs_shape.dim_size(2);
+    const Eigen::DenseIndex max_time = inputs_shape.dim_size(0);
+    const Eigen::DenseIndex batch_size = inputs_shape.dim_size(1);
+    const Eigen::DenseIndex num_classes_raw = inputs_shape.dim_size(2);
     OP_REQUIRES(
         ctx, FastBoundsCheck(num_classes_raw, std::numeric_limits<int>::max()),
         errors::InvalidArgument("num_classes cannot exceed max int"));
@@ -270,9 +270,9 @@ class CTCBeamSearchDecoderOp : public OpKernel {
 
     const TensorShape& inputs_shape = inputs->shape();
 
-    const int64 max_time = inputs_shape.dim_size(0);
-    const int64 batch_size = inputs_shape.dim_size(1);
-    const int64 num_classes_raw = inputs_shape.dim_size(2);
+    const Eigen::DenseIndex max_time = inputs_shape.dim_size(0);
+    const Eigen::DenseIndex batch_size = inputs_shape.dim_size(1);
+    const Eigen::DenseIndex num_classes_raw = inputs_shape.dim_size(2);
     OP_REQUIRES(
         ctx, FastBoundsCheck(num_classes_raw, std::numeric_limits<int>::max()),
         errors::InvalidArgument("num_classes cannot exceed max int"));

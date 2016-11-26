@@ -33,7 +33,7 @@ limitations under the License.
 namespace tensorflow {
 namespace {
 
-static const int64 kTableSize = (1 << 10);
+static const Eigen::DenseIndex kTableSize = (1 << 10);
 
 const float* InitCoeffsTable() {
   // Allocate and initialize coefficients table using Bicubic
@@ -56,16 +56,16 @@ const float* GetCoeffsTable() {
   return coeffs_tab;
 }
 
-inline int64 Bound(int64 val, int64 limit) {
+inline Eigen::DenseIndex Bound(Eigen::DenseIndex val, Eigen::DenseIndex limit) {
   return std::min(limit - 1ll, std::max(0ll, val));
 }
 
-inline void GetWeightsAndIndices(float scale, int64 out_loc, int64 limit,
+inline void GetWeightsAndIndices(float scale, Eigen::DenseIndex out_loc, Eigen::DenseIndex limit,
                                  std::array<float, 4>* weights,
-                                 std::array<int64, 4>* indices) {
-  const int64 in_loc = scale * out_loc;
+                                 std::array<Eigen::DenseIndex, 4>* indices) {
+  const Eigen::DenseIndex in_loc = scale * out_loc;
   const float delta = scale * out_loc - in_loc;
-  const int64 offset = lrintf(delta * kTableSize);
+  const Eigen::DenseIndex offset = lrintf(delta * kTableSize);
   const float* coeffs_tab = GetCoeffsTable();
   *weights = {{coeffs_tab[offset * 2 + 1], coeffs_tab[offset * 2],
                coeffs_tab[(kTableSize - offset) * 2],
@@ -103,21 +103,21 @@ class ResizeBicubicOp : public OpKernel {
         st.output->tensor<float, 4>();
 
     std::array<float, 4> coeff = {{0.0, 0.0, 0.0, 0.0}};
-    for (int64 b = 0; b < st.batch_size; ++b) {
-      for (int64 y = 0; y < st.out_height; ++y) {
+    for (Eigen::DenseIndex b = 0; b < st.batch_size; ++b) {
+      for (Eigen::DenseIndex y = 0; y < st.out_height; ++y) {
         std::array<float, 4> y_weights;
-        std::array<int64, 4> y_indices;
+        std::array<Eigen::DenseIndex, 4> y_indices;
         GetWeightsAndIndices(st.height_scale, y, st.in_height, &y_weights,
                              &y_indices);
-        for (int64 x = 0; x < st.out_width; ++x) {
+        for (Eigen::DenseIndex x = 0; x < st.out_width; ++x) {
           std::array<float, 4> x_weights;
-          std::array<int64, 4> x_indices;
+          std::array<Eigen::DenseIndex, 4> x_indices;
           GetWeightsAndIndices(st.width_scale, x, st.in_width, &x_weights,
                                &x_indices);
-          for (int64 c = 0; c < st.channels; ++c) {
+          for (Eigen::DenseIndex c = 0; c < st.channels; ++c) {
             // Use a 4x4 patch to compute the interpolated output value at
             // (b, y, x, c).
-            for (int64 i = 0; i < 4; ++i) {
+            for (Eigen::DenseIndex i = 0; i < 4; ++i) {
               const std::array<float, 4> values = {
                   {static_cast<float>(
                        input_data((Eigen::DenseIndex)b, (Eigen::DenseIndex)y_indices[i], (Eigen::DenseIndex)x_indices[0], (Eigen::DenseIndex)c)),

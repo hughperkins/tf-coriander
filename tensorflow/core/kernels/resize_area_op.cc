@@ -77,33 +77,33 @@ class ResizeAreaOp : public OpKernel {
     //   out[1] = (in[1] * 2/3 + in[2] * 2/3 * scale
     //   out[2] = (in[3] * 1/3 + in[3] * 1.0) * scale
     float scale = 1.0 / (st.height_scale * st.width_scale);
-    for (int64 b = 0; b < st.batch_size; ++b) {
-      for (int64 y = 0; y < st.out_height; ++y) {
+    for (Eigen::DenseIndex b = 0; b < st.batch_size; ++b) {
+      for (Eigen::DenseIndex y = 0; y < st.out_height; ++y) {
         const float in_y = y * st.height_scale;
         const float in_y1 = (y + 1) * st.height_scale;
         // The start and end height indices of all the cells that could
         // contribute to the target cell.
-        int64 y_start = floor(in_y);
-        int64 y_end = ceil(in_y1);
+        Eigen::DenseIndex y_start = floor(in_y);
+        Eigen::DenseIndex y_end = ceil(in_y1);
 
-        for (int64 x = 0; x < st.out_width; ++x) {
+        for (Eigen::DenseIndex x = 0; x < st.out_width; ++x) {
           const float in_x = x * st.width_scale;
           const float in_x1 = (x + 1) * st.width_scale;
           // The start and end width indices of all the cells that could
           // contribute to the target cell.
-          int64 x_start = floor(in_x);
-          int64 x_end = ceil(in_x1);
+          Eigen::DenseIndex x_start = floor(in_x);
+          Eigen::DenseIndex x_end = ceil(in_x1);
 
           sum_data.setConstant(0.0);
-          for (int64 i = y_start; i < y_end; ++i) {
+          for (Eigen::DenseIndex i = y_start; i < y_end; ++i) {
             float scale_y =
                 i < in_y ? (i + 1 > in_y1 ? st.height_scale : i + 1 - in_y)
                          : (i + 1 > in_y1 ? in_y1 - i : 1.0);
-            for (int64 j = x_start; j < x_end; ++j) {
+            for (Eigen::DenseIndex j = x_start; j < x_end; ++j) {
               float scale_x =
                   j < in_x ? (j + 1 > in_x1 ? st.width_scale : j + 1 - in_x)
                            : (j + 1 > in_x1 ? in_x1 - j : 1.0);
-              for (int64 c = 0; c < st.channels; ++c) {
+              for (Eigen::DenseIndex c = 0; c < st.channels; ++c) {
 #define BOUND(val, limit) std::min(((limit)-1ll), (std::max(0ll, (val))))
                 sum_data(c) += float(input_data((Eigen::DenseIndex)b, (Eigen::DenseIndex)BOUND(i, st.in_height),
                                                 (Eigen::DenseIndex)BOUND(j, st.in_width), (Eigen::DenseIndex)c)) *
@@ -112,7 +112,7 @@ class ResizeAreaOp : public OpKernel {
               }
             }
           }
-          for (int64 c = 0; c < st.channels; ++c) {
+          for (Eigen::DenseIndex c = 0; c < st.channels; ++c) {
             output_data((Eigen::DenseIndex)b, (Eigen::DenseIndex)y, (Eigen::DenseIndex)x, (Eigen::DenseIndex)c) = sum_data(c);
           }
         }

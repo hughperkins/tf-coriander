@@ -39,8 +39,8 @@ namespace tensorflow {
 
 class RandomShuffleQueue : public TypedQueue<std::vector<PersistentTensor> > {
  public:
-  RandomShuffleQueue(int32 capacity, int32 min_after_dequeue, int64 seed,
-                     int64 seed2, const DataTypeVector& component_dtypes,
+  RandomShuffleQueue(int32 capacity, int32 min_after_dequeue, Eigen::DenseIndex seed,
+                     Eigen::DenseIndex seed2, const DataTypeVector& component_dtypes,
                      const std::vector<TensorShape>& component_shapes,
                      const string& name);
 
@@ -69,14 +69,14 @@ class RandomShuffleQueue : public TypedQueue<std::vector<PersistentTensor> > {
   void DequeueLocked(OpKernelContext* ctx, Tuple* tuple)
       EXCLUSIVE_LOCKS_REQUIRED(mu_);
 
-  static Status GetElementComponentFromBatch(const Tuple& tuple, int64 index,
+  static Status GetElementComponentFromBatch(const Tuple& tuple, Eigen::DenseIndex index,
                                              int component,
                                              OpKernelContext* ctx,
                                              PersistentTensor* out_tensor);
 
   const int32 min_after_dequeue_;
-  const int64 original_seed_;
-  const int64 original_seed2_;
+  const Eigen::DenseIndex original_seed_;
+  const Eigen::DenseIndex original_seed2_;
 
   random::PhiloxRandom parent_generator_ GUARDED_BY(mu_);
   random::SingleSampleAdapter<random::PhiloxRandom> generator_ GUARDED_BY(mu_);
@@ -85,7 +85,7 @@ class RandomShuffleQueue : public TypedQueue<std::vector<PersistentTensor> > {
 };
 
 RandomShuffleQueue::RandomShuffleQueue(
-    int32 capacity, int32 min_after_dequeue, int64 seed, int64 seed2,
+    int32 capacity, int32 min_after_dequeue, Eigen::DenseIndex seed, Eigen::DenseIndex seed2,
     const DataTypeVector& component_dtypes,
     const std::vector<TensorShape>& component_shapes, const string& name)
     : TypedQueue(capacity, component_dtypes, component_shapes, name),
@@ -113,7 +113,7 @@ Status RandomShuffleQueue::Initialize() {
 
 void RandomShuffleQueue::DequeueLocked(OpKernelContext* ctx, Tuple* tuple) {
   DCHECK_GT(queues_[0].size(), size_t{0});
-  int64 index = generator_() % queues_[0].size();
+  Eigen::DenseIndex index = generator_() % queues_[0].size();
   (*tuple).reserve(num_components());
   for (int i = 0; i < num_components(); ++i) {
     (*tuple).push_back(*queues_[i][index].AccessTensor(ctx));
@@ -161,7 +161,7 @@ void RandomShuffleQueue::TryEnqueue(const Tuple& tuple, OpKernelContext* ctx,
 
 /* static */
 Status RandomShuffleQueue::GetElementComponentFromBatch(
-    const Tuple& tuple, int64 index, int component, OpKernelContext* ctx,
+    const Tuple& tuple, Eigen::DenseIndex index, int component, OpKernelContext* ctx,
     PersistentTensor* out_tensor) {
   TensorShape element_shape(tuple[component].shape());
   element_shape.RemoveDim(0);
@@ -176,7 +176,7 @@ Status RandomShuffleQueue::GetElementComponentFromBatch(
 void RandomShuffleQueue::TryEnqueueMany(const Tuple& tuple,
                                         OpKernelContext* ctx,
                                         DoneCallback callback) {
-  const int64 batch_size = tuple[0].dim_size(0);
+  const Eigen::DenseIndex batch_size = tuple[0].dim_size(0);
   if (batch_size == 0) {
     callback();
     return;
@@ -334,7 +334,7 @@ void RandomShuffleQueue::TryDequeueMany(int num_elements, OpKernelContext* ctx,
                   // to reset the attempt tuple.
                   if (!attempt->tuple.empty()) {
                     // Restore already-dequeued elements to the queue.
-                    for (int64 i = attempt->tuple[0].dim_size(0) -
+                    for (Eigen::DenseIndex i = attempt->tuple[0].dim_size(0) -
                                    attempt->elements_requested - 1;
                          i >= 0; --i) {
                       for (int j = 0; j < num_components(); ++j) {
@@ -437,8 +437,8 @@ Status RandomShuffleQueue::MatchesNodeDef(const NodeDef& node_def) {
         " but requested min_after_dequeue was ", min_after_dequeue, ".");
   }
 
-  int64 seed = -1;
-  int64 seed2 = -1;
+  Eigen::DenseIndex seed = -1;
+  Eigen::DenseIndex seed2 = -1;
   TF_RETURN_IF_ERROR(GetNodeAttr(node_def, "seed", &seed));
   TF_RETURN_IF_ERROR(GetNodeAttr(node_def, "seed2", &seed2));
   if ((seed != 0 || seed2 != 0) &&
@@ -496,8 +496,8 @@ class RandomShuffleQueueOp : public QueueOp {
 
  private:
   int32 min_after_dequeue_;
-  int64 seed_;
-  int64 seed2_;
+  Eigen::DenseIndex seed_;
+  Eigen::DenseIndex seed2_;
   std::vector<TensorShape> component_shapes_;
 
   TF_DISALLOW_COPY_AND_ASSIGN(RandomShuffleQueueOp);

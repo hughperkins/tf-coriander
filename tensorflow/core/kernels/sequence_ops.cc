@@ -61,7 +61,7 @@ class RangeOp : public OpKernel {
           errors::InvalidArgument("Requires start >= limit when delta < 0: ",
                                   start, "/", limit));
     }
-    int64 size = (std::is_integral<T>::value
+    Eigen::DenseIndex size = (std::is_integral<T>::value
                       ? ((std::abs(limit - start) + std::abs(delta) - 1) /
                          std::abs(delta))
                       : std::ceil(std::abs((limit - start) / delta)));
@@ -70,7 +70,7 @@ class RangeOp : public OpKernel {
                    context->allocate_output(0, TensorShape({size}), &out));
     auto flat = out->flat<T>();
     T val = start;
-    for (int64 i = 0; i < size; ++i) {
+    for (Eigen::DenseIndex i = 0; i < size; ++i) {
       flat(i) = T(val);
       val += delta;
     }
@@ -93,14 +93,14 @@ class RangeOp : public OpKernel {
 TF_CALL_float(REGISTER_CPU_KERNEL);
 TF_CALL_double(REGISTER_CPU_KERNEL);
 TF_CALL_int32(REGISTER_CPU_KERNEL);
-TF_CALL_int64(REGISTER_CPU_KERNEL);
+TF_CALL_Eigen::DenseIndex(REGISTER_CPU_KERNEL);
 
 // #if GOOGLE_CUDA
 
 TF_CALL_float(REGISTER_GPU_KERNEL);
 // TF_CALL_double(REGISTER_GPU_KERNEL);
 TF_CALL_int32(REGISTER_GPU_KERNEL);
-// TF_CALL_int64(REGISTER_GPU_KERNEL);
+// TF_CALL_Eigen::DenseIndex(REGISTER_GPU_KERNEL);
 
 // #endif  // GOOGLE_CUDA
 

@@ -60,17 +60,17 @@ namespace {
 // row-major order.
 template <typename T>
 void UnionSparseIndicesAndValues(
-    typename TTypes<int64>::ConstMatrix a_indices_mat,
-    typename TTypes<T>::ConstFlat a_values, int64 a_nnz,
-    typename TTypes<int64>::ConstMatrix b_indices_mat,
-    typename TTypes<T>::ConstFlat b_values, int64 b_nnz, int num_dims,
+    typename TTypes<Eigen::DenseIndex>::ConstMatrix a_indices_mat,
+    typename TTypes<T>::ConstFlat a_values, Eigen::DenseIndex a_nnz,
+    typename TTypes<Eigen::DenseIndex>::ConstMatrix b_indices_mat,
+    typename TTypes<T>::ConstFlat b_values, Eigen::DenseIndex b_nnz, int num_dims,
     std::vector<T> *a_augmented_values, std::vector<T> *b_augmented_values,
-    std::vector<std::pair<bool, int64>> *entries_to_copy) {
+    std::vector<std::pair<bool, Eigen::DenseIndex>> *entries_to_copy) {
   entries_to_copy->reserve(a_nnz + b_nnz);
   a_augmented_values->reserve(a_nnz);
   b_augmented_values->reserve(b_nnz);
 
-  int64 i = 0, j = 0;
+  Eigen::DenseIndex i = 0, j = 0;
   const T kZero = T(0);
   while (i < a_nnz && j < b_nnz) {
     switch (sparse::DimComparator::cmp(a_indices_mat, b_indices_mat, i, j,
@@ -146,8 +146,8 @@ class SparseSparseBinaryOpShared : public OpKernel {
                     a_values_t->shape().DebugString(), " and ",
                     b_values_t->shape().DebugString()));
 
-    const int64 a_nnz = a_indices_t->dim_size(0);
-    const int64 b_nnz = b_indices_t->dim_size(0);
+    const Eigen::DenseIndex a_nnz = a_indices_t->dim_size(0);
+    const Eigen::DenseIndex b_nnz = b_indices_t->dim_size(0);
     const auto a_values = a_values_t->vec<T>();
     const auto b_values = b_values_t->vec<T>();
 
@@ -168,8 +168,8 @@ class SparseSparseBinaryOpShared : public OpKernel {
                     "Operands do not have the same ranks; got shapes: ",
                     a_shape_t->SummarizeValue(10), " and ",
                     b_shape_t->SummarizeValue(10)));
-    const auto a_shape = a_shape_t->flat<int64>();
-    const auto b_shape = b_shape_t->flat<int64>();
+    const auto a_shape = a_shape_t->flat<Eigen::DenseIndex>();
+    const auto b_shape = b_shape_t->flat<Eigen::DenseIndex>();
     for (int i = 0; i < a_shape_t->NumElements(); ++i) {
       OP_REQUIRES(ctx, a_shape(i) == b_shape(i),
                   errors::InvalidArgument("Operands' shapes do not match: got ",
@@ -178,27 +178,27 @@ class SparseSparseBinaryOpShared : public OpKernel {
     }
 
     const int num_dims = a_indices_t->dim_size(1);
-    const auto a_indices_mat = a_indices_t->matrix<int64>();
-    const auto b_indices_mat = b_indices_t->matrix<int64>();
+    const auto a_indices_mat = a_indices_t->matrix<Eigen::DenseIndex>();
+    const auto b_indices_mat = b_indices_t->matrix<Eigen::DenseIndex>();
     std::vector<T> a_augmented_values, b_augmented_values;
-    std::vector<std::pair<bool, int64>> entries_to_copy;  // from_a?, idx
+    std::vector<std::pair<bool, Eigen::DenseIndex>> entries_to_copy;  // from_a?, idx
     UnionSparseIndicesAndValues(a_indices_mat, a_values, a_nnz, b_indices_mat,
                                 b_values, b_nnz, num_dims, &a_augmented_values,
                                 &b_augmented_values, &entries_to_copy);
 
     // Allocates and fills output tensors.
-    const int64 sum_nnz = a_augmented_values.size();
+    const Eigen::DenseIndex sum_nnz = a_augmented_values.size();
     Tensor *output_indices_t, *output_values_t;
     OP_REQUIRES_OK(ctx,
                    ctx->allocate_output(0, TensorShape({sum_nnz, num_dims}),
                                         &output_indices_t));
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output(1, TensorShape({sum_nnz}), &output_values_t));
-    auto output_indices_mat = output_indices_t->matrix<int64>();
+    auto output_indices_mat = output_indices_t->matrix<Eigen::DenseIndex>();
 
-    for (int64 i = 0; i < sum_nnz; ++i) {
+    for (Eigen::DenseIndex i = 0; i < sum_nnz; ++i) {
       const bool from_a = entries_to_copy[i].first;
-      const int64 idx = entries_to_copy[i].second;
+      const Eigen::DenseIndex idx = entries_to_copy[i].second;
       output_indices_mat.chip<0>(i) =
           from_a ? a_indices_mat.chip<0>(idx) : b_indices_mat.chip<0>(idx);
     }

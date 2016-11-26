@@ -31,7 +31,7 @@ using Eigen::operator==;
 
 template <typename T>
 void Sparsify(Tensor* t, float sparsity) {
-  const int64 N = t->NumElements();
+  const Eigen::DenseIndex N = t->NumElements();
   CHECK_LE(sparsity, 1);
   auto flat = t->flat<T>();
   if (sparsity == 1) {
@@ -39,7 +39,7 @@ void Sparsify(Tensor* t, float sparsity) {
     return;
   }
   static const uint32 K = 10000;
-  for (int64 i = 0; i < N; ++i) {
+  for (Eigen::DenseIndex i = 0; i < N; ++i) {
     if (rnd.Uniform(K) < sparsity * K) {
       flat(i) = T(0);
     } else if (flat(i) == T(0)) {
@@ -99,7 +99,7 @@ static Graph* SparseMatMul(int m, int n, int d, float sparsity_a,
       BM_Sparse##_##M##_##K##_##N##_##S1##_##S2##_##TRA##_##TRB##_##TA##_##TB( \
           int iters) {                                                         \
     testing::StopTiming();                                                     \
-    testing::ItemsProcessed(static_cast<int64>(iters) * M * K * N * 2);        \
+    testing::ItemsProcessed(static_cast<Eigen::DenseIndex>(iters) * M * K * N * 2);        \
     std::string label =                                                        \
         strings::Printf("tr_a: %d tr_b: %d sp_a: %0.2f sp_b: %0.2f", TRA, TRB, \
                         S1 / 100.0, S2 / 100.0);                               \
@@ -167,7 +167,7 @@ static Graph* MultiSparseMatMul(int m, int n, int d, float sparsity_1,
 #define BM_SPARSE_MULTI(M, K, N, S1, S2)                                    \
   static void BM_Sparse_Multi##_##M##_##K##_##N##_##S1##_##S2(int iters) {  \
     testing::StopTiming();                                                  \
-    testing::ItemsProcessed(static_cast<int64>(iters) * M * K * N * 2 * 3); \
+    testing::ItemsProcessed(static_cast<Eigen::DenseIndex>(iters) * M * K * N * 2 * 3); \
     std::string label = strings::Printf("%d_%d_%d_%0.2f_%0.2f", M, K, N,    \
                                         S1 / 100.0, S2 / 100.0);            \
     testing::SetLabel(label);                                               \

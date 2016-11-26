@@ -43,7 +43,7 @@ static void SegmentReductionValidationHelper(OpKernelContext* context,
                                              const Tensor& segment_ids) {
   OP_REQUIRES(context, TensorShapeUtils::IsVector(segment_ids.shape()),
               errors::InvalidArgument("segment_ids should be a vector."));
-  const int64 num_indices = segment_ids.NumElements();
+  const Eigen::DenseIndex num_indices = segment_ids.NumElements();
   OP_REQUIRES(context, num_indices == input.dim_size(0),
               errors::InvalidArgument(
                   "segment_ids should be the same size as dimension 0 of"
@@ -73,9 +73,9 @@ class SegmentReductionOp : public OpKernel {
       return;
     }
 
-    const int64 num_indices = segment_ids.NumElements();
+    const Eigen::DenseIndex num_indices = segment_ids.NumElements();
     auto input_flat = input.flat_outer_dims<T>();
-    const int64 num_col = input_flat.dimension(1);
+    const Eigen::DenseIndex num_col = input_flat.dimension(1);
 
     const auto segment_vec = segment_ids.vec<Index>();
     // Note that the current implementation assumes that segment_vec values are
@@ -202,11 +202,11 @@ class SegmentReductionOp : public OpKernel {
 
 #define REGISTER_REAL_CPU_KERNELS_ALL(type) \
   REGISTER_REAL_CPU_KERNELS(type, int32);   \
-  REGISTER_REAL_CPU_KERNELS(type, int64)
+  REGISTER_REAL_CPU_KERNELS(type, Eigen::DenseIndex)
 
 #define REGISTER_COMPLEX_CPU_KERNELS_ALL(type) \
   REGISTER_COMPLEX_CPU_KERNELS(type, int32);   \
-  REGISTER_COMPLEX_CPU_KERNELS(type, int64)
+  REGISTER_COMPLEX_CPU_KERNELS(type, Eigen::DenseIndex)
 
 TF_CALL_REAL_NUMBER_TYPES(REGISTER_REAL_CPU_KERNELS_ALL);
 REGISTER_COMPLEX_CPU_KERNELS_ALL(complex64);
@@ -231,9 +231,9 @@ struct UnsortedSegmentSumFunctor<CPUDevice, T, Index> {
     if (data_size == 0) {
       return;
     }
-    const int64 N = segment_ids.dimension(0);
+    const Eigen::DenseIndex N = segment_ids.dimension(0);
     auto data_flat = typename TTypes<T, 2>::ConstTensor(data, N, data_size / N);
-    for (int64 i = 0; i < N; ++i) {
+    for (Eigen::DenseIndex i = 0; i < N; ++i) {
       Index j = internal::SubtleMustCopy(segment_ids(i));
       OP_REQUIRES(ctx, FastBoundsCheck(j, output_rows),
                   errors::InvalidArgument(
@@ -304,7 +304,7 @@ class UnsortedSegmentSumOp : public OpKernel {
 
 #define REGISTER_CPU_UNSORTED_KERNELS_ALL(type) \
   REGISTER_CPU_UNSORTED_KERNELS(type, int32);   \
-  REGISTER_CPU_UNSORTED_KERNELS(type, int64);
+  REGISTER_CPU_UNSORTED_KERNELS(type, Eigen::DenseIndex);
 
 TF_CALL_NUMBER_TYPES(REGISTER_CPU_UNSORTED_KERNELS_ALL);
 #undef REGISTER_CPU_UNSORTED_KERNELS
@@ -321,7 +321,7 @@ TF_CALL_NUMBER_TYPES(REGISTER_CPU_UNSORTED_KERNELS_ALL);
 
 #define REGISTER_GPU_UNSORTED_KERNELS_ALL(type) \
   REGISTER_GPU_UNSORTED_KERNELS(type, int32);   \
-  REGISTER_GPU_UNSORTED_KERNELS(type, int64);
+  REGISTER_GPU_UNSORTED_KERNELS(type, Eigen::DenseIndex);
 
 TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPU_UNSORTED_KERNELS_ALL);
 #undef REGISTER_GPU_UNSORTED_KERNELS
@@ -348,7 +348,7 @@ class SparseSegmentReductionOpBase : public OpKernel {
     OP_REQUIRES(context, TensorShapeUtils::IsVector(segment_ids.shape()),
                 errors::InvalidArgument("segment_ids should be a vector."));
 
-    const int64 num_indices = indices.NumElements();
+    const Eigen::DenseIndex num_indices = indices.NumElements();
     OP_REQUIRES(context, num_indices == segment_ids.NumElements(),
                 errors::InvalidArgument(
                     "segment_ids and indices should have same size."));
@@ -379,7 +379,7 @@ class SparseSegmentReductionOpBase : public OpKernel {
                 errors::InvalidArgument("segment ids must be >= 0"));
     auto output_flat = output->flat_outer_dims<T>();
 
-    int64 start = 0, end = 1;
+    Eigen::DenseIndex start = 0, end = 1;
     OutputRow out_index = internal::SubtleMustCopy(segment_vec(start));
     OP_REQUIRES(context, out_index == 0,
                 errors::InvalidArgument("segment ids do not start at 0"));
@@ -426,9 +426,9 @@ class SparseSegmentReductionOpBase : public OpKernel {
  private:
   typedef int32 Index;
 
-  int64 Reduce(const typename TTypes<T>::ConstMatrix& input_flat,
-               const typename TTypes<Index>::ConstVec& indices_vec, int64 start,
-               int64 num,
+  Eigen::DenseIndex Reduce(const typename TTypes<T>::ConstMatrix& input_flat,
+               const typename TTypes<Index>::ConstVec& indices_vec, Eigen::DenseIndex start,
+               Eigen::DenseIndex num,
                Eigen::TensorChippingOp<0, typename TTypes<T>::Matrix> out) {
 #define INDEX(n, i)                               \
   const auto index##n = indices_vec(start + (i)); \
@@ -440,7 +440,7 @@ class SparseSegmentReductionOpBase : public OpKernel {
       INDEX(0, 0);
       out = L(0);
     } else {
-      int64 r = num % 8;
+      Eigen::DenseIndex r = num % 8;
       T m(1);
       if (is_mean_ && (num < 10)) {
         m = T(num);
@@ -627,7 +627,7 @@ class SparseSegmentGradOpBase : public OpKernel {
     OP_REQUIRES(context, IsLegacyScalar(output_dim0.shape()),
                 errors::InvalidArgument("output_dim0 should be a scalar."));
 
-    const int64 N = indices.NumElements();
+    const Eigen::DenseIndex N = indices.NumElements();
     OP_REQUIRES(context, N == segment_ids.NumElements(),
                 errors::InvalidArgument(
                     "segment_ids and indices should have same size."));
@@ -655,7 +655,7 @@ class SparseSegmentGradOpBase : public OpKernel {
 
     // Compute scaling factors for input.
     std::vector<double> scaling(num_segments, 0.0);
-    for (int64 i = 0; i < N; ++i) {
+    for (Eigen::DenseIndex i = 0; i < N; ++i) {
       const SegmentId idx = internal::SubtleMustCopy(segment_vec(i));
       OP_REQUIRES(
           context, FastBoundsCheck(idx, num_segments),
@@ -675,7 +675,7 @@ class SparseSegmentGradOpBase : public OpKernel {
     output_flat.setZero();
     std::vector<bool> is_modified(M, false);
 
-    for (int64 i = 0; i < N; ++i) {
+    for (Eigen::DenseIndex i = 0; i < N; ++i) {
       const Index output_idx = internal::SubtleMustCopy(indices_vec(i));
       OP_REQUIRES(context, FastBoundsCheck(output_idx, M),
                   errors::InvalidArgument("Index ", output_idx,
