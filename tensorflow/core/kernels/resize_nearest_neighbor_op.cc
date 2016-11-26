@@ -67,7 +67,7 @@ class ResizeNearestNeighborOp : public OpKernel {
               std::min(static_cast<int64>(floorf(x * st.width_scale)),
                        (st.in_width - 1));
           for (int c = 0; c < st.channels; ++c) {
-            output_data((IndexType)b, (IndexType)y, (IndexType)x, (IndexType)c) = input_data((IndexType)b, (IndexType)in_y, (IndexType)in_x, (IndexType)c);
+            output_data((DenseIndex)b, (DenseIndex)y, (DenseIndex)x, (DenseIndex)c) = input_data((DenseIndex)b, (DenseIndex)in_y, (DenseIndex)in_x, (DenseIndex)c);
           }
         }
       }
@@ -141,8 +141,8 @@ class ResizeNearestNeighborOpGrad : public OpKernel {
               static_cast<int64>(floorf(x * width_scale)), (out_width - 1));
 
           for (int b = 0; b < batch_size; ++b) {
-            output_data((IndexType)b, (IndexType)out_y, (IndexType)out_x, (IndexType)c) +=
-              input_data((IndexType)b, (IndexType)y, (IndexType)x, (IndexType)c);
+            output_data((DenseIndex)b, (DenseIndex)out_y, (DenseIndex)out_x, (DenseIndex)c) +=
+              input_data((DenseIndex)b, (DenseIndex)y, (DenseIndex)x, (DenseIndex)c);
           }
         }
       }
