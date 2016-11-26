@@ -30,17 +30,17 @@ before_install:
   - make install
   - echo =============== bazel =====================
   - cd ${BASEDIR}
-  - git clone https://github.com/bazelbuild/bazel.git
-  - cd bazel
-  - git checkout 0.3.2
-  - ./compile.sh
-  - sudo cp output/bazel /usr/local/bin
+  - mkdir soft
+  - cd soft
+  - java -version
+  - wget https://github.com/bazelbuild/bazel/releases/download/0.3.2/bazel-0.3.2-installer-darwin-x86_64.sh
+  - chmod +x bazel-0.3.2-installer-darwin-x86_64.sh
+  - ./bazel-0.3.2-installer-darwin-x86_64.sh --user
+  - export PATH=$HOME/bin:$PATH
+  - bazel version
+  - which bazel
+  - cd ${BASEDIR}
   - echo ====== python ==============
-  - #echo -------- virtualenv ----------
-  - #cd ${BASEDIR}
-  - #wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-14.0.6.tar.gz
-  - #tar -xf virtualenv-14.0.6.tar.gz
-  - echo -------- python 3.5 ----------
   - cd ${BASEDIR}
   - wget https://www.python.org/ftp/python/3.5.2/python-3.5.2-macosx10.6.pkg
   - sudo installer -pkg python-3.5.2-macosx10.6.pkg -target /
@@ -48,17 +48,14 @@ before_install:
   - which python3
   - ls /usr/local/bin
   - ls /usr/local/lib
-  - #${BASEDIR}/virtualenv-14.0.6/virtualenv.py -p python3 ~/env35
-  - #source ~/env35/bin/activate
-  - #pip install -U pip
-  - #pip install -U setuptools
-  - #pip install wheel
-  - #pip install numpy
-  - #pip install -r ${BASEDIR}/test/requirements.txt
-  - #python -c 'import numpy'
+  - find /usr/local -name 'dist-packages'
   - echo ================ tensorflow ==================
   - cd ${BASEDIR}
-  - echo /usr/local/lib/python3/dist-packages | util/python/python_config.sh --setup /usr/local/bin/python3
+  - export TF_NEED_GCP=0
+  - export TF_NEED_HDFS=0
+  - export TF_NEED_CUDA=0
+  - export PYTHON_BIN_PATH=/usr/local/bin/python3
+  - echo /usr/local/lib/python3.5/dist-packages | util/python/python_config.sh --setup /usr/local/bin/python3
   - ls tools
   - bazel fetch //tensorflow/...
   - bazel build --verbose_failures //tensorflow/tools/pip_package:build_pip_package
