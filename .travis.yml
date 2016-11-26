@@ -12,6 +12,35 @@ before_install:
   - echo BASEDIR ${BASEDIR}
   - mkdir soft
   - cd soft
+  - echo =============== bazel =====================
+  - cd ${BASEDIR}/soft
+  - java -version
+  - wget https://github.com/bazelbuild/bazel/releases/download/0.3.2/bazel-0.3.2-installer-darwin-x86_64.sh
+  - chmod +x bazel-0.3.2-installer-darwin-x86_64.sh
+  - ./bazel-0.3.2-installer-darwin-x86_64.sh --user
+  - export PATH=$HOME/bin:$PATH
+  - bazel version
+  - which bazel
+  - echo ====== python ==============
+  - cd ${BASEDIR}
+  - wget https://www.python.org/ftp/python/3.5.2/python-3.5.2-macosx10.6.pkg
+  - sudo installer -pkg python-3.5.2-macosx10.6.pkg -target /
+  - python3 -V
+  - which python3
+  - ls /usr/local/bin
+  - ls /usr/local/lib
+  - find /usr/local -name 'dist-packages'
+  - echo ================ tensorflow configure ==================
+  - cd ${BASEDIR}
+  - export TF_NEED_GCP=0
+  - export TF_NEED_HDFS=0
+  - export TF_NEED_CUDA=0
+  - export PYTHON_BIN_PATH=/usr/local/bin/python3
+  - echo /usr/local/lib/python3.5/dist-packages | util/python/python_config.sh --setup /usr/local/bin/python3
+  - ls tools
+  - bazel fetch //tensorflow/...
+  - echo =========== clang ================================
+  - cd ${BASEDIR}
   - CLANG_VERSION=3.8.0
   - wget http://llvm.org/releases/${CLANG_VERSION}/clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin.tar.xz
   - tar -xf clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin.tar.xz
@@ -28,36 +57,7 @@ before_install:
   - cmake .. -DCLANG_HOME=${CLANG_HOME} -DBUILD_TESTS=ON -DTESTS_DUMP_CL=ON
   - make -j 8
   - make install
-  - echo =============== bazel =====================
-  - cd ${BASEDIR}
-  - mkdir soft
-  - cd soft
-  - java -version
-  - wget https://github.com/bazelbuild/bazel/releases/download/0.3.2/bazel-0.3.2-installer-darwin-x86_64.sh
-  - chmod +x bazel-0.3.2-installer-darwin-x86_64.sh
-  - ./bazel-0.3.2-installer-darwin-x86_64.sh --user
-  - export PATH=$HOME/bin:$PATH
-  - bazel version
-  - which bazel
-  - cd ${BASEDIR}
-  - echo ====== python ==============
-  - cd ${BASEDIR}
-  - wget https://www.python.org/ftp/python/3.5.2/python-3.5.2-macosx10.6.pkg
-  - sudo installer -pkg python-3.5.2-macosx10.6.pkg -target /
-  - python3 -V
-  - which python3
-  - ls /usr/local/bin
-  - ls /usr/local/lib
-  - find /usr/local -name 'dist-packages'
-  - echo ================ tensorflow ==================
-  - cd ${BASEDIR}
-  - export TF_NEED_GCP=0
-  - export TF_NEED_HDFS=0
-  - export TF_NEED_CUDA=0
-  - export PYTHON_BIN_PATH=/usr/local/bin/python3
-  - echo /usr/local/lib/python3.5/dist-packages | util/python/python_config.sh --setup /usr/local/bin/python3
-  - ls tools
-  - bazel fetch //tensorflow/...
+  - ========= tensorflow install =================
   - bazel build --verbose_failures //tensorflow/tools/pip_package:build_pip_package
   - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
 
