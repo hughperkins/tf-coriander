@@ -120,16 +120,16 @@ class ResizeBicubicOp : public OpKernel {
             for (int64 i = 0; i < 4; ++i) {
               const std::array<float, 4> values = {
                   {static_cast<float>(
-                       input_data(b, y_indices[i], x_indices[0], c)),
+                       input_data((Indextype)b, (Indextype)y_indices[i], (Indextype)x_indices[0], (Indextype)c)),
                    static_cast<float>(
-                       input_data(b, y_indices[i], x_indices[1], c)),
+                       input_data((Indextype)b, (Indextype)y_indices[i], (Indextype)x_indices[1], (Indextype)c)),
                    static_cast<float>(
-                       input_data(b, y_indices[i], x_indices[2], c)),
+                       input_data((Indextype)b, (Indextype)y_indices[i], (Indextype)x_indices[2], (Indextype)c)),
                    static_cast<float>(
-                       input_data(b, y_indices[i], x_indices[3], c))}};
+                       input_data((Indextype)b, (Indextype)y_indices[i], (Indextype)x_indices[3], (Indextype)c))}};
               coeff[i] = Interpolate1D(x_weights, values);
             }
-            output_data(b, y, x, c) = Interpolate1D(y_weights, coeff);
+            output_data((Indextype)b, (Indextype)y, (Indextype)x, (Indextype)c) = Interpolate1D(y_weights, coeff);
           }
         }
       }
