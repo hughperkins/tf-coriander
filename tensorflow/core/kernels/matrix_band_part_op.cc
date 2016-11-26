@@ -119,7 +119,7 @@ struct MatrixBandPart<CPUDevice, T> {
           if (band_start < band_end) {
             const Eigen::DSizes<Eigen::DenseIndex, 3> indices((Eigen::DenseIndex)r, (Eigen::DenseIndex)i, (Eigen::DenseIndex)band_start);
             const Eigen::DSizes<Eigen::DenseIndex, 3> sizes(
-                (Eigen::DenseIndex)1, (Eigen::DenseIndex)1, (Eigen::DenseIndex)(band_end - band_start);
+                (Eigen::DenseIndex)1, (Eigen::DenseIndex)1, (Eigen::DenseIndex)(band_end - band_start));
             output.slice(indices, sizes) = input.slice(indices, sizes);
           }
         }
