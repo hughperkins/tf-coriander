@@ -150,6 +150,9 @@ done
 
 # Find out where the CUDA toolkit is installed
 OSNAME=`uname -s`
+if [ $OSNAME == Darwin ]; then
+  perl -pi -e "s,SO_SUFFIX = \".(so|dylib)\",SO_SUFFIX = \".dylib\",s" tensorflow/core/platform/default/build_config.bzl
+fi
 
 while true; do
   # Configure the Cuda SDK version to use.
