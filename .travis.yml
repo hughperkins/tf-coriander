@@ -12,6 +12,17 @@ before_install:
   - echo BASEDIR ${BASEDIR}
   - mkdir soft
   - cd soft
+  - ========= swig ============
+  - cd ${BASEDIR}/soft
+  - wget http://kent.dl.sourceforge.net/project/swig/swig/swig-3.0.10/swig-3.0.10.tar.gz
+  - tar -xf swig-3.0.10.tar.gz
+  - ls
+  - cd swig-3.0.10
+  - ./configure
+  - make
+  - sudo make install
+  - ls /usr/local/bin
+  - swig
   - echo =============== bazel =====================
   - cd ${BASEDIR}/soft
   - java -version
