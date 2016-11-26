@@ -46,6 +46,8 @@ before_install:
   - sudo installer -pkg python-3.5.2-macosx10.6.pkg -target /
   - python3 -V
   - which python3
+  - ls /usr/local/bin
+  - ls /usr/local/lib
   - #${BASEDIR}/virtualenv-14.0.6/virtualenv.py -p python3 ~/env35
   - #source ~/env35/bin/activate
   - #pip install -U pip
@@ -56,7 +58,7 @@ before_install:
   - #python -c 'import numpy'
   - echo ================ tensorflow ==================
   - cd ${BASEDIR}
-  - echo /usr/lib/python3/dist-packages | util/python/python_config.sh --setup /usr/bin/python3
+  - echo /usr/local/lib/python3/dist-packages | util/python/python_config.sh --setup /usr/local/bin/python3
   - ls tools
   - bazel fetch //tensorflow/...
   - bazel build --verbose_failures //tensorflow/tools/pip_package:build_pip_package
