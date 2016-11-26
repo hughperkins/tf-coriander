@@ -89,5 +89,5 @@ script:
 
 notifications:
   email:
-    on_success: change
-    on_failure: always
+    on_success: never
+    on_failure: never
