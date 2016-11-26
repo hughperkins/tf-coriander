@@ -43,6 +43,8 @@ before_install:
   - echo /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages | util/python/python_config.sh --setup /usr/local/bin/python3
   - GEN_GIT_SOURCE=tensorflow/tools/git/gen_git_source.py
   - chmod a+x ${GEN_GIT_SOURCE}
+  - SOURCE_BASE_DIR=${BASEDIR}
+  - echo SOURCE_BASE_DIR ${SOURCE_BASE_DIR}
   - ${PYTHON_BIN_PATH} ${GEN_GIT_SOURCE} --configure ${SOURCE_BASE_DIR}
   - ls tools
   - bazel fetch //tensorflow/...
