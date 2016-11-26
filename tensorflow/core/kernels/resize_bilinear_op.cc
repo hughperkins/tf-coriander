@@ -93,11 +93,11 @@ struct ResizeBilinear<CPUDevice, T> {
               std::min(static_cast<int64>(ceilf(in_x)), in_width - 1);
           const float x_lerp = in_x - left_x_index;
           for (int c = 0; c < channels; ++c) {
-            const float top_left(images((Indextype)b, (Indextype)top_y_index, (Indextype)left_x_index, (Indextype)c));
-            const float top_right(images((Indextype)b, (Indextype)top_y_index, (Indextype)right_x_index, (Indextype)c));
-            const float bottom_left(images((Indextype)b, (Indextype)bottom_y_index, (Indextype)left_x_index, (Indextype)c));
+            const float top_left(images((IndexType)b, (IndexType)top_y_index, (IndexType)left_x_index, (IndexType)c));
+            const float top_right(images((IndexType)b, (IndexType)top_y_index, (IndexType)right_x_index, (IndexType)c));
+            const float bottom_left(images((IndexType)b, (IndexType)bottom_y_index, (IndexType)left_x_index, (IndexType)c));
             const float bottom_right(
-                images((Indextype)b, (Indextype)bottom_y_index, (Indextype)right_x_index, (Indextype)c));
+                images((IndexType)b, (IndexType)bottom_y_index, (IndexType)right_x_index, (IndexType)c));
             const float top = top_left + (top_right - top_left) * x_lerp;
             const float bottom =
                 bottom_left + (bottom_right - bottom_left) * x_lerp;
@@ -186,14 +186,14 @@ struct ResizeBilinearGrad<CPUDevice, T> {
           const float x_lerp = in_x - left_x_index;
           const float inverse_x_lerp = (1.0f - x_lerp);
           for (int64 c = 0; c < channels; ++c) {
-            output_grad((Indextype)b, (Indextype)top_y_index, (Indextype)left_x_index, (Indextype)c) +=
-                T(input_grad((Indextype)b, (Indextype)y, (Indextype)x, (Indextype)c) * inverse_y_lerp * inverse_x_lerp);
-            output_grad((Indextype)b, (Indextype)top_y_index, (Indextype)right_x_index, (Indextype)c) +=
-                T(input_grad((Indextype)b, (Indextype)y, (Indextype)x, (Indextype)c) * inverse_y_lerp * x_lerp);
-            output_grad((Indextype)b, (Indextype)bottom_y_index, (Indextype)left_x_index, (Indextype)c) +=
-                T(input_grad((Indextype)b, (Indextype)y, (Indextype)x, (Indextype)c) * y_lerp * inverse_x_lerp);
-            output_grad((Indextype)b, (Indextype)bottom_y_index, (Indextype)right_x_index, (Indextype)c) +=
-                T(input_grad((Indextype)b, (Indextype)y, (Indextype)x, (Indextype)c) * y_lerp * x_lerp);
+            output_grad((IndexType)b, (IndexType)top_y_index, (IndexType)left_x_index, (IndexType)c) +=
+                T(input_grad((IndexType)b, (IndexType)y, (IndexType)x, (IndexType)c) * inverse_y_lerp * inverse_x_lerp);
+            output_grad((IndexType)b, (IndexType)top_y_index, (IndexType)right_x_index, (IndexType)c) +=
+                T(input_grad((IndexType)b, (IndexType)y, (IndexType)x, (IndexType)c) * inverse_y_lerp * x_lerp);
+            output_grad((IndexType)b, (IndexType)bottom_y_index, (IndexType)left_x_index, (IndexType)c) +=
+                T(input_grad((IndexType)b, (IndexType)y, (IndexType)x, (IndexType)c) * y_lerp * inverse_x_lerp);
+            output_grad((IndexType)b, (IndexType)bottom_y_index, (IndexType)right_x_index, (IndexType)c) +=
+                T(input_grad((IndexType)b, (IndexType)y, (IndexType)x, (IndexType)c) * y_lerp * x_lerp);
           }
         }
       }
