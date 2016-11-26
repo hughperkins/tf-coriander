@@ -273,8 +273,9 @@ class Conv3DBackpropFilterOp : public OpKernel {
     OP_REQUIRES_OK(context,
                    context->allocate_temp(DataTypeToEnum<T>::v(),
                                           padded_out_shape, &padded_output));
-    Eigen::DSizes<Eigen::DenseIndex, 5> eigen_strides{1, strides[0], strides[1],
-                                                      strides[2], 1};
+    Eigen::DSizes<Eigen::DenseIndex, 5> eigen_strides{
+        (Eigen::DenseIndex)1, (Eigen::DenseIndex)strides[0], (Eigen::DenseIndex)strides[1],
+                                                      (Eigen::DenseIndex)strides[2], (Eigen::DenseIndex)1};
     functor::InflatePadAndShuffle<Device, T, 5, Eigen::DenseIndex>()(
         context->eigen_device<Device>(), out_backprop.tensor<T, 5>(),
         eigen_strides, pad_dims, out_order, padded_output.tensor<T, 5>());

@@ -81,9 +81,9 @@ before_install:
   - cd ${BASEDIR}
   - export PATH=$HOME/bin:$PATH
   - bazel version
-  - bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:ops
-  - bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:framework
-  - bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:lib
+  - # bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:ops
+  - # bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:framework
+  - # bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:lib
   - bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/tools/pip_package:build_pip_package
   - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
 
