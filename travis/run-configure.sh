@@ -19,5 +19,5 @@ if [[ ! -f ${BASEDIR}/tools/bazel.rc ]]; then {
     ls tools
     perl -pi -e "s,SO_SUFFIX = \".(so|dylib)\",SO_SUFFIX = \".dylib\",s" tensorflow/core/platform/default/build_config.bzl
     bazel fetch //tensorflow/...
-    bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
+    bash ${BASEDIR}/travis/upload.sh bazelinstall /private/var/tmp/_bazel_travis
 } fi

@@ -11,7 +11,7 @@ before_install:
   - export BASEDIR=$(pwd)
   - echo BASEDIR ${BASEDIR}
   - pip install --user awscli
-  - bash ${BASEDIR}/travis/download.sh bazelcache /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/download.sh bazelinstall /private/var/tmp/_bazel_travis
   - bash ${BASEDIR}/travis/download.sh cocl ${BASEDIR}/cuda-on-cl
   - mkdir soft
   - cd soft
