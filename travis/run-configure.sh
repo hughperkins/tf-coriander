@@ -18,6 +18,6 @@ if [[ ! -f ${BASEDIR}/tools/bazel.rc ]]; then {
     ${PYTHON_BIN_PATH} ${GEN_GIT_SOURCE} --configure ${SOURCE_BASE_DIR}
     ls tools
     perl -pi -e "s,SO_SUFFIX = \".(so|dylib)\",SO_SUFFIX = \".dylib\",s" tensorflow/core/platform/default/build_config.bzl
-    bazel fetch //tensorflow/...
+    bazel --batch fetch //tensorflow/...
     bash ${BASEDIR}/travis/upload.sh bazelinstall /private/var/tmp/_bazel_travis
 } fi
