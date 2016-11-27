@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -x
+set -e
 
 CACHE_NAME=$1
 CACHED_PATH=$2
