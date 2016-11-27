@@ -77,10 +77,9 @@ before_install:
   - bazel shutdown
   - bash ${BASEDIR}/travis/upload.sh bazel3 /private/var/tmp/_bazel_travis
 
-  - bash ${BASEDIR}/travis/download.sh bazel4a /private/var/tmp/_bazel_travis
-  - for KERNEL in array candidate_sampler_ops control_flow_ops ctc_ops data_flow function_ops image io linalg logging math; do { time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
-  - bazel shutdown
-  - bash ${BASEDIR}/travis/upload.sh bazel4a /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/download.sh bazel4aa /private/var/tmp/_bazel_travis
+  - time bazel --batch build --verbose_failures //tensorflow/core/kernels:array
+  - bash ${BASEDIR}/travis/upload.sh bazel4aa /private/var/tmp/_bazel_travis
 
   # 13 seconds.  pointless
   #- bash ${BASEDIR}/travis/download.sh bazel4 /private/var/tmp/_bazel_travis
