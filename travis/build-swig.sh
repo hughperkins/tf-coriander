@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -x
+echo BASEDIR ${BASEDIR}
+bash ${BASEDIR}/travis/download.sh swig ${BASEDIR}/soft/swig
+if [[ ! -f ${BASEDIR}/soft/swig-3.0.10/swig ]]; then {
+    cd ${BASEDIR}/soft
+    wget http://kent.dl.sourceforge.net/project/swig/swig/swig-3.0.10/swig-3.0.10.tar.gz
+    tar -xf swig-3.0.10.tar.gz
+    ls
+    cd swig-3.0.10
+    ./configure
+    make -j 8
+    bash ${BASEDIR}/travis/upload.sh swig ${BASEDIR}/soft/swig
+} fi
+cd ${BASEDIR}/soft/swig-3.0.10
+sudo make install
+ls /usr/local/bin

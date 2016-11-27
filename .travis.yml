@@ -8,65 +8,33 @@ matrix:
 
 before_install:
   - if [ -f ".git/shallow" ]; then travis_retry git fetch --unshallow; fi
-  - BASEDIR=$(pwd)
+  - export BASEDIR=$(pwd)
   - echo BASEDIR ${BASEDIR}
+  - pip install --user awscli
+  - bash ${BASEDIR}/travis/download.sh bazelcache /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/download.sh cocl ${BASEDIR}/cuda-on-cl
   - mkdir soft
   - cd soft
   - echo ========= swig ============
-  - cd ${BASEDIR}/soft
-  - wget http://kent.dl.sourceforge.net/project/swig/swig/swig-3.0.10/swig-3.0.10.tar.gz
-  - tar -xf swig-3.0.10.tar.gz
-  - ls
-  - cd swig-3.0.10
-  - ./configure
-  - make -j 8
-  - sudo make install
-  - ls /usr/local/bin
+  - bash ${BASEDIR}/travis/build-swig.sh
+  - ls -lh /usr/local/bin/swig
   - echo =============== bazel =====================
-  - cd ${BASEDIR}/soft
-  - java -version
-  - wget https://github.com/bazelbuild/bazel/releases/download/0.3.2/bazel-0.3.2-installer-darwin-x86_64.sh
-  - chmod +x bazel-0.3.2-installer-darwin-x86_64.sh
-  - ./bazel-0.3.2-installer-darwin-x86_64.sh --user
+  - bash ${BASEDIR}/travis/install-bazel.sh
   - export PATH=$HOME/bin:$PATH
-  - bazel version
-  - which bazel
+  - bazel --batch version
   - echo ====== python ==============
   - cd ${BASEDIR}
-  - wget https://www.python.org/ftp/python/3.5.2/python-3.5.2-macosx10.6.pkg
-  - sudo installer -pkg python-3.5.2-macosx10.6.pkg -target /
-  - python3 -V
-  - which python3
-  - ls /usr/local/bin
-  - ls /usr/local/lib
-  - find /usr/local -name 'dist-packages'
-  - pip3 install --upgrade setuptools
-  - pip3 install --upgrade wheel
-  - pip3 install --upgrade pip
-  - pip3 install numpy
+  - bash ${BASEDIR}/travis/install-python.sh
   - echo ================ tensorflow configure ==================
   - cd ${BASEDIR}
-  - export TF_NEED_GCP=0
-  - export TF_NEED_HDFS=0
-  - export TF_NEED_CUDA=0
-  - export PYTHON_BIN_PATH=/usr/local/bin/python3
-  - echo /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages | util/python/python_config.sh --setup /usr/local/bin/python3
-  - GEN_GIT_SOURCE=tensorflow/tools/git/gen_git_source.py
-  - chmod a+x ${GEN_GIT_SOURCE}
-  - SOURCE_BASE_DIR=${BASEDIR}
-  - echo SOURCE_BASE_DIR ${SOURCE_BASE_DIR}
-  - ${PYTHON_BIN_PATH} ${GEN_GIT_SOURCE} --configure ${SOURCE_BASE_DIR}
-  - ls tools
-  - perl -pi -e "s,SO_SUFFIX = \".(so|dylib)\",SO_SUFFIX = \".dylib\",s" tensorflow/core/platform/default/build_config.bzl
-  - bazel fetch //tensorflow/...
+  - bash ${BASEDIR}/travis/run-configure.sh
   - echo =========== clang ================================
   - cd ${BASEDIR}
   - CLANG_VERSION=3.8.0
-  - wget http://llvm.org/releases/${CLANG_VERSION}/clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin.tar.xz
-  - tar -xf clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin.tar.xz
+  - time wget http://llvm.org/releases/${CLANG_VERSION}/clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin.tar.xz
+  - time tar -xf clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin.tar.xz
   - ls
   - export CLANG_HOME=${PWD}/clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin
-  - ${CLANG_HOME}/bin/clang++ -### -c ${BASEDIR}/test/cocl/cuda_sample.cu
   - cd ${BASEDIR}
   - git submodule update --init --recursive
   - echo ============= cuda-on-cl ================
@@ -77,14 +45,19 @@ before_install:
   - cmake .. -DCLANG_HOME=${CLANG_HOME} -DBUILD_TESTS=ON -DTESTS_DUMP_CL=ON
   - make -j 8
   - make install
+  - bash ${BASEDIR}/travis/upload.sh cocl ${BASEDIR}/cuda-on-cl
   - echo ========= tensorflow install =================
   - cd ${BASEDIR}
   - export PATH=$HOME/bin:$PATH
-  - bazel version
-  - # bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:ops
-  - # bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:framework
-  - # bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:lib
-  - bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/tools/pip_package:build_pip_package
+  - bazel --batch version
+  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:ops
+  - bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
+  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:framework
+  - bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
+  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:lib
+  - bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
+  - bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/tools/pip_package:build_pip_package
+  - bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
   - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
 
 script:
