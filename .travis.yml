@@ -86,6 +86,11 @@ before_install:
   #- time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:gpu_lib
   #- bash ${BASEDIR}/travis/upload.sh bazel4 /private/var/tmp/_bazel_travis
 
+  - bash ${BASEDIR}/travis/download.sh bazel4a /private/var/tmp/_bazel_travis
+  - for KERNEL in array candidate_sampler_ops control_flow_ops ctc_ops data_flow function_ops image io linalg logging math; do { time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
+  - bazel shutdown
+  - bash ${BASEDIR}/travis/upload.sh bazel4a /private/var/tmp/_bazel_travis
+
   - bash ${BASEDIR}/travis/download.sh bazel4b /private/var/tmp/_bazel_travis
   - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:all_kernels
   - bash ${BASEDIR}/travis/upload.sh bazel4b /private/var/tmp/_bazel_travis
