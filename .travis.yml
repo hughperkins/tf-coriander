@@ -68,7 +68,7 @@ before_install:
   #- bash ${BASEDIR}/travis/upload.sh bazel2 /private/var/tmp/_bazel_travis
 
   # about 2 minutes
-  - bash ${BASEDIR}/travis/upload.sh bazel3 /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/download.sh bazel3 /private/var/tmp/_bazel_travis
   - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:gpu_runtime
   - bash ${BASEDIR}/travis/upload.sh bazel3 /private/var/tmp/_bazel_travis
 
@@ -77,7 +77,7 @@ before_install:
   #- time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:gpu_lib
   #- bash ${BASEDIR}/travis/upload.sh bazel4 /private/var/tmp/_bazel_travis
 
-  - bash ${BASEDIR}/travis/upload.sh bazel5 /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/download.sh bazel5 /private/var/tmp/_bazel_travis
   - bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/tools/pip_package:build_pip_package
   - bash ${BASEDIR}/travis/upload.sh bazel5 /private/var/tmp/_bazel_travis
 
