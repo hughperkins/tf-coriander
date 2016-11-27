@@ -62,17 +62,20 @@ before_install:
   #- time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:lib
   #- bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
 
-  - bash ${BASEDIR}/travis/upload.sh bazel2 /private/var/tmp/_bazel_travis
-  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/stream_executor:stream_executor
-  - bash ${BASEDIR}/travis/upload.sh bazel2 /private/var/tmp/_bazel_travis
+  # about 1 minute, not really worth it...
+  #- bash ${BASEDIR}/travis/upload.sh bazel2 /private/var/tmp/_bazel_travis
+  #- time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/stream_executor:stream_executor
+  #- bash ${BASEDIR}/travis/upload.sh bazel2 /private/var/tmp/_bazel_travis
 
+  # about 2 minutes
   - bash ${BASEDIR}/travis/upload.sh bazel3 /private/var/tmp/_bazel_travis
   - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:gpu_runtime
   - bash ${BASEDIR}/travis/upload.sh bazel3 /private/var/tmp/_bazel_travis
 
-  - bash ${BASEDIR}/travis/upload.sh bazel4 /private/var/tmp/_bazel_travis
-  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:gpu_lib
-  - bash ${BASEDIR}/travis/upload.sh bazel4 /private/var/tmp/_bazel_travis
+  # 13 seconds.  pointless
+  #- bash ${BASEDIR}/travis/upload.sh bazel4 /private/var/tmp/_bazel_travis
+  #- time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:gpu_lib
+  #- bash ${BASEDIR}/travis/upload.sh bazel4 /private/var/tmp/_bazel_travis
 
   - bash ${BASEDIR}/travis/upload.sh bazel5 /private/var/tmp/_bazel_travis
   - bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/tools/pip_package:build_pip_package

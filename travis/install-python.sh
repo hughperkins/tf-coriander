@@ -15,6 +15,7 @@ NUMPY_COUNT=$(pip3 freeze | grep numpy | wc -l)
 echo NUMPY_COUNT ${NUMPY_COUNT}
 
 if [[ ${NUMPY_COUNT} == 0 ]]; then {
+    set -x
     cd ${BASEDIR}
     python3 -V
     which python3
