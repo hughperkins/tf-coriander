@@ -50,11 +50,20 @@ before_install:
   - cd ${BASEDIR}
   - export PATH=$HOME/bin:$PATH
   - bazel --batch version
+  # this is about 8 minutes:
   - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:ops
   - bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
-  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:framework
+  # this does nothing :-P :
+  #- time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:framework
+  #- bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
+  # doesnt do much either :-P
+  #- time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:lib
+  #- bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
+  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/stream_executor:stream_executor
   - bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
-  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:lib
+  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:gpu_runtime
+  - bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
+  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:gpu_lib
   - bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
   - bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/tools/pip_package:build_pip_package
   - bash ${BASEDIR}/travis/upload.sh bazelcache /private/var/tmp/_bazel_travis
