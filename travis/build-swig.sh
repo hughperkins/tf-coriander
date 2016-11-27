@@ -18,4 +18,4 @@ if [[ ! -f ${BASEDIR}/soft/swig-3.0.10/swig ]]; then {
 } fi
 cd ${BASEDIR}/soft/swig-3.0.10
 sudo make install
-ls /usr/local/bin
+ls -lh /usr/local/bin/swig*
