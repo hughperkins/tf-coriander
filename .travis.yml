@@ -12,7 +12,7 @@ before_install:
   - echo BASEDIR ${BASEDIR}
   - git submodule update --init --recursive
   - pip install --user awscli
-  - bash ${BASEDIR}/travis/download.sh bazelinstall /private/var/tmp/_bazel_travis
+  # - bash ${BASEDIR}/travis/download.sh bazelinstall /private/var/tmp/_bazel_travis
   - bash ${BASEDIR}/travis/download.sh cocl2 ${BASEDIR}/third_party/cuda-on-cl
   - mkdir soft
   - cd soft
@@ -53,7 +53,7 @@ before_install:
   # this is about 8 minutes:
   - bash ${BASEDIR}/travis/download.sh bazel1 /private/var/tmp/_bazel_travis
   - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:ops
-  - bash ${BASEDIR}/travis/upload.sh bazel1 /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/upload.sh bazel1 /private/var/tmp/_bazel_travis install
 
   # this does nothing :-P :
   #- time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:framework
@@ -75,11 +75,11 @@ before_install:
   # about 2 minutes
   - time bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:gpu_runtime
   - bazel shutdown
-  - bash ${BASEDIR}/travis/upload.sh bazel3 /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/upload.sh bazel3 /private/var/tmp/_bazel_travis install
 
   - bash ${BASEDIR}/travis/download.sh bazel4aa /private/var/tmp/_bazel_travis
   - time bazel --batch build --verbose_failures //tensorflow/core/kernels:array
-  - bash ${BASEDIR}/travis/upload.sh bazel4aa /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/upload.sh bazel4aa /private/var/tmp/_bazel_travis install
 
   # 13 seconds.  pointless
   #- bash ${BASEDIR}/travis/download.sh bazel4 /private/var/tmp/_bazel_travis
@@ -89,15 +89,15 @@ before_install:
   - bash ${BASEDIR}/travis/download.sh bazel4a /private/var/tmp/_bazel_travis
   - for KERNEL in array candidate_sampler_ops control_flow_ops ctc_ops data_flow function_ops image io linalg logging math; do { time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
   - bazel shutdown
-  - bash ${BASEDIR}/travis/upload.sh bazel4a /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/upload.sh bazel4a /private/var/tmp/_bazel_travis install
 
   - bash ${BASEDIR}/travis/download.sh bazel4b /private/var/tmp/_bazel_travis
   - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:all_kernels
-  - bash ${BASEDIR}/travis/upload.sh bazel4b /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/upload.sh bazel4b /private/var/tmp/_bazel_travis install
 
   - bash ${BASEDIR}/travis/download.sh bazel5 /private/var/tmp/_bazel_travis
   - bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/tools/pip_package:build_pip_package
-  - bash ${BASEDIR}/travis/upload.sh bazel5 /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/upload.sh bazel5 /private/var/tmp/_bazel_travis install
 
   - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
 
