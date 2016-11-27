@@ -12,7 +12,7 @@ before_install:
   - echo BASEDIR ${BASEDIR}
   - git submodule update --init --recursive
   - pip install --user awscli
-  # - bash ${BASEDIR}/travis/download.sh bazelinstall /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/download.sh bazelinstall /private/var/tmp/_bazel_travis
   - bash ${BASEDIR}/travis/download.sh cocl2 ${BASEDIR}/third_party/cuda-on-cl
   - mkdir soft
   - cd soft
@@ -28,7 +28,9 @@ before_install:
   - bash ${BASEDIR}/travis/install-python.sh
   - echo ================ tensorflow configure ==================
   - cd ${BASEDIR}
+  # - bash ${BASEDIR}/travis/download.sh bazelinstall /private/var/tmp/_bazel_travis
   - bash ${BASEDIR}/travis/run-configure.sh
+  - bash ${BASEDIR}/travis/upload.sh bazelinstall /private/var/tmp/_bazel_travis
   - echo =========== clang ================================
   - cd ${BASEDIR}
   - CLANG_VERSION=3.8.0
@@ -51,6 +53,7 @@ before_install:
   - export PATH=$HOME/bin:$PATH
   - bazel --batch version
   # this is about 8 minutes:
+  - export TIME='%e'
   - bash ${BASEDIR}/travis/download.sh bazel1 /private/var/tmp/_bazel_travis
   - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:ops
   - bash ${BASEDIR}/travis/upload.sh bazel1 /private/var/tmp/_bazel_travis install
@@ -68,13 +71,7 @@ before_install:
   #- bash ${BASEDIR}/travis/upload.sh bazel2 /private/var/tmp/_bazel_travis
 
   - bash ${BASEDIR}/travis/download.sh bazel3 /private/var/tmp/_bazel_travis
-  - time bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:framework
-  - time bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:lib
-  # about 1 minute
-  - time bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/stream_executor:stream_executor
-  # about 2 minutes
-  - time bazel build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:gpu_runtime
-  - bazel shutdown
+  - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:framework //tensorflow/core:lib //tensorflow/stream_executor:stream_executor //tensorflow/core:gpu_runtime
   - bash ${BASEDIR}/travis/upload.sh bazel3 /private/var/tmp/_bazel_travis install
 
   - bash ${BASEDIR}/travis/download.sh bazel4aa /private/var/tmp/_bazel_travis
@@ -87,7 +84,7 @@ before_install:
   #- bash ${BASEDIR}/travis/upload.sh bazel4 /private/var/tmp/_bazel_travis
 
   - bash ${BASEDIR}/travis/download.sh bazel4a /private/var/tmp/_bazel_travis
-  - for KERNEL in array candidate_sampler_ops control_flow_ops ctc_ops data_flow function_ops image io linalg logging math; do { time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
+  - for KERNEL in array candidate_sampler_ops control_flow_ops ctc_ops data_flow function_ops image io linalg logging math; do { echo "building //tensorflow/core/kernels:${KERNEL}"; time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
   - bazel shutdown
   - bash ${BASEDIR}/travis/upload.sh bazel4a /private/var/tmp/_bazel_travis install
 
@@ -95,6 +92,11 @@ before_install:
   - for KERNEL in multinomial_op nn parameterized_truncated_normal_op parsing random_ops required; do { echo "building //tensorflow/core/kernels:${KERNEL}"; time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
   - bazel shutdown
   - bash ${BASEDIR}/travis/upload.sh bazel4b1 /private/var/tmp/_bazel_travis install
+
+  - bash ${BASEDIR}/travis/download.sh bazel4b2 /private/var/tmp/_bazel_travis
+  - for KERNEL in sdca_ops sparse state string training_ops; do { echo "building //tensorflow/core/kernels:${KERNEL}"; time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
+  - bazel shutdown
+  - bash ${BASEDIR}/travis/upload.sh bazel4b2 /private/var/tmp/_bazel_travis install
 
   - bash ${BASEDIR}/travis/download.sh bazel4b /private/var/tmp/_bazel_travis
   - time bazel --batch build --verbose_failures --copt="-ferror-limit=500" //tensorflow/core:all_kernels
