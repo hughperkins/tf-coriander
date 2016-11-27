@@ -25,6 +25,6 @@ rm /tmp/${CACHE_NAME}.tar.bz2
 set -x
 time tar -cjf /tmp/${CACHE_NAME}.tar.bz2 ${EXCLUDE_STR} *
 ls -lh /tmp/${CACHE_NAME}.tar.bz2
-time aws s3 cp /tmp/${CACHE_NAME}.tar.bz2 ${S3_CACHE_DIR}/${CACHE_NAME}.tar.bz2
+time aws s3 cp --quiet /tmp/${CACHE_NAME}.tar.bz2 ${S3_CACHE_DIR}/${CACHE_NAME}.tar.bz2
 echo UPLOAD DONE ${CACHE_NAME}
 echo ========================
