@@ -2,6 +2,8 @@
 
 set -x
 
+cd ${BASEDIR}
+
 PYTHON_DIR=/Library/Frameworks/Python.framework/Versions/3.5
 
 bash ${BASEDIR}/travis/download.sh pythoninstall ${PYTHON_DIR}

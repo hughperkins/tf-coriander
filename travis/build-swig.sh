@@ -1,6 +1,9 @@
 #!/bin/bash
 
 set -x
+
+cd ${BASEDIR}
+
 echo BASEDIR ${BASEDIR}
 bash ${BASEDIR}/travis/download.sh swig ${BASEDIR}/soft/swig
 if [[ ! -f ${BASEDIR}/soft/swig-3.0.10/swig ]]; then {

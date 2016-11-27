@@ -7,7 +7,7 @@ CACHED_PATH=$2
 
 # BASEL_CACHE=/private/var/tmp/_bazel_travis
 PATH=~/Library/Python/2.7/bin:$PATH
-S3_CACHE_DIR=s3://${TRAVIS_BUCKET}/cache/travis-test/${TRAVIS_BRANCH}
+S3_CACHE_DIR=s3://${TRAVIS_BUCKET}/cache/tensorflow-cl/${TRAVIS_BRANCH}
 
 # aws s3 ls s3://hughperkinstravis
 # CACHE_COUNT=$(aws s3 ls ${S3_CACHE_DIR}/${CACHE_NAME}.tar.bz2 | wc -l)

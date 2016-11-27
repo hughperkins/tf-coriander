@@ -2,6 +2,8 @@
 
 set -x
 
+cd ${BASEDIR}
+
 if [[ ! -f ${BASEDIR}/tools/bazel.rc ]]; then {
     cd ${BASEDIR}
     export TF_NEED_GCP=0
