@@ -15,6 +15,8 @@ limitations under the License.
 
 #include "tensorflow/core/platform/types.h"
 
+#include <cstdlib>
+
 #if defined(PLATFORM_GOOGLE) || defined(PLATFORM_POSIX_ANDROID) || \
     defined(PLATFORM_GOOGLE_ANDROID)
 #include "tensorflow/core/platform/google/build_config/googletest.h"
