@@ -7,13 +7,13 @@ matrix:
       rvm: system
 
 before_install:
-  - export BUILD_START=`python ${BASEDIR}/travis/seconds.py`
-  - echo BUILD_START ${BUILD_START}
-  - export GIT_COMMIT=`git rev-parse --short HEAD`
-  - echo GIT_COMMIT ${GIT_COMMIT}
-  - if [ -f ".git/shallow" ]; then travis_retry git fetch --unshallow; fi
   - export BASEDIR=$(pwd)
   - echo BASEDIR ${BASEDIR}
+  - export BUILD_START=`python ${BASEDIR}/travis/seconds.py`
+  - echo BUILD_START ${BUILD_START}
+  - if [ -f ".git/shallow" ]; then travis_retry git fetch --unshallow; fi
+  - export GIT_COMMIT=`git rev-parse --short HEAD`
+  - echo GIT_COMMIT ${GIT_COMMIT}
   - git submodule update --init --recursive
   - pip install --user awscli
   - bash ${BASEDIR}/travis/download.sh bazelinstall /private/var/tmp/_bazel_travis
