@@ -36,6 +36,7 @@ function wait_bazel {
 
 wait_bazel
 echo after wait_bazel
+killall bazel
 bazel --batch shutdown
 while [ `ps -ef | grep bazel | grep -v grep | grep -v run-bazel-step | wc -l` -ne 0 ]; do {
     echo waiting for bazel shutdown...
