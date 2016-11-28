@@ -107,7 +107,7 @@ before_install:
   - END=`python ${BASEDIR}/travis/seconds.py`
   - DIFF=`echo "$END - $START" | bc -l`
   - echo DIFF $DIFF
-  - if [ `echo "${DIFF} > 60" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4a /private/var/tmp/_bazel_travis install; } fi
+  - if [ `echo "${DIFF} > 90" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4a /private/var/tmp/_bazel_travis install; } fi
 
   - bash ${BASEDIR}/travis/download.sh bazel4b1 /private/var/tmp/_bazel_travis
   - START=`python ${BASEDIR}/travis/seconds.py`
@@ -116,7 +116,7 @@ before_install:
   - END=`python ${BASEDIR}/travis/seconds.py`
   - DIFF=`echo "$END - $START" | bc -l`
   - echo DIFF $DIFF
-  - if [ `echo "${DIFF} > 60" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b1 /private/var/tmp/_bazel_travis install; } fi
+  - if [ `echo "${DIFF} > 90" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b1 /private/var/tmp/_bazel_travis install; } fi
 
   - bash ${BASEDIR}/travis/download.sh bazel4b2 /private/var/tmp/_bazel_travis
   - START=`python ${BASEDIR}/travis/seconds.py`
@@ -125,7 +125,16 @@ before_install:
   - END=`python ${BASEDIR}/travis/seconds.py`
   - DIFF=`echo "$END - $START" | bc -l`
   - echo DIFF $DIFF
-  - if [ `echo "${DIFF} > 60" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b2 /private/var/tmp/_bazel_travis install; } fi
+  - if [ `echo "${DIFF} > 90" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b2 /private/var/tmp/_bazel_travis install; } fi
+
+  - bash ${BASEDIR}/travis/download.sh bazel4b3 /private/var/tmp/_bazel_travis
+  - START=`python ${BASEDIR}/travis/seconds.py`
+  - for KERNEL in fact_op array_not_windows math_not_windows; do { echo "building //tensorflow/core/kernels:${KERNEL}"; time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
+  - bazel shutdown
+  - END=`python ${BASEDIR}/travis/seconds.py`
+  - DIFF=`echo "$END - $START" | bc -l`
+  - echo DIFF $DIFF
+  - if [ `echo "${DIFF} > 90" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b3 /private/var/tmp/_bazel_travis install; } fi
 
   - bash ${BASEDIR}/travis/download.sh bazel4b /private/var/tmp/_bazel_travis
   - START=`python ${BASEDIR}/travis/seconds.py`
@@ -133,7 +142,7 @@ before_install:
   - END=`python ${BASEDIR}/travis/seconds.py`
   - DIFF=`echo "$END - $START" | bc -l`
   - echo DIFF $DIFF
-  - if [ `echo "${DIFF} > 60" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b /private/var/tmp/_bazel_travis install; } fi
+  - if [ `echo "${DIFF} > 90" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b /private/var/tmp/_bazel_travis install; } fi
 
   - bash ${BASEDIR}/travis/download.sh bazel5 /private/var/tmp/_bazel_travis
   - START=`python ${BASEDIR}/travis/seconds.py`
@@ -141,7 +150,7 @@ before_install:
   - END=`python ${BASEDIR}/travis/seconds.py`
   - DIFF=`echo "$END - $START" | bc -l`
   - echo DIFF $DIFF
-  - if [ `echo "${DIFF} > 60" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel5 /private/var/tmp/_bazel_travis install; } fi
+  - if [ `echo "${DIFF} > 90" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel5 /private/var/tmp/_bazel_travis install; } fi
 
   - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
 
