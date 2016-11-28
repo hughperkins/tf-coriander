@@ -20,11 +20,11 @@ PATH=~/Library/Python/2.7/bin:$PATH
 S3_CACHE_DIR=s3://${TRAVIS_BUCKET}/cache/tensorflow-cl/${TRAVIS_BRANCH}
 
 cd ${CACHED_PATH}
-touch /tmp/${CACHE_NAME}.tar.bz2
-rm /tmp/${CACHE_NAME}.tar.bz2
+touch /tmp/${CACHE_NAME}.tar.gz
+rm /tmp/${CACHE_NAME}.tar.gz
 set -x
-time tar -cjf /tmp/${CACHE_NAME}.tar.bz2 ${EXCLUDE_STR} *
-ls -lh /tmp/${CACHE_NAME}.tar.bz2
-time aws s3 cp --quiet /tmp/${CACHE_NAME}.tar.bz2 ${S3_CACHE_DIR}/${CACHE_NAME}.tar.bz2
+time tar -czf /tmp/${CACHE_NAME}.tar.gz ${EXCLUDE_STR} *
+ls -lh /tmp/${CACHE_NAME}.tar.gz
+time aws s3 cp --quiet /tmp/${CACHE_NAME}.tar.gz ${S3_CACHE_DIR}/${CACHE_NAME}.tar.gz
 echo UPLOAD DONE ${CACHE_NAME}
 echo ========================
