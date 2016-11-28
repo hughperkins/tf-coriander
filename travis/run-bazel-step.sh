@@ -16,7 +16,7 @@ BAZEL_DONE=0
 function wait_bazel {
     while true; do {
         BAZEL_COUNT=`ps -ef | grep bazel | grep -v grep | grep -v run-bazel-step | wc -l`
-        echo BAZEL_COUNT ${BAZEL_COUNT}
+        # echo BAZEL_COUNT ${BAZEL_COUNT}
         if [ ${BAZEL_COUNT} -eq 0 ]; then {
             echo bazel done
             BAZEL_DONE=1
@@ -29,14 +29,14 @@ function wait_bazel {
             echo timeout
             return
         } fi
-        echo sleep
-        sleep 1
+        # echo sleep
+        sleep 10
     } done
 }
 
 wait_bazel
 echo after wait_bazel
-bazel shutdown
+bazel --batch shutdown
 while [ `ps -ef | grep bazel | grep -v grep | grep -v run-bazel-step | wc -l` -ne 0 ]; do {
     echo waiting for bazel shutdown...
     sleep 1
