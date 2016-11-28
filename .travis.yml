@@ -102,8 +102,11 @@ before_install:
 
   - bash ${BASEDIR}/travis/download.sh bazel4a /private/var/tmp/_bazel_travis
   - START=`python ${BASEDIR}/travis/seconds.py`
-  - for KERNEL in array candidate_sampler_ops control_flow_ops ctc_ops data_flow function_ops image io linalg logging math; do { echo "building //tensorflow/core/kernels:${KERNEL}"; time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
-  - bazel shutdown
+
+  - TARGETS=
+  - for KERNEL in array candidate_sampler_ops control_flow_ops ctc_ops data_flow function_ops image io linalg logging math; do { TARGETS="$TARGETS //tensorflow/core/kernels:${KERNEL}"; } done
+  - echo TARGETS $TARGETS
+  - time bazel --batch build --verbose_failures $TARGETS
   - END=`python ${BASEDIR}/travis/seconds.py`
   - DIFF=`echo "$END - $START" | bc -l`
   - echo DIFF $DIFF
@@ -111,8 +114,10 @@ before_install:
 
   - bash ${BASEDIR}/travis/download.sh bazel4b1 /private/var/tmp/_bazel_travis
   - START=`python ${BASEDIR}/travis/seconds.py`
-  - for KERNEL in multinomial_op nn parameterized_truncated_normal_op parsing random_ops required; do { echo "building //tensorflow/core/kernels:${KERNEL}"; time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
-  - bazel shutdown
+  - TARGETS=
+  - for KERNEL in multinomial_op nn parameterized_truncated_normal_op parsing random_ops required; do { TARGETS="$TARGETS //tensorflow/core/kernels:${KERNEL}"; } done
+  - echo TARGETS $TARGETS
+  - time bazel --batch build --verbose_failures $TARGETS
   - END=`python ${BASEDIR}/travis/seconds.py`
   - DIFF=`echo "$END - $START" | bc -l`
   - echo DIFF $DIFF
@@ -120,21 +125,33 @@ before_install:
 
   - bash ${BASEDIR}/travis/download.sh bazel4b2 /private/var/tmp/_bazel_travis
   - START=`python ${BASEDIR}/travis/seconds.py`
-  - for KERNEL in sdca_ops sparse state string training_ops; do { echo "building //tensorflow/core/kernels:${KERNEL}"; time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
-  - bazel shutdown
+  - TARGETS=
+  - for KERNEL in sdca_ops sparse state string training_ops; do { TARGETS="$TARGETS //tensorflow/core/kernels:${KERNEL}"; } done
+  - echo TARGETS $TARGETS
+  - time bazel --batch build --verbose_failures $TARGETS
   - END=`python ${BASEDIR}/travis/seconds.py`
   - DIFF=`echo "$END - $START" | bc -l`
   - echo DIFF $DIFF
-  - if [ `echo "${DIFF} > 90" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b2 /private/var/tmp/_bazel_travis install; } fi
+  - if [ `echo "${DIFF} > 120" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b2 /private/var/tmp/_bazel_travis install; } fi
 
   - bash ${BASEDIR}/travis/download.sh bazel4b3 /private/var/tmp/_bazel_travis
   - START=`python ${BASEDIR}/travis/seconds.py`
-  - for KERNEL in fact_op array_not_windows math_not_windows; do { echo "building //tensorflow/core/kernels:${KERNEL}"; time bazel build --verbose_failures //tensorflow/core/kernels:${KERNEL}; } done
-  - bazel shutdown
+  - TARGETS=
+  - for KERNEL in fact_op array_not_windows math_not_windows; do { TARGETS="$TARGETS //tensorflow/core/kernels:${KERNEL}"; } done
+  - echo TARGETS $TARGETS
+  - time bazel --batch build --verbose_failures $TARGETS
   - END=`python ${BASEDIR}/travis/seconds.py`
   - DIFF=`echo "$END - $START" | bc -l`
   - echo DIFF $DIFF
-  - if [ `echo "${DIFF} > 90" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b3 /private/var/tmp/_bazel_travis install; } fi
+  - if [ `echo "${DIFF} > 120" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b3 /private/var/tmp/_bazel_travis install; } fi
+
+  - bash ${BASEDIR}/travis/download.sh bazel4b4 /private/var/tmp/_bazel_travis
+  - START=`python ${BASEDIR}/travis/seconds.py`
+  - time bazel --batch build --verbose_failures //tensorflow/core/kernels:all
+  - END=`python ${BASEDIR}/travis/seconds.py`
+  - DIFF=`echo "$END - $START" | bc -l`
+  - echo DIFF $DIFF
+  - if [ `echo "${DIFF} > 90" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazel4b4 /private/var/tmp/_bazel_travis install; } fi
 
   - bash ${BASEDIR}/travis/download.sh bazel4b /private/var/tmp/_bazel_travis
   - START=`python ${BASEDIR}/travis/seconds.py`
