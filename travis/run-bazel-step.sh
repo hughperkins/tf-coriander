@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MAX_BUILD_TIME=350
+MAX_BUILD_TIME=450
 
 TARGET=$1
 echo TARGET ${TARGET}
@@ -8,7 +8,7 @@ echo TARGET ${TARGET}
 PATH=~/Library/Python/2.7/bin:$PATH
 S3_CACHE_DIR=s3://${TRAVIS_BUCKET}/cache/tensorflow-cl/${TRAVIS_BRANCH}
 
-bash ${BASEDIR}/travis/download.sh ${GIT_COMMIT} /private/var/tmp/_bazel_travis install
+bash ${BASEDIR}/travis/download.sh ${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT} /private/var/tmp/_bazel_travis install
 
 bazel --batch build --verbose_failures ${TARGET} &
 
@@ -48,16 +48,16 @@ echo sleep 10
 sleep 10
 
 echo running upload...
-bash ${BASEDIR}/travis/upload.sh ${GIT_COMMIT} /private/var/tmp/_bazel_travis install
+bash ${BASEDIR}/travis/upload.sh ${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT} /private/var/tmp/_bazel_travis install
 
 if [ ${BAZEL_DONE} -eq 1 ]; then {
     echo exit SUCCESS
     touch /tmp/flg.ok
-    aws s3 cp /tmp/flg.interrupted ${S3_CACHE_DIR}/${GIT_COMMIT}-ok.flg
+    aws s3 cp /tmp/flg.interrupted ${S3_CACHE_DIR}/${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT}-ok.flg
     exit 0
 } else {
     echo exit FAIL
     touch /tmp/flg.interrupted
-    aws s3 cp /tmp/flg.interrupted ${S3_CACHE_DIR}/${GIT_COMMIT}-interrupted.flg
+    aws s3 cp /tmp/flg.interrupted ${S3_CACHE_DIR}/${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT}-interrupted.flg
     exit 1
 } fi
