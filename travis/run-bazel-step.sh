@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MAX_BUILD_TIME=450
+MAX_BUILD_TIME=1200
 
 TARGET=$1
 echo TARGET ${TARGET}
@@ -50,6 +50,7 @@ sleep 10
 echo running upload...
 bash ${BASEDIR}/travis/upload.sh ${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT} /private/var/tmp/_bazel_travis install
 
+aws s3 rm /tmp/flg.interrupted ${S3_CACHE_DIR}/${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT}-running.flg || true
 if [ ${BAZEL_DONE} -eq 1 ]; then {
     echo exit SUCCESS
     touch /tmp/flg.ok
