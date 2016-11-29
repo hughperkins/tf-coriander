@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MAX_BUILD_TIME=600
+MAX_BUILD_TIME=350
 
 TARGET=$1
 echo TARGET ${TARGET}
@@ -44,7 +44,10 @@ while [ `ps -ef | grep bazel | grep -v grep | grep -v run-bazel-step | wc -l` -n
     sleep 1
 } done
 echo bazel down
+echo sleep 10
+sleep 10
 
+echo running upload...
 bash ${BASEDIR}/travis/upload.sh ${GIT_COMMIT} /private/var/tmp/_bazel_travis install
 
 if [ ${BAZEL_DONE} -eq 1 ]; then {
