@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+# Copyright 2015 The TensorFlow Authors, 2016 Hugh Perkins. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -83,10 +83,14 @@ function main() {
   # rsync -a $RUNFILES/third_party/eigen3 ${TMPDIR}/third_party
 
   mkdir -p ${TMPDIR}/tensorflow/third_party/cuda-on-cl
-  cp third_party/cuda-on-cl/build/libcocl.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
-  cp third_party/cuda-on-cl/build/libeasycl.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
-  cp third_party/cuda-on-cl/build/libclew.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
-  cp third_party/cuda-on-cl/build/libclblast.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
+  for EXT in so dylib; do {
+    echo trying extension ${EXT}
+    cp third_party/cuda-on-cl/build/libcocl.${EXT} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+    cp third_party/cuda-on-cl/build/libeasycl.${EXT} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+    cp third_party/cuda-on-cl/build/libclew.${EXT} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+    cp third_party/cuda-on-cl/build/libclblast.${EXT} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+  } done
+  ls ${TMPDIR}/tensorflow/third_party/cuda-on-cl
   touch ${TMPDIR}/tensorflow/third_party/__init__.py
   touch ${TMPDIR}/tensorflow/third_party/cuda-on-cl/__init__.py
   cp tensorflow/tools/pip_package/MANIFEST.in ${TMPDIR}
