@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MAX_BUILD_TIME=1200
+MAX_BUILD_TIME=600
 
 TARGET=$1
 echo TARGET ${TARGET}
@@ -36,7 +36,7 @@ function wait_bazel {
 
 wait_bazel
 echo after wait_bazel
-ps -ef | grep bazel | grep -v grep | awk '{print $2}' | xargs -L1 kill
+ps -ef | grep bazel | grep -v grep | grep -v run-bazel-step | awk '{print $2}' | xargs -L1 kill
 # killall bazel
 bazel --batch shutdown
 while [ `ps -ef | grep bazel | grep -v grep | grep -v run-bazel-step | wc -l` -ne 0 ]; do {
