@@ -24,7 +24,9 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## Installation 
 
-- For now, Ubuntu 16.04 is supported.  In the future, I plan to support Mac OS X too
+- Ubuntu 16.04 is used for development
+- Ubuntu 14.04 will probably work, but might need some small tweaking (which I can help with)
+- Mac OS X almost working :-)  Latest travis build here: https://travis-ci.org/hughperkins/tensorflow-cl/builds/179727517  `build_pip_package` builds to completion now :-)
 - You need:
   - the tensorflow non-gpu installation pre-requisites,
    - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
@@ -71,6 +73,8 @@ py.test -v
 
 ## News
 
+- Nov 29:
+  - Mac build ran to completion!  On Travis.  Build output https://travis-ci.org/hughperkins/tensorflow-cl/builds/179727517  Yes, it didnt run, didnt create the wheel.  But the `build_pip_package` target built to completion.  which is a huge step forward :-)  Travis script here: [.travis.yml](.travis.yaml)
 - Nov 25:
   - release wheel [v0.14.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.14.0/tensorflow-0.11.0rc0-py3-none-any.whl)
     - this fixes `argmin`, `argmax`, and `softmax`
