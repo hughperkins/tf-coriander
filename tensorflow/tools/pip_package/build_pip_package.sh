@@ -82,14 +82,20 @@ function main() {
     $RUNFILES/external/protobuf ${TMPDIR}/google
   # rsync -a $RUNFILES/third_party/eigen3 ${TMPDIR}/third_party
 
+  PLATFORM=`uname`
+  echo PLATFORM ${PLATFORM}
+  if [ $PLATFORM -eq Darwin ]; then {
+    echo Mac platform
+    SO_SUFFIX=so
+  } else {
+    echo Linux platform
+    SO_SUFFIX=dylib
+  }
   mkdir -p ${TMPDIR}/tensorflow/third_party/cuda-on-cl
-  for EXT in so dylib; do {
-    echo trying extension ${EXT}
-    cp third_party/cuda-on-cl/build/libcocl.${EXT} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
-    cp third_party/cuda-on-cl/build/libeasycl.${EXT} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
-    cp third_party/cuda-on-cl/build/libclew.${EXT} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
-    cp third_party/cuda-on-cl/build/libclblast.${EXT} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
-  } done
+  cp third_party/cuda-on-cl/build/libcocl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+  cp third_party/cuda-on-cl/build/libeasycl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+  cp third_party/cuda-on-cl/build/libclew.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+  cp third_party/cuda-on-cl/build/libclblast.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
   ls ${TMPDIR}/tensorflow/third_party/cuda-on-cl
   touch ${TMPDIR}/tensorflow/third_party/__init__.py
   touch ${TMPDIR}/tensorflow/third_party/cuda-on-cl/__init__.py

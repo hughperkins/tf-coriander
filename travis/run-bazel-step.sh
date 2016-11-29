@@ -50,15 +50,16 @@ sleep 10
 echo running upload...
 bash ${BASEDIR}/travis/upload.sh ${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT} /private/var/tmp/_bazel_travis install
 
-aws s3 rm /tmp/flg.interrupted ${S3_CACHE_DIR}/${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT}-running.flg || true
+touch /tmp/foo
+aws s3 rm ${S3_CACHE_DIR}/${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT}-running.flg || true
 if [ ${BAZEL_DONE} -eq 1 ]; then {
     echo exit SUCCESS
     touch /tmp/flg.ok
-    aws s3 cp /tmp/flg.interrupted ${S3_CACHE_DIR}/${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT}-ok.flg
+    aws s3 cp /tmp/foo ${S3_CACHE_DIR}/${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT}-ok.flg
     exit 0
 } else {
-    echo exit FAIL
+    echo exit INCOMPLETE
     touch /tmp/flg.interrupted
-    aws s3 cp /tmp/flg.interrupted ${S3_CACHE_DIR}/${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT}-interrupted.flg
+    aws s3 cp /tmp/foo ${S3_CACHE_DIR}/${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT}-interrupted.flg
     exit 1
 } fi
