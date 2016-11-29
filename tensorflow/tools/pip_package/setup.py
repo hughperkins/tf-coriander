@@ -21,6 +21,7 @@ import fnmatch
 import os
 import re
 import sys
+import platform
 
 from setuptools import find_packages, setup, Command
 from setuptools.command.install import install as InstallCommandBase
@@ -33,6 +34,12 @@ REQUIRED_PACKAGES = [
     'six >= 1.10.0',
     'protobuf == 3.1.0',
 ]
+
+sharedobject_extension = '.so'
+print('platform uname[0]', platform.uname()[0])
+if platform.uname()[0] == 'Darwin':
+  sharedobject_extension = '.dylib'
+print('sharedobject_extension', sharedobject_extension)
 
 # python3 requires wheel 0.26
 if sys.version_info.major == 3:
@@ -153,11 +160,11 @@ headers = []
 setup(
     name='tensorflow',
     version=_VERSION,
-    description='TensorFlow helps the tensors flow',
+    description='OpenCL fork of TensorFlow',
     long_description='',
-    url='http://tensorflow.org/',
-    author='Google Inc.',
-    author_email='opensource@google.com',
+    url='http://tensorflow.org/;https://github.com/hughperkins/tensorflow-cl',
+    author='Google Inc., Hugh Perkins',
+    author_email='opensource@google.com;hughperkins@gmail.com',
     # Contained modules and scripts.
     packages=find_packages(),
     entry_points={
@@ -169,11 +176,11 @@ setup(
     # Add in any packaged data.
     include_package_data=True,
     package_data={
-        'tensorflow': ['python/_pywrap_tensorflow.so',
-                       'third_party/cuda-on-cl/libclew.so',
-                       'third_party/cuda-on-cl/libeasycl.so',
-                       'third_party/cuda-on-cl/libcocl.so',
-                       'third_party/cuda-on-cl/libclblast.so',
+        'tensorflow': ['python/_pywrap_tensorflow%s' % sharedobject_extension,
+                       'third_party/cuda-on-cl/libclew%s' % sharedobject_extension,
+                       'third_party/cuda-on-cl/libeasycl%s' % sharedobject_extension,
+                       'third_party/cuda-on-cl/libcocl%s' % sharedobject_extension,
+                       'third_party/cuda-on-cl/libclblast%s' % sharedobject_extension,
                        'tensorboard/dist/bazel-html-imports.html',
                        'tensorboard/dist/index.html',
                        'tensorboard/dist/tf-tensorboard.html',
