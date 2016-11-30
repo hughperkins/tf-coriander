@@ -6,6 +6,10 @@ matrix:
       osx_image: osx10.11
       rvm: system
 
+branches:
+  only:
+    - travis
+
 before_install:
   - export BASEDIR=$(pwd)
   - echo BASEDIR ${BASEDIR}
