@@ -1,13 +1,7 @@
 .DS_Store
 .ipynb_checkpoints
 node_modules
-/bazel-bin
-/bazel-ci_build-cache
-/bazel-genfiles
-/bazel-out
-/bazel-tensorflow
-/bazel-testlogs
-/bazel-tf
+/bazel-*
 /tensorflow/contrib/cmake/build
 /tensorflow/core/util/version_info.cc
 /tensorflow/tools/git/gen
@@ -23,5 +17,7 @@ __pycache__
 *.swp
 env/
 ~*
+/.tmp
+/.cache/
 
 junit-pytest-report.xml

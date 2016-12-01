@@ -90,7 +90,7 @@ function main() {
   } else {
     echo Linux platform
     SO_SUFFIX=dylib
-  }
+  } fi
   mkdir -p ${TMPDIR}/tensorflow/third_party/cuda-on-cl
   cp third_party/cuda-on-cl/build/libcocl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
   cp third_party/cuda-on-cl/build/libeasycl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true

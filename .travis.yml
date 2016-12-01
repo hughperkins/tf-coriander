@@ -66,13 +66,14 @@ before_install:
   - echo ========= tensorflow install =================
   - cd ${BASEDIR}
   - export PATH=$HOME/bin:$PATH
-  - bash travis/run-bazel-step.sh //tensorflow/tools/pip_package:build_pip_package
-  - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
+  - INTERRUPTED=0
+  - bash travis/run-bazel-step.sh //tensorflow/tools/pip_package:build_pip_package || INTERRUPTED=1
+  - if [ $INTERRUPTED -eq 0 ]; then { xbazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg; } fi
 
 script:
   - cd ${BASEDIR}
 
 notifications:
   email:
-    on_success: never
-    on_failure: never
+    on_success: change
+    on_failure: always
