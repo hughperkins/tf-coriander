@@ -71,6 +71,8 @@ before_install:
   - cd ${BASEDIR}
   - if [ $INTERRUPTED -eq 0 ]; then { bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg; } fi
   - if [ $INTERRUPTED -eq 0 ]; then { bash ${BASEDIR}/travis/upload.sh tensorflowpkg-${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT} /tmp/tensorflowpkg; } fi
+  - if [ $INTERRUPTED -eq 0 ]; then { pip3 install --upgrade /tmp/tensorflowpkg/*; } fi
+  - if [ $INTERRUPTED -eq 0 ]; then { python3 -c 'import tensorflow'; } fi
 
 script:
   - cd ${BASEDIR}
