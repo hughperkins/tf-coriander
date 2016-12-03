@@ -27,6 +27,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - Ubuntu 16.04 is used for development
 - Ubuntu 14.04 will probably work, but might need some small tweaking (which I can help with)
 - Mac OS X builds ok :-)  Doesnt run yet though...   wheel at https://s3.amazonaws.com/hughperkinstravis/cache/tensorflow-cl/travis/tensorflowpkg.tar.gz  Log of failed importing https://travis-ci.org/hughperkins/tensorflow-cl#L2419
+   - if you want to help debug the import issue, some ideas at https://github.com/hughperkins/tensorflow-cl/issues/11
 - You need:
   - the tensorflow non-gpu installation pre-requisites,
    - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
@@ -38,8 +39,6 @@ pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
 If you want, you can [build from source](doc/build-from-source.md)
-
-[![Build Status](https://travis-ci.org/hughperkins/tensorflow-cl.svg?branch=travis)](https://travis-ci.org/hughperkins/tensorflow-cl/branches)
 
 ## Testing
 
