@@ -68,7 +68,9 @@ before_install:
   - export PATH=$HOME/bin:$PATH
   - INTERRUPTED=0
   - bash travis/run-bazel-step.sh //tensorflow/tools/pip_package:build_pip_package || INTERRUPTED=1
-  - if [ $INTERRUPTED -eq 0 ]; then { xbazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg; } fi
+  - cd ${BASEDIR}
+  - if [ $INTERRUPTED -eq 0 ]; then { bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg; } fi
+  - if [ $INTERRUPTED -eq 0 ]; then { bash ${BASEDIR}/travis/upload.sh tensorflowpkg /tmp/tensorflowpkg; } fi
 
 script:
   - cd ${BASEDIR}
