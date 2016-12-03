@@ -37,7 +37,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
-If you want, you can [build from source](doc/build-from-source.md)
+If you want, you can [build from source](doc/build-from-source.md)  [![Build Status](https://travis-ci.org/hughperkins/tensorflow-cl.svg?branch=travis)](https://travis-ci.org/hughperkins/tensorflow-cl/branches)
 
 ## Testing
 
