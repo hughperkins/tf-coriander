@@ -72,16 +72,6 @@ py.test -v
 - [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl)  Compile CUDA apps for OpenCL
 - [EasyCL](https://github.com/hughperkins/EasyCL)   Handles running kernels, passing in arguments etc, on OpenCL
 
-## Support/development/roadmap?
-
-I'm taking a break from OpenCL, since NIPS, trying some new things :-)  Unfortunately, supporting my OpenCL projects was taking ~20-40 hours a week, and I do have a full-time day-job too,
-so cannot provide support at this time.  Please help each other out during this period :-)  Feel free to create your own fork etc.  Just do whatever you can do to help encourage a diverse vendor ecosystem please :-)
-
-I can answer concrete specific questions where needed.  Questions like "how can I get started?", you need to read through the code, and try things, break things, see what tweaking bits works, draw an architecture diagram, etc.
-
-If anyone needs a presentation eg on Youtube of how the architecture works, whats working, where to go next, or via Skype, please contact me, eg by creating an issue.  Happy to do that :-)  Also, happy to eg host a group
-for 1 hour a week, where we discuss what's working, what's broken, various development options, I answer your questions, etc.
-
 ## News
 
 - Dec 3:
