@@ -28,9 +28,16 @@ git checkout 0.3.2
 ./compile.sh
 sudo cp output/bazel /usr/local/bin
 
+# prepare python virtual env
+if [[ ! -d ~/env3 ]]; then { virtualenv -p python3 ~/env3; } fi
+source ~/env3/bin/activate
+pip install numpy
+deactivate
+
 # download tensorflow, and configure
 git clone --recursive https://github.com/hughperkins/tensorflow-cl
 cd tensorflow-cl
+source ~/env3/bin/activate
 ./configure
 # put python path: /usr/bin/python3
 # 'no' for hadoop, gpu, cloud, etc
@@ -42,18 +49,18 @@ sudo make install
 popd
 
 # build tensorflow
-source ~/env3/bin/activate
-bazel run --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
-# (ignore error message about 'No destination dir provided')
+bazel build --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
 bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
-if [[ ! -d ~/env3 ]]; then { virtualenv -p python3 ~/env3; } fi
 pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
 
 # test/validate
 cd
 python -c 'import tensorflow'
 # hopefully no errors :-)
-python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_tf2.py
+# and the expected result:
+# [[  4.   7.   9.]
+# [  8.  10.  12.]]
+python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_simple.py
 ```
 
 ## Updating
