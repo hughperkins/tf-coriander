@@ -12,3 +12,5 @@ def test_simple():
                 b = tf.constant([3, 4, 4, 6, 6, 5], dtype=tf.float32, shape=[2, 3], name='b')
                 c = tf.add(a, b, name="c")
                 print(sess.run(c))
+
+test_simple()
