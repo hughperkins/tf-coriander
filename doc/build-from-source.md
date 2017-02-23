@@ -44,6 +44,9 @@ source ~/env3/bin/activate
 
 # build cuda-on-cl
 pushd third_party/cuda-on-cl
+mkdir build
+cd build
+cmake ..
 make -j 4
 sudo make install
 popd
