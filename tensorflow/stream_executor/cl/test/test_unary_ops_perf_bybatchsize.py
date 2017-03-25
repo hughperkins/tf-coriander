@@ -4,7 +4,7 @@ import numpy as np
 import time
 import json
 import argparse
-
+import test_common
 
 funcs = {
     'tanh': 'np.tanh(a)',
@@ -20,16 +20,6 @@ funcs = {
     'argmax': 'np.argmax(a, 1)',
     'argmin': 'np.argmin(a, 1)',
 }
-
-
-def print_as_csv(results):
-    columns = sorted(results[0].keys())
-    print('\t'.join(columns))
-    for result in results:
-        line_list = []
-        for column in columns:
-            line_list.append(str(result[column]))
-        print('\t'.join(line_list))
 
 
 def test(tf_func, py_func, dtype, shape0, force_gpu):
@@ -68,7 +58,10 @@ def test(tf_func, py_func, dtype, shape0, force_gpu):
                     print(probe)
                     if it == 1:
                         print('time for', tf_func, 'dtype', dtype, 'shape0', shape0, time_taken)
-                        res = {'tf_func': tf_func, 'shape0': shape0, 'dtype': dtype, 'time': time_taken}
+                        mb = shape0 * 1600 * 4 / 1024 / 1024
+                        res = {
+                            'tf_func': tf_func, 'shape0': shape0, 'dtype': dtype, 'time': time_taken,
+                            'is_cuda': test_common.is_cuda(), 'MB': mb}
 
                 # print('original ', ar)
                 c_py = eval(py_func)
@@ -100,14 +93,14 @@ def run(force_gpu, max_size, func_list, dtype_list):
                     results.append(res)
                 tens *= 10
     print(json.dumps(results, indent=2))
-    print_as_csv(results)
+    test_common.print_as_csv(results)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--no-force-gpu', action='store_true')
-    parser.add_argument('--dtype-list', default='float32')
-    parser.add_argument('--func-list', default='tanh', help='eg: uint8,int32,float32')
+    parser.add_argument('--dtype-list', default='float32', help='eg: uint8,int32,float32')
+    parser.add_argument('--func-list', default='tanh')
     parser.add_argument('--max-size', type=int, default=100000, help='should be power of 10')
     args = parser.parse_args()
     args_dict = args.__dict__
