@@ -20,6 +20,11 @@
 ```
 brew install protobuf
 brew install grpc
+# the following brew installs might not be strictly necessary, but I did them:
+brew install autoconf automake libtool shtool gflags
+# these lines *are* necessary, unless someone finds a better way:
+mkdir bazel-out/host/bin/external/grpc
+ln -s /usr/local/bin/grpc_cpp_plugin bazel-out/host/bin/external/grpc/
 ```
 
 ## Procedure
