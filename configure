@@ -150,7 +150,7 @@ while true; do
   # Retry
 done
 
-# Find out where the CUDA toolkit is installed
+# set so suffix to .dylib or .so, depending on Mac or not
 OSNAME=`uname -s`
 if [ $OSNAME == Darwin ]; then
   perl -pi -e "s,SO_SUFFIX = \".(so|dylib)\",SO_SUFFIX = \".dylib\",s" tensorflow/core/platform/default/build_config.bzl

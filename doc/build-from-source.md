@@ -49,6 +49,7 @@ mkdir build
 cd build
 cmake ..
 make -j 4
+# note: on Mac: following command might not need `sudo`:
 sudo make install
 popd
 

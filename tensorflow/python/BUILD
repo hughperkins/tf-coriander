@@ -1775,9 +1775,9 @@ tf_cuda_library(
     srcs = ["client/tf_session_helper.cc"],
     hdrs = ["client/tf_session_helper.h"],
     deps = [
-        ":construction_fails_op",
+        # ":construction_fails_op",
         ":numpy_lib",
-        ":test_ops_kernels",
+        # ":test_ops_kernels",
         "//tensorflow/c:c_api",
         "//tensorflow/c:tf_status_helper",
         "//tensorflow/core",
