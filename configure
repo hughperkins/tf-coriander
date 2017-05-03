@@ -10,7 +10,9 @@ popd > /dev/null
 
 function bazel_clean_and_fetch() {
   bazel clean --expunge
-  bazel fetch //tensorflow/...
+  # bazel fetch //tensorflow/...
+  # from https://github.com/tensorflow/tensorflow/pull/6225/files
+  bazel fetch $(bazel query "//tensorflow/... -//tensorflow/examples/android/...")
 }
 
 ## Set up python-related environment settings
