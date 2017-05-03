@@ -201,9 +201,9 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
 
   native.new_http_archive(
     name = "zlib_archive",
-    url = "http://zlib.net/zlib-1.2.10.tar.gz",
-    sha256 = "8d7e9f698ce48787b6e1c67e6bff79e487303e66077e25cb9784ac8835978017",
-    strip_prefix = "zlib-1.2.10",
+    url = "http://zlib.net/zlib-1.2.11.tar.gz",
+    sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
+    strip_prefix = "zlib-1.2.11",
     build_file = str(Label("//:zlib.BUILD")),
   )
 
