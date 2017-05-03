@@ -22,6 +22,7 @@ mkdir -p ~/git
 cd ~/git
 
 # install bazel
+# note: on Mac `brew install bazel`, giving bazel 0.4.5-homebrew, might be ok (in beta)
 git clone https://github.com/bazelbuild/bazel.git
 cd bazel
 git checkout 0.3.2
