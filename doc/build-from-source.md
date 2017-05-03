@@ -2,8 +2,8 @@
 
 ## Pre-requisites
 
-- Ubuntu 16.04 64-bit (might work on other platforms, but not tested)
-  - I hope to target also Mac, and you can help me to tweak some of the `BUILD` rules for Mac if you want (specifically [this one](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/workspace.bzl#L21-L25), used by [usr_lib_x8664linux.BUILD](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/usr_lib_x8664linux.BUILD))
+### Ubuntu 16.04 64-bit:
+
 - normal non-GPU tensorflow prerequisites for building from source
   - when you run `./configure`, you can put `n` for cuda, gpu etc
 - you need an OpenCL-enabled GPU installed and OpenCL drivers for that GPU installed.  Currently, supported OpenCL version is 1.2 or better
@@ -11,6 +11,16 @@
     - `Device Type`: 'GPU', and
     - `Device OpenCL C Version`: 1.2, or higher
   - If you do, then you're good :+1:
+
+### Mac Sierra (draft)
+
+- normal Mac non-GPU tensorflow prerequisites for building from source
+  - when you run `./configure`, you can put `n` for cuda, gpu etc
+- also:
+```
+brew install protobuf
+brew install grpc
+```
 
 ## Procedure
 
