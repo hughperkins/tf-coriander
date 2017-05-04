@@ -1229,5 +1229,5 @@ void initialize_cl_gpu_executor() {
 }  // namespace gputools
 }  // namespace perftools
 
-REGISTER_MODULE_INITIALIZER(
-    cl_gpu_executor, {perftools::gputools::initialize_cl_gpu_executor();});
+// REGISTER_MODULE_INITIALIZER(
+//     cl_gpu_executor, {perftools::gputools::initialize_cl_gpu_executor();});
