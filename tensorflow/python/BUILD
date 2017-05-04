@@ -1812,9 +1812,10 @@ tf_py_wrap_cc(
         "util/port.i",
         "util/py_checkpoint_reader.i",
     ],
-    linkopts = [
-        '-Wl,-rpath,$${ORIGIN}/../third_party/cuda-on-cl'
-    ],
+    linkopts = select({
+        "//tensorflow:darwin": ['-Wl,-rpath,@loader_path/../third_party/cuda-on-cl'],
+        "//conditions:default": ['-Wl,-rpath,$${ORIGIN}/../third_party/cuda-on-cl'],
+    }),
     deps = [
         ":cpp_shape_inference",
         ":kernel_registry",
