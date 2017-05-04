@@ -84,12 +84,12 @@ function main() {
 
   PLATFORM=`uname`
   echo PLATFORM ${PLATFORM}
-  if [ $PLATFORM -eq Darwin ]; then {
+  if [[ $PLATFORM == Darwin ]]; then {
     echo Mac platform
-    SO_SUFFIX=so
+    SO_SUFFIX=dylib
   } else {
     echo Linux platform
-    SO_SUFFIX=dylib
+    SO_SUFFIX=so
   } fi
   mkdir -p ${TMPDIR}/tensorflow/third_party/cuda-on-cl
   cp third_party/cuda-on-cl/build/libcocl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
