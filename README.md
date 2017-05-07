@@ -43,7 +43,7 @@ For Ubuntu 16.04, there is a wheel, that you can install from directly.
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
-For Mac OS X, I just started working on this in May, so no wheel as such yet, and it doesnt quite run yet.  You can [build from source](doc/build-from-source), but you might want to just choose 'watch' on this repository, and wait for the build to be working, and `wheel`d. Or you create an issue, to ask about Mac build, and I'll post Mac build updates into that issue.  Actually, I'll make the issue now, and you can just post/subscribe to it, if you wish [here](https://github.com/hughperkins/tensorflow-cl/issues/30).
+For Mac OS X, I just started working on this in May, so no wheel as such yet, and it doesnt quite run yet.  You can [build from source](doc/build-from-source), but you might want to just choose [watch](https://github.com/hughperkins/tensorflow-cl/subscription) on this repository, and wait for the build to be working, and `wheel`d. Or you create an issue, to ask about Mac build, and I'll post Mac build updates into that issue.  Actually, I'll make the issue now, and you can just post/subscribe to it, if you wish [here](https://github.com/hughperkins/tensorflow-cl/issues/30).
 
 More generally, if you want to participate in development, or just for fun, you can [build from source](doc/build-from-source.md)
 
@@ -81,6 +81,8 @@ py.test -v
 
 ## News
 
+- May 2017:
+  - My employer [ASAPP](http://asapp.com) have given me use of a nice Mac Book Pro 4th Generation, complete with Radeon Pro 450 GPU :-)  I've started looking into getting tensorflow-cl to build/run on it. Actually, it already builds. Just some small(-ish?) teething problems with getting it to run. Watch this space, or post/subscribe into [Mac build doesnt run yet](https://github.com/hughperkins/tensorflow-cl/issues/30) issue
 - Dec 3:
   - BUILT A MAC WHEEL!!!  This is entirely untested.  But the wheel is here: https://s3.amazonaws.com/hughperkinstravis/cache/tensorflow-cl/travis/tensorflowpkg.tar.gz  (Simply untar it, and `pip install` it)
     - corresponding travis log is at https://travis-ci.org/hughperkins/tensorflow-cl/builds/180917138 and https://travis-ci.org/hughperkins/tensorflow-cl/builds/180410593
