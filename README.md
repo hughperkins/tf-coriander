@@ -24,10 +24,15 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## Installation 
 
-- Ubuntu 16.04 is used for development
-- Ubuntu 14.04 will probably work, but might need some small tweaking (which I can help with)
-- Mac OS X builds ok :-)  Doesnt run yet though...   wheel at https://s3.amazonaws.com/hughperkinstravis/cache/tensorflow-cl/travis/tensorflowpkg.tar.gz  Log of failed importing https://travis-ci.org/hughperkins/tensorflow-cl#L2419
-   - if you want to help debug the import issue, some ideas at https://github.com/hughperkins/tensorflow-cl/issues/11
+The environments used for testing/development are:
+- Ubuntu 16.04, with:
+  - NVIDIA K80, and
+- Mac Sierra, with:
+  - Intel HD Graphics 530
+  - Radeon Pro 450
+  (using a nice Mac Book Pro 4th generation that my employer [ASAPP](http://www.asapp.com) have provided me with recently :-) )
+
+For Ubuntu 16.04, there is a wheel, that you can install from directly.
 - You need:
   - the tensorflow non-gpu installation pre-requisites,
    - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
@@ -38,7 +43,9 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
-If you want, you can [build from source](doc/build-from-source.md)
+For Mac OS X, I just started working on this in May, so no wheel as such yet, and it doesnt quite run yet.  You can [build from source](doc/build-from-source), but you might want to just choose 'watch' on this repository, and wait for the build to be working, and `wheel`d. Or you create an issue, to ask about Mac build, and I'll post Mac build updates into that issue.  Actually, I'll make the issue now, and you can just post/subscribe to it, if you wish [here](https://github.com/hughperkins/tensorflow-cl/issues/30).
+
+More generally, if you want to participate in development, or just for fun, you can [build from source](doc/build-from-source.md)
 
 ## Testing
 
