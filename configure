@@ -120,6 +120,13 @@ while [ "$TF_NEED_CUDA" == "" ]; do
   esac
 done
 
+# set so suffix to .dylib or .so, depending on Mac or not
+echo checking operating system
+OSNAME=`uname -s`
+if [[ $OSNAME == Darwin ]]; then
+  perl -pi -e "s,SO_SUFFIX = \".(so|dylib)\",SO_SUFFIX = \".dylib\",s" tensorflow/core/platform/default/build_config.bzl
+fi
+
 export TF_NEED_CUDA
 if [ "$TF_NEED_CUDA" == "0" ]; then
   echo "Configuration finished"
@@ -149,12 +156,6 @@ while true; do
   GCC_HOST_COMPILER_PATH=""
   # Retry
 done
-
-# set so suffix to .dylib or .so, depending on Mac or not
-OSNAME=`uname -s`
-if [ $OSNAME == Darwin ]; then
-  perl -pi -e "s,SO_SUFFIX = \".(so|dylib)\",SO_SUFFIX = \".dylib\",s" tensorflow/core/platform/default/build_config.bzl
-fi
 
 while true; do
   # Configure the Cuda SDK version to use.
