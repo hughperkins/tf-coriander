@@ -145,6 +145,7 @@ void EventMgr::PollLoop() {
 void EventMgr::QueueInUse(gpu::Stream* stream, InUse iu) {
   VLOG(2) << "QueueInUse  free_events_ " << free_events_.size()
           << " used_events_ " << used_events_.size();
+  std::cout << "tensorflow/core/common_runtime/gpu/gpu_event_mgr.cc QueueInUse iu.func=" << &(iu.func) << std::endl;
   // Events are created on demand, and repeatedly reused.  There is no
   // limit placed here on the number of allocated Events.
   if (free_events_.empty()) {
@@ -156,9 +157,13 @@ void EventMgr::QueueInUse(gpu::Stream* stream, InUse iu) {
   stream->ThenRecordEvent(e);
   iu.event = e;
   bool was_empty = used_events_.empty();
+  std::cout << "tensorflow/core/common_runtime/gpu/gpu_event_mgr.cc QueueInUse before push_back used_events.size()=" << used_events_.size() << std::endl;
   used_events_.push_back(iu);
+  std::cout << "tensorflow/core/common_runtime/gpu/gpu_event_mgr.cc QueueInUse after push_back iu.func=" << &(iu.func) << std::endl;
+  std::cout << "tensorflow/core/common_runtime/gpu/gpu_event_mgr.cc QueueInUse after push_back used_events.size()=" << used_events_.size() << std::endl;
   // Maybe wake up the polling thread
   if (was_empty) events_pending_.notify_all();
+  std::cout << "tensorflow/core/common_runtime/gpu/gpu_event_mgr.cc QueueInUse after notify_all iu.func=" << &(iu.func) << std::endl;
 }
 
 // This function must be called periodically to check whether pending
@@ -188,7 +193,9 @@ void EventMgr::PollEvents(bool is_dedicated_poller,
   // polling thread, check the entire set.  Otherwise, just sweep up to
   // the first non-complete record that is still pending.
   for (auto& iu : used_events_) {
-    if (iu.event == nullptr) continue;
+    if (iu.event == nullptr) {
+      continue;
+    }
     gpu::Event::Status s = iu.event->PollForStatus();
     switch (s) {
       case gpu::Event::Status::kUnknown:

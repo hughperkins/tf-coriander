@@ -501,6 +501,7 @@ void BaseGPUDevice::ComputeAsync(AsyncOpKernel* op_kernel,
 Status BaseGPUDevice::MakeTensorFromProto(const TensorProto& tensor_proto,
                                           const AllocatorAttributes alloc_attrs,
                                           Tensor* tensor) {
+  std::cout << "tensorflow/core/common_runtime/gpu/gpu_device.cc BaseGPUDevice::MakeTensorFromProto()" << std::endl;
   AllocatorAttributes attr;
   attr.set_on_host(true);
   attr.set_gpu_compatible(true);

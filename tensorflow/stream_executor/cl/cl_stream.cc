@@ -37,7 +37,8 @@ bool CLStream::Init() {
   auto res = CLDriver::CreateEvent(parent_->cl_context(), &completed_event_,
                                  CLDriver::EventFlags::kDisableTiming)
       .ok();
-  // std::cout << "CLStream::Init() after call to create event" << std::endl;
+  std::cout << "CLStream::Init() after call to create event completed_event_=" << completed_event_
+      << " clevent=" << completed_event_->event << std::endl;
   return res;
 }
 

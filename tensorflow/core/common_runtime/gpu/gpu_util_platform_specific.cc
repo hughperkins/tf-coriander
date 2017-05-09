@@ -26,6 +26,7 @@ void GPUDeviceContext::CopyCPUTensorToDevice(const Tensor* cpu_tensor,
                                              Device* device,
                                              Tensor* device_tensor,
                                              StatusCallback done) const {
+  std::cout << "tensorflow/core/common_runtime/gpu/gpu_util_platform_specific.cc GPUDeviceContext::CopyCPUTensorToDevice done=" << &done << std::endl;
   GPUUtil::CopyCPUTensorToGPU(cpu_tensor, this, device, device_tensor, done);
 }
 

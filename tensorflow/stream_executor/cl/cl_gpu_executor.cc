@@ -98,9 +98,12 @@ class CLTimer;
 std::function<string(const string &)> g_cubinate;
 
 static CLEvent *AsCLEvent(Event *event) {
-  // std::cout << "cl_gpu_executor::AsCLEvent()" << std::endl;
+  std::cout << "cl_gpu_executor::AsCLEvent() tf Event=" << event << std::endl;
   DCHECK(event != nullptr);
-  return static_cast<CLEvent *>(event->implementation());
+  CLEvent *clevent= static_cast<CLEvent *>(event->implementation());
+  std::cout << " ... finished cl_gpu_executor::AsCLEvent() CUEvent=" << clevent <<
+      " clevent=" << clevent->cl_event() << std::endl;
+  return clevent;
 }
 
 
@@ -126,11 +129,12 @@ static CUdeviceptr AsClDevicePtr(const DeviceMemoryBase &gpu_mem) {
 
 // See description on const version above.
 static CUdeviceptr AsClDevicePtr(DeviceMemoryBase *gpu_mem) {
+  std::cout << "cl_gpu_executor::AsClDevicePtr()" << std::endl;
   return AsClDevicePtr(*gpu_mem);
 }
 
 static ClContext* GetClContext(Stream *stream) {
-  // std::cout << "cl_gpu_executor::GetClContext()" << std::endl;
+  std::cout << "cl_gpu_executor::GetClContext()" << std::endl;
   return static_cast<CLExecutor *>(stream->parent()->implementation())
       ->cl_context();
 }
@@ -147,7 +151,7 @@ CLExecutor *ExtractClExecutor(StreamExecutor *stream_exec) {
 }
 
 CLExecutor::~CLExecutor() {
-  // std::cout << "CLExecutor::~CLExecutor()" << std::endl;
+  std::cout << "CLExecutor::~CLExecutor()" << std::endl;
   for (auto &it : disk_modules_) {
     CLDriver::UnloadModule(context_, it.second);
   }
@@ -161,7 +165,7 @@ CLExecutor::~CLExecutor() {
 
 port::Status CLExecutor::Init(int device_ordinal,
                                 DeviceOptions device_options) {
-  // std::cout << "CLExecutor::Init()" << std::endl;
+  std::cout << "CLExecutor::Init()" << std::endl;
   device_ordinal_ = device_ordinal;
 
   auto status = CLDriver::Init();
@@ -487,7 +491,7 @@ void CLExecutor::OccupancyCheck(const KernelBase &kernel,
 }
 
 void *CLExecutor::Allocate(uint64 size) {
-  // std::cout << "cl_gpu_executor::Allocate()" << std::endl;
+  std::cout << "cl_gpu_executor::Allocate()" << std::endl;
   return CLDriver::DeviceAllocate(context_, size);
 }
 
@@ -500,7 +504,7 @@ void *CLExecutor::AllocateSubBuffer(DeviceMemoryBase *mem,
 }
 
 void CLExecutor::Deallocate(DeviceMemoryBase *mem) {
-  // std::cout << "cl_gpu_executor::Deallocate()" << std::endl;
+  std::cout << "cl_gpu_executor::Deallocate()" << std::endl;
   // CL "sub-buffers" are just pointer + offset, so no dealloc is necessary.
   if (!mem->is_sub_buffer()) {
      CLDriver::DeviceDeallocate(context_, mem->opaque());
@@ -526,7 +530,7 @@ bool CLExecutor::HostMemoryUnregister(void *location) {
 }
 
 bool CLExecutor::SynchronizeAllActivity() {
-  // std::cout << "cl_gpu_executor::SynchronizeAllActivity()" << std::endl;
+  std::cout << "cl_gpu_executor::SynchronizeAllActivity()" << std::endl;
   return CLDriver::SynchronizeContext(context_);
 }
 
@@ -561,7 +565,7 @@ bool CLExecutor::SynchronousMemSet(DeviceMemoryBase *location, int value,
 
 bool CLExecutor::SynchronousMemcpy(DeviceMemoryBase *gpu_dst,
                                      const void *host_src, uint64 size) {
-  // std::cout << "cl_gpu_executor::SynchronousMemcpy()" << std::endl;
+  std::cout << "cl_gpu_executor::SynchronousMemcpy()" << std::endl;
   return CLDriver::SynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
                                         host_src, size);
 }
@@ -569,14 +573,14 @@ bool CLExecutor::SynchronousMemcpy(DeviceMemoryBase *gpu_dst,
 bool CLExecutor::SynchronousMemcpy(void *host_dst,
                                      const DeviceMemoryBase &gpu_src,
                                      uint64 size) {
-  // std::cout << "cl_gpu_executor::SynchronousMemcpy()" << std::endl;
+  std::cout << "cl_gpu_executor::SynchronousMemcpy()" << std::endl;
   return CLDriver::SynchronousMemcpyD2H(context_, host_dst,
                                         AsClDevicePtr(gpu_src), size);
 }
 
 bool CLExecutor::SynchronousMemcpyDeviceToDevice(
     DeviceMemoryBase *gpu_dst, const DeviceMemoryBase &gpu_src, uint64 size) {
-  // std::cout << "cl_gpu_executor::SynchronousMemcpyDeviceToDevice()" << std::endl;
+  std::cout << "cl_gpu_executor::SynchronousMemcpyDeviceToDevice()" << std::endl;
   return CLDriver::SynchronousMemcpyD2D(context_, AsClDevicePtr(gpu_dst),
                                         AsClDevicePtr(gpu_src), size);
 }
@@ -621,7 +625,7 @@ bool CLExecutor::Memset32(Stream *stream, DeviceMemoryBase *location,
 
 bool CLExecutor::Memcpy(Stream *stream, void *host_dst,
                           const DeviceMemoryBase &gpu_src, uint64 size) {
-  // std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
+  std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
   return CLDriver::AsynchronousMemcpyD2H(context_, host_dst,
                                            AsClDevicePtr(gpu_src), size,
                                            AsCLStreamValue(stream));
@@ -629,10 +633,12 @@ bool CLExecutor::Memcpy(Stream *stream, void *host_dst,
 
 bool CLExecutor::Memcpy(Stream *stream, DeviceMemoryBase *gpu_dst,
                           const void *host_src, uint64 size) {
-  // std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
-  return CLDriver::AsynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
+  std::cout << "cl_gpu_executor::Memcpy()" << std::endl;
+  bool res = CLDriver::AsynchronousMemcpyH2D(context_, AsClDevicePtr(gpu_dst),
                                            host_src, size,
                                            AsCLStreamValue(stream));
+  std::cout << " ... done cl_gpu_executor::Memcpy() res=" << res << std::endl;
+  return res;
 }
 
 bool CLExecutor::MemcpyDeviceToDevice(Stream *stream,
@@ -666,22 +672,30 @@ bool CLExecutor::HostCallback(Stream *stream,
 }
 
 port::Status CLExecutor::AllocateEvent(Event *event) {
-  // std::cout << "cl_gpu_executor::AllocateEvent()" << std::endl;
+  CLEvent *cuevent= static_cast<CLEvent *>(event->implementation());
+  std::cout << "cl_gpu_executor::AllocateEvent() Event*=" << event << " tf CLEvent=" << cuevent
+      << " CoclEvent=" << cuevent->cl_event() << std::endl;
   return AsCLEvent(event)->Init();
   }
 
 port::Status CLExecutor::DeallocateEvent(Event *event) {
-  // std::cout << "cl_gpu_executor::DeallocateEvent()" << std::endl;
+  std::cout << "cl_gpu_executor::DeallocateEvent()" << std::endl;
   return AsCLEvent(event)->Destroy();
 }
 
 port::Status CLExecutor::RecordEvent(Stream *stream, Event *event) {
+  CLEvent *cuevent= static_cast<CLEvent *>(event->implementation());
+  std::cout << "cl_gpu_executor::RecordEvent() tf Event*=" << event << " tf CLEvent=" << cuevent
+      << " CUevent=" << cuevent->cl_event() << std::endl;
   // std::cout << "cl_gpu_executor::RecordEvent()" << std::endl;
  return AsCLEvent(event)->Record(AsCLStream(stream));
 }
 
 port::Status CLExecutor::WaitForEvent(Stream *stream, Event *event) {
   // std::cout << "cl_gpu_executor::WaitForEvent()" << std::endl;
+  CLEvent *cuevent= static_cast<CLEvent *>(event->implementation());
+  std::cout << "cl_gpu_executor::WaitForEvent() Event*=" << event << " cuevent=" << cuevent
+      << "clevent=" << cuevent->cl_event() << std::endl;
   if (CLDriver::WaitStreamOnEvent(context_,
                                     AsCLStream(stream)->cl_stream(),
                                     AsCLEvent(event)->cl_event())) {
@@ -695,13 +709,19 @@ port::Status CLExecutor::WaitForEvent(Stream *stream, Event *event) {
 }
 
 Event::Status CLExecutor::PollForEventStatus(Event *event) {
+  CLEvent *cuevent= static_cast<CLEvent *>(event->implementation());
+  std::cout << "cl_gpu_executor::PollForEventStatus() Event*=" << event << " cuevent=" << cuevent
+      << "clevent=" << cuevent->cl_event() << std::endl;
   // std::cout << "cl_gpu_executor::PollForEventSTatus()" << std::endl;
-  return AsCLEvent(event)->PollForStatus();
+  Event::Status status = AsCLEvent(event)->PollForStatus();
+  std::cout << " ... cl_gpu_executor::PollForEventStatus finished" << std::endl;
+  return status;
 }
 
 bool CLExecutor::AllocateStream(Stream *stream) {
   // std::cout << "cl_gpu_executor::AllocateStream()" << std::endl;
-  return AsCLStream(stream)->Init();
+  bool res = AsCLStream(stream)->Init();
+  return res;
 }
 
 void CLExecutor::DeallocateStream(Stream *stream) {
@@ -725,7 +745,7 @@ void CLExecutor::DeallocateTimer(Timer *timer) {
 }
 
 bool CLExecutor::CreateStreamDependency(Stream *dependent, Stream *other) {
-  // std::cout << "cl_gpu_executor::CreateStreamDependency()" << std::endl;
+  std::cout << "cl_gpu_executor::CreateStreamDependency()" << std::endl;
   CUevent other_completed_event = *AsCLStream(other)->completed_event();
   bool ok = CLDriver::RecordEvent(context_, other_completed_event,
                                     AsCLStreamValue(other))
@@ -759,7 +779,7 @@ bool CLExecutor::BlockHostUntilDone(Stream *stream) {
 }
 
 blas::BlasSupport *CLExecutor::CreateBlas() {
-  // std::cout << "cl_gpu_executor::CreateBlas()" << std::endl;
+  std::cout << "cl_gpu_executor::CreateBlas()" << std::endl;
   PluginRegistry *registry = PluginRegistry::Instance();
   port::StatusOr<PluginRegistry::BlasFactory> status =
       registry->GetFactory<PluginRegistry::BlasFactory>(kClPlatformId,
@@ -821,12 +841,12 @@ rng::RngSupport *CLExecutor::CreateRng() {
 
 // TODO(rspringer): Remove in b/18544742.
 bool CLExecutor::SupportsDnn() const {
-  // std::cout << "CLExecutor::SupportsDnn" << std::endl;
+  std::cout << "CLExecutor::SupportsDnn" << std::endl;
   return false;
 }
 
 bool CLExecutor::CanEnablePeerAccessTo(StreamExecutorInterface *other) {
-  // std::cout << "CLExecutor::CanEnablePeerAccessTo" << std::endl;
+  std::cout << "CLExecutor::CanEnablePeerAccessTo" << std::endl;
   return false;
   // CLExecutor *cl_other = static_cast<CLExecutor *>(other);
   // return CLDriver::CanEnablePeerAccess(context_, cl_other->context_);
@@ -842,7 +862,7 @@ port::Status CLExecutor::EnablePeerAccessTo(StreamExecutorInterface *other) {
 }
 
 SharedMemoryConfig CLExecutor::GetDeviceSharedMemoryConfig() {
-  // std::cout << "CLExecutor::GetDeviceSharedMemoryConfig" << std::endl;
+  std::cout << "CLExecutor::GetDeviceSharedMemoryConfig" << std::endl;
   // port::StatusOr<CUsharedconfig> cl_config =
   //     CLDriver::ContextGetSharedMemConfig(context_);
   // if (!cl_config.ok()) {
@@ -889,7 +909,7 @@ port::Status CLExecutor::SetDeviceSharedMemoryConfig(
 }
 
 bool CLExecutor::DeviceMemoryUsage(int64 *free, int64 *total) const {
-  // std::cout << "CLExecutor::DeviceMemoryUsage" << std::endl;
+  std::cout << "CLExecutor::DeviceMemoryUsage" << std::endl;
   //return false;
   return CLDriver::GetDeviceMemoryInfo(context_, free, total);
 }
@@ -925,7 +945,7 @@ bool CLExecutor::GetSymbol(const string& symbol_name, void **mem,
 }
 
 bool CLExecutor::FillBlockDimLimit(BlockDim *block_dim_limit) const {
-  // std::cout << "CLExecutor::FillBlockDimLimit" << std::endl;
+  std::cout << "CLExecutor::FillBlockDimLimit" << std::endl;
   // The BlockDim name is a mismatch against these GRID_DIM_* queries because
   // we use BlockDims to express the dimensions of blocks within a grid
   // (as opposed to ThreadDim which expresses the dimensions of threads
@@ -943,7 +963,7 @@ bool CLExecutor::FillBlockDimLimit(BlockDim *block_dim_limit) const {
 
 KernelArg CLExecutor::DeviceMemoryToKernelArg(
     const DeviceMemoryBase &gpu_mem) const {
-  // std::cout << "CLExecutor::DeviceMemoryToKernelArg" << std::endl;
+  std::cout << "CLExecutor::DeviceMemoryToKernelArg" << std::endl;
   const void* arg = gpu_mem.opaque();
   const uint8 *arg_ptr = reinterpret_cast<const uint8 *>(&arg);
 
@@ -971,7 +991,7 @@ bool CLExecutor::SupportsRng() const {
 
 std::unique_ptr<internal::EventInterface>
 CLExecutor::CreateEventImplementation() {
-  // std::cout << "CLExecutor::CreateEventImplementation" << std::endl;
+  std::cout << "CLExecutor::CreateEventImplementation" << std::endl;
   return std::unique_ptr<internal::EventInterface>(new CLEvent(this));
 }
 
@@ -990,13 +1010,13 @@ CLExecutor::GetStreamImplementation() {
 
 std::unique_ptr<internal::TimerInterface>
 CLExecutor::GetTimerImplementation() {
-  // std::cout << "CLExecutor::GetTimerImplementation" << std::endl;
+  std::cout << "CLExecutor::GetTimerImplementation" << std::endl;
   return std::unique_ptr<internal::TimerInterface>();
   // return std::unique_ptr<internal::TimerInterface>(new CLTimer(this));
 }
 
 void *CLExecutor::CudaContextHack() { 
-  // std::cout << "CLExecutor::CudaContextHack" << std::endl;
+  std::cout << "CLExecutor::CudaContextHack" << std::endl;
   return context_;
 }
 
@@ -1011,7 +1031,7 @@ ClContext* CLExecutor::cl_context() {
 // For anything more complicated/prod-focused than this, you'll likely want to
 // turn to gsys' topology modeling.
 static int TryToReadNumaNode(const string &pci_bus_id, int device_ordinal) {
-  // std::cout << "CLExecutor::TryToReadNumaNode" << std::endl;
+  std::cout << "CLExecutor::TryToReadNumaNode" << std::endl;
 // #if defined(__APPLE__)
   //LOG(INFO) << "OS X does not support NUMA - returning NUMA node zero";
   return 0;
@@ -1092,7 +1112,7 @@ static const UnqueryableDeviceParams kAllUnqueryableDeviceParams[] = {
 };
 
 DeviceDescription *CLExecutor::PopulateDeviceDescription() const {
-  // std::cout << "CLExecutor::PopulateDeviceDescription" << std::endl;
+  std::cout << "CLExecutor::PopulateDeviceDescription" << std::endl;
   internal::DeviceDescriptionBuilder builder;
   {
     int driver_version = 0;
@@ -1195,9 +1215,9 @@ DeviceDescription *CLExecutor::PopulateDeviceDescription() const {
   // std::cout << "deviceprops 5" << std::endl;
   builder.set_threads_per_warp(
       CLDriver::GetThreadsPerWarp(device_).ValueOrDie());
-  // std::cout << "cl_gpu_executor.cc calling builder.Build()" << std::endl;
+  std::cout << "cl_gpu_executor.cc calling builder.Build()" << std::endl;
   auto built = builder.Build();
-  // std::cout << "cl_gpu_executor.cc called builder.Build()" << std::endl;
+  std::cout << "cl_gpu_executor.cc called builder.Build()" << std::endl;
   return built.release();
 }
 

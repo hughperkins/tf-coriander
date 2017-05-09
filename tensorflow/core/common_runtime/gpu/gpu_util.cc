@@ -306,6 +306,7 @@ void GPUUtil::CopyCPUTensorToGPU(const Tensor* cpu_tensor,
                                  Device* gpu_device, Tensor* gpu_tensor,
                                  StatusCallback done) {
   VLOG(1) << "CopyCPUTensorToGPU";
+  std::cout << "tensorflow/core/common_runtime/gpu/gpu_util.cc GPUUtil::CopyCPUTensorToGPU done=" << &done << std::endl;
   const DeviceBase::GpuDeviceInfo* dev_info = nullptr;
   gpu::Stream* recv_stream = nullptr;
   Status s = PrepareCopy(gpu_device, device_context, *cpu_tensor, gpu_tensor,
@@ -335,15 +336,20 @@ void GPUUtil::CopyCPUTensorToGPU(const Tensor* cpu_tensor,
   }
   // Use of cpu_tensor may outlive stack scope, so keep a ref.
   TensorReference input_ref(*cpu_tensor);
-  dev_info->event_mgr->ThenExecute(
-      recv_host_to_device_stream,
-      [recv_host_to_device_stream, done, input_ref]() {
+  std::function<void()> doneFunc = [recv_host_to_device_stream, done, input_ref]() {
+        std::cout << "gpu_util.cc CopyCPUTensorToGPU, line 341" << std::endl;
         input_ref.Unref();
         if (!recv_host_to_device_stream->ok()) {
           LOG(FATAL) << "CPU->GPU Memcpy failed";
         }
+        std::cout << "tensorflow/core/common_runtime/gpu/gpu_util.cc GPUUtil::CopyCPUTensorToGPU done=" << &done << std::endl;
         done(Status::OK());
-      });
+  };
+  std::cout << "tensorflow/core/common_runtime/gpu/gpu_util.cc GPUUtil::CopyCPUTensorToGPU doneFunc=" << &doneFunc << std::endl;
+  dev_info->event_mgr->ThenExecute(
+      recv_host_to_device_stream,
+      doneFunc
+  );
 }
 
 Status GPUUtil::Sync(Device* gpu_device) {
