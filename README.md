@@ -32,8 +32,10 @@ The environments used for testing/development are:
   - Radeon Pro 450
   (using a nice Mac Book Pro 4th generation that my employer [ASAPP](http://www.asapp.com) have provided me with recently :-) )
 
-For Ubuntu 16.04, there is a wheel, that you can install from directly.
-- You need:
+### Ubuntu 16.04
+
+You can install from wheel:
+- You will need:
   - the tensorflow non-gpu installation pre-requisites,
    - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
    - python 3
@@ -43,9 +45,20 @@ For Ubuntu 16.04, there is a wheel, that you can install from directly.
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
-For Mac OS X, I just started working on this in May, so no wheel as such yet, and it doesnt quite run yet.  You can [build from source](doc/build-from-source), but you might want to just choose [watch](https://github.com/hughperkins/tensorflow-cl/subscription) on this repository, and wait for the build to be working, and `wheel`d. Or you create an issue, to ask about Mac build, and I'll post Mac build updates into that issue.  Actually, I'll make the issue now, and you can just post/subscribe to it, if you wish [here](https://github.com/hughperkins/tensorflow-cl/issues/30).
+### Mac Sierra
 
-More generally, if you want to participate in development, or just for fun, you can [build from source](doc/build-from-source.md)
+For Mac Sierra, python 3.6, there is a wheel at [Mac wheel](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.15.0/tensorflow-0.11.0rc0-py3-none-any.whl)
+- tested on Mac Sierra, using Radeon Pro 450
+- to select the Radeon, given that there's probably an Intel HD530 at gpu index 0, make sure to `export CL_GPUOFFSET=1`, which will select the gpu at index 1, ie the Radeon
+- you'll need to install python 3.6, and create a virtualenv from it, activate it
+- download the wheel from the link just above, and install by doing:
+```
+pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
+```
+
+### Build from source
+
+If you want, you can [build from source](doc/build-from-source.md)
 
 ## Testing
 
