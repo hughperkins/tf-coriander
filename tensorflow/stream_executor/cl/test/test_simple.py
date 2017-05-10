@@ -5,12 +5,21 @@ import numpy as np
 
 
 def test_simple():
-    with tf.Graph().as_default():
-        with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
+    graph = tf.Graph()
+    with graph.as_default():
+        a = tf.constant([1, 3, 5, 2, 4, 7], dtype=tf.float32, shape=[2, 3], name='a')
+        b = tf.constant([3, 4, 4, 6, 6, 5], dtype=tf.float32, shape=[2, 3], name='b')
+        c = tf.add(a, b, name="c")
+        sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+        with sess.as_default():
             with tf.device('/gpu:0'):
-                a = tf.constant([1, 3, 5, 2, 4, 7], dtype=tf.float32, shape=[2, 3], name='a')
-                b = tf.constant([3, 4, 4, 6, 6, 5], dtype=tf.float32, shape=[2, 3], name='b')
-                c = tf.add(a, b, name="c")
-                print(sess.run(c))
+                print('running sess.run a')
+                try:
+                    # print(sess.run(a))
+                    print(sess.run(c))
+                except Exception as e:
+                    print('exception')
+                    print(e)
+                print('done')
 
 test_simple()

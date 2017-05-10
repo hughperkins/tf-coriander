@@ -81,6 +81,8 @@ py.test -v
 
 ## News
 
+- May 9 2017:
+  - Mac build: [test_simple.py](https://github.com/hughperkins/tensorflow-cl/blob/tensorflow-cl/tensorflow/stream_executor/cl/test/test_simple.py) script runs ok now, on Mac OS Sierra X, using Radeon Pro 450.  It's a start :-)
 - May 2017:
   - My employer [ASAPP](http://asapp.com) have given me use of a nice Mac Book Pro 4th Generation, complete with Radeon Pro 450 GPU :-)  I've started looking into getting tensorflow-cl to build/run on it. Actually, it already builds. Just some small(-ish?) teething problems with getting it to run. Watch this space, or post/subscribe into [Mac build doesnt run yet](https://github.com/hughperkins/tensorflow-cl/issues/30) issue
 - Dec 3:
