@@ -56,6 +56,10 @@ For Mac Sierra, python 3.6, there is a wheel at [Mac wheel](https://github.com/h
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
+Piccie of tests running on Mac Sierra:
+
+<img src="doc/img/mac_sierra_tests.png" width="600" />
+
 ### Build from source
 
 If you want, you can [build from source](doc/build-from-source.md)
