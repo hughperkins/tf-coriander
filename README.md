@@ -87,8 +87,8 @@ For Mac Sierra, python 3.6, there is a wheel at [https://github.com/hughperkins/
 - you'll need to install python 3.6, and create a virtualenv from it, activate it
 - download the tar file from the link just above, and install by doing:
 ```
-tar -xf tf-v0.15-wheel-mac-sierra-py36.tar
-cd tf-v0.15-wheel-mac-sierra-py36
+tar -xf tf-v0.16-wheel-mac-sierra-py36.tar
+cd tf-v0.16-wheel-mac-sierra-py36
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
