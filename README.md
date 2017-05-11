@@ -10,6 +10,28 @@ This repo was created from the original Tensorflow repository at:
 
 Please see the main repository for full Tensorflow documentation.  This readme will only focus on the OpenCL porting aspects of Tensorflow.
 
+## Good points of this compared to other OpenCL Tensorflows
+
+- compatible with Mac, since doesnt need SPIR ingestor
+- should work theoretically on any OpenCL 1.2 GPU device, without needing SPIR 1.2 extension, or OpenCL 2.0.
+
+## What works, what doesnt
+
+### Things that are working:
+
+- per-element unary operations
+- per-element binary operations
+- reductions
+- backprop
+- BLAS, ie matrix multiplications, using Cedric Nugteren's [CLBlast](https://github.com/cnugteren/CLBlast) library
+
+### Things that arent implemented
+
+- need a random-number generator implementation
+  - ideally this would be an implementation of cuRNG, in [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl), but either way, it's not implemented yet
+  - should probalby be sufficient to generate random numbers on the cpu, then copy them to gpu, eg see the analysis at http://stackoverflow.com/questions/9912143/how-to-get-a-random-number-in-opencl/16130111#16130111
+- need to activate cudnn within tensorflow-cl. The hard bit is mostly done, ie implementing the convolutions inside [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl), but need to 'switch it on' here
+
 ## Test results, on v0.14.0 wheel
 
 | test | Intel HD5500, beignet 1.2.1 | NVIDIA 940M, driver v367.57 |
