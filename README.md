@@ -22,6 +22,18 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 | [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| missing adam   |  missing adam  |
 | [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)|  missing rmsprop  |    |
 
+## Test results, on v0.16.0 wheel
+
+| test | Mac Sierra, using Radeon Pro 450 GPU |
+|----- |-------|
+| unit tests (`py.test -v`) | pass | pass |
+| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | slow, but works   | 
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | ok  | 
+| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | ok (accuracy 0.92)  |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | missing adam  |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| missing adam   | 
+| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)|  missing rmsprop  |  
+
 ## Installation 
 
 The environments used for testing/development are:
@@ -47,12 +59,14 @@ pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 
 ### Mac Sierra
 
-For Mac Sierra, python 3.6, there is a wheel at [Mac wheel](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.15.0/tensorflow-0.11.0rc0-py3-none-any.whl)
+For Mac Sierra, python 3.6, there is a wheel at [https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0)
 - tested on Mac Sierra, using Radeon Pro 450
 - to select the Radeon, given that there's probably an Intel HD530 at gpu index 0, make sure to `export CL_GPUOFFSET=1`, which will select the gpu at index 1, ie the Radeon
 - you'll need to install python 3.6, and create a virtualenv from it, activate it
-- download the wheel from the link just above, and install by doing:
+- download the tar file from the link just above, and install by doing:
 ```
+tar -xf tf-v0.15-wheel-mac-sierra-py36.tar
+cd tf-v0.15-wheel-mac-sierra-py36
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
@@ -98,6 +112,9 @@ py.test -v
 
 ## News
 
+- May 10 2017:
+  - test results on Mac Sierra with Radeon Pro 450, using v0.16.0 wheel, now approximately in line with earlier results on Ubuntu, using v0.14.0 wheel
+    - https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0
 - May 9 2017:
   - Mac build runs ok :-)  See the release at [Mac build and wheel](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.15.0)
   - tested on Mac Sierra, using Radeon Pro 450 GPU
