@@ -65,10 +65,22 @@ make -j 4
 sudo make install
 popd
 
-# build tensorflow
+# build grpc_cpp_plugin and protobuf
+# (these should probably be in the BUILD dependencies somehow, but
+# I didnt figure out how to do this yet)
 bazel build @grpc//:grpc_cpp_plugin
+bazel build @protobuf//:protoc
+
+# create directories and links
+if [[ ! -h bazel-out ]]; then { echo ERROR: bazel-out should be a link; } fi
+# ^^^ make sure bazel-out is a link, if it's not, then stop, cos nothing
+# else will work if it's not :-)
 mkdir -p bazel-out/host/bin/external/grpc
+mkdir -p bazel-out/host/bin/external/protobuf
 ln -sf $PWD/bazel-bin/external/grpc/grpc_cpp_plugin bazel-out/host/bin/external/grpc/grpc_cpp_plugin
+ln -sf $PWD/bazel-bin/external/protobuf/protoc bazel-out/host/bin/external/protobuf/protoc
+
+# build tensorflow
 bazel build --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
 bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
 pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
