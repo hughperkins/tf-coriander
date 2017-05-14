@@ -25,3 +25,4 @@ env/
 ~*
 
 junit-pytest-report.xml
+.cache/
