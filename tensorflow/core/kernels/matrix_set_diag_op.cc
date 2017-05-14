@@ -125,7 +125,7 @@ struct MatrixSetDiag<CPUDevice, T> {
     output.device(d) = input;
     for (int64 r = 0; r < output.dimension(0); ++r) {
       for (int64 d = 0; d < diag.dimension(1); ++d) {
-        output(r, d, d) = diag(r, d);
+        output((Eigen::DenseIndex)r, (Eigen::DenseIndex)d, (Eigen::DenseIndex)d) = diag((Eigen::DenseIndex)r, (Eigen::DenseIndex)d);
       }
     }
   }

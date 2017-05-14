@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+# Copyright 2015 The TensorFlow Authors, 2016 Hugh Perkins. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -82,11 +82,21 @@ function main() {
     $RUNFILES/external/protobuf ${TMPDIR}/google
   # rsync -a $RUNFILES/third_party/eigen3 ${TMPDIR}/third_party
 
+  PLATFORM=`uname`
+  echo PLATFORM ${PLATFORM}
+  if [[ $PLATFORM == Darwin ]]; then {
+    echo Mac platform
+    SO_SUFFIX=dylib
+  } else {
+    echo Linux platform
+    SO_SUFFIX=so
+  } fi
   mkdir -p ${TMPDIR}/tensorflow/third_party/cuda-on-cl
-  cp third_party/cuda-on-cl/build/libcocl.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
-  cp third_party/cuda-on-cl/build/libeasycl.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
-  cp third_party/cuda-on-cl/build/libclew.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
-  cp third_party/cuda-on-cl/build/libclblast.so ${TMPDIR}/tensorflow/third_party/cuda-on-cl/
+  cp third_party/cuda-on-cl/build/libcocl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+  cp third_party/cuda-on-cl/build/libeasycl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+  cp third_party/cuda-on-cl/build/libclew.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+  cp third_party/cuda-on-cl/build/libclblast.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
+  ls ${TMPDIR}/tensorflow/third_party/cuda-on-cl
   touch ${TMPDIR}/tensorflow/third_party/__init__.py
   touch ${TMPDIR}/tensorflow/third_party/cuda-on-cl/__init__.py
   cp tensorflow/tools/pip_package/MANIFEST.in ${TMPDIR}

@@ -2435,7 +2435,7 @@ bool CLBlas::DoBlasTrsm(Stream *stream, blas::Side side,
 namespace gpu = ::perftools::gputools;
 
 void initialize_clblas() {
-      // std::cout << "CLBlas::initialize_clblas()" << std::endl;
+  std::cout << "CLBlas::initialize_clblas()" << std::endl;
   gpu::port::Status status =
       gpu::PluginRegistry::Instance()
           ->RegisterFactory<gpu::PluginRegistry::BlasFactory>(
@@ -2480,5 +2480,5 @@ void initialize_clblas() {
 }  // namespace gputools
 }  // namespace perftools
 
-REGISTER_MODULE_INITIALIZER(register_clblas,
-                            { perftools::gputools::initialize_clblas(); });
+// REGISTER_MODULE_INITIALIZER(register_clblas,
+//                             { perftools::gputools::initialize_clblas(); });

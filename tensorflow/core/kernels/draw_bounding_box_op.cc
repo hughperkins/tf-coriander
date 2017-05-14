@@ -151,7 +151,7 @@ class DrawBoundingBoxesOp : public OpKernel {
         if (min_box_row >= 0) {
           for (int64 j = min_box_col_clamp; j <= max_box_col_clamp; ++j)
             for (int64 c = 0; c < depth; c++) {
-              canvas(b, min_box_row, j, c) =
+              canvas((Eigen::DenseIndex)b, (Eigen::DenseIndex)min_box_row, (Eigen::DenseIndex)j, (Eigen::DenseIndex)c) =
                   static_cast<T>(color_table[color_index][c]);
             }
         }
@@ -159,7 +159,7 @@ class DrawBoundingBoxesOp : public OpKernel {
         if (max_box_row < height) {
           for (int64 j = min_box_col_clamp; j <= max_box_col_clamp; ++j)
             for (int64 c = 0; c < depth; c++) {
-              canvas(b, max_box_row, j, c) =
+              canvas((Eigen::DenseIndex)b, (Eigen::DenseIndex)max_box_row, (Eigen::DenseIndex)j, (Eigen::DenseIndex)c) =
                   static_cast<T>(color_table[color_index][c]);
             }
         }
@@ -167,7 +167,7 @@ class DrawBoundingBoxesOp : public OpKernel {
         if (min_box_col >= 0) {
           for (int64 i = min_box_row_clamp; i <= max_box_row_clamp; ++i)
             for (int64 c = 0; c < depth; c++) {
-              canvas(b, i, min_box_col, c) =
+              canvas((Eigen::DenseIndex)b, (Eigen::DenseIndex)i, (Eigen::DenseIndex)min_box_col, (Eigen::DenseIndex)c) =
                   static_cast<T>(color_table[color_index][c]);
             }
         }
@@ -175,7 +175,7 @@ class DrawBoundingBoxesOp : public OpKernel {
         if (max_box_col < width) {
           for (int64 i = min_box_row_clamp; i <= max_box_row_clamp; ++i)
             for (int64 c = 0; c < depth; c++) {
-              canvas(b, i, max_box_col, c) =
+              canvas((Eigen::DenseIndex)b, (Eigen::DenseIndex)i, (Eigen::DenseIndex)max_box_col, (Eigen::DenseIndex)c) =
                   static_cast<T>(color_table[color_index][c]);
             }
         }

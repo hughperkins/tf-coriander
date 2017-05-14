@@ -1,3 +1,5 @@
+load("//tensorflow/core:platform/default/build_config.bzl", "tf_add_so_suffix")
+
 cc_library(
     name = 'cocl',
     copts = [
@@ -6,16 +8,16 @@ cc_library(
       '-Icuda-on-cl/src/EasyCL/thirdparty/clew/include',
     ],
     data = [
-        ":cuda-on-cl/build/libclew.so",
-        ":cuda-on-cl/build/libeasycl.so",
-        ":cuda-on-cl/build/libcocl.so",
-        ":cuda-on-cl/build/libclblast.so",
+        tf_add_so_suffix(":cuda-on-cl/build/libclew"),
+        tf_add_so_suffix(":cuda-on-cl/build/libeasycl"),
+        tf_add_so_suffix(":cuda-on-cl/build/libcocl"),
+        tf_add_so_suffix(":cuda-on-cl/build/libclblast"),
     ],
     srcs = [
-        'cuda-on-cl/build/libclew.so',
-        'cuda-on-cl/build/libeasycl.so',
-        'cuda-on-cl/build/libcocl.so',
-        'cuda-on-cl/build/libclblast.so',
+        tf_add_so_suffix('cuda-on-cl/build/libclew'),
+        tf_add_so_suffix('cuda-on-cl/build/libeasycl'),
+        tf_add_so_suffix('cuda-on-cl/build/libcocl'),
+        tf_add_so_suffix('cuda-on-cl/build/libclblast'),
     ],
     hdrs = glob([
         'cuda-on-cl/src/EasyCL/thirdparty/clew/include/clew.h',

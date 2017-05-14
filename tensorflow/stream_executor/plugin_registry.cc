@@ -242,3 +242,21 @@ EMIT_PLUGIN_SPECIALIZATIONS(RngFactory, rng, "RNG");
 
 }  // namespace gputools
 }  // namespace perftools
+
+// put initializers here for now, so they run in a defined order, and after the mutex was created...
+// you can get the full list by doing something like `nm env/lib/python3.6/site-packages/tensorflow/python/_pywrap_tensorflow.so | grep google_init_module
+// (or theres probably a way that doesnt require compilation first I would think :-) )
+namespace perftools {
+  namespace gputools {
+    void initialize_clblas();
+    void InitializeClPlatform();
+    void initialize_cl_gpu_executor();
+  }
+}
+#include "tensorflow/stream_executor/lib/initialize.h"
+REGISTER_MODULE_INITIALIZER(register_clblas,
+                            { perftools::gputools::initialize_clblas(); });
+REGISTER_MODULE_INITIALIZER(cl_platform,
+                            perftools::gputools::InitializeClPlatform());
+REGISTER_MODULE_INITIALIZER(
+    cl_gpu_executor, {perftools::gputools::initialize_cl_gpu_executor();});

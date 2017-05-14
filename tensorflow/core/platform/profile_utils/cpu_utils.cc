@@ -19,7 +19,7 @@ limitations under the License.
 #include <mutex>
 
 #include "tensorflow/core/platform/logging.h"
-#include "tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.h"
+//#include "tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.h"
 
 namespace tensorflow {
 namespace profile_utils {

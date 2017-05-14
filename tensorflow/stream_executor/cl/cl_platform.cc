@@ -162,7 +162,7 @@ void ClPlatform::UnregisterTraceListener(TraceListener* listener) {
 
 } // namespace cl
 
-static void InitializeClPlatform() {
+void InitializeClPlatform() {
     std::unique_ptr<cl::ClPlatform> platform(new cl::ClPlatform);
     SE_CHECK_OK(MultiPlatformManager::RegisterPlatform(std::move(platform)));
 }
@@ -170,5 +170,5 @@ static void InitializeClPlatform() {
 } // namespace gputools
 } // namespace perftools
 
-REGISTER_MODULE_INITIALIZER(cl_platform,
-                            perftools::gputools::InitializeClPlatform());
+// REGISTER_MODULE_INITIALIZER(cl_platform,
+//                             perftools::gputools::InitializeClPlatform());

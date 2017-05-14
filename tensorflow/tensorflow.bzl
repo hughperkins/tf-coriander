@@ -147,7 +147,7 @@ def if_not_windows(a):
   })  
 
 def tf_copts():
-  return (["-exceptions", "-DEIGEN_AVOID_STL_ARRAY"] +
+  return (["-fexceptions", "-DEIGEN_AVOID_STL_ARRAY"] +
           if_cuda(["-DGOOGLE_CUDA=1"]) +
           if_android_arm(["-mfpu=neon"]) +
           select({"//tensorflow:android": [

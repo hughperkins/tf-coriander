@@ -105,15 +105,15 @@ class ResizeAreaOp : public OpKernel {
                            : (j + 1 > in_x1 ? in_x1 - j : 1.0);
               for (int64 c = 0; c < st.channels; ++c) {
 #define BOUND(val, limit) std::min(((limit)-1ll), (std::max(0ll, (val))))
-                sum_data(c) += float(input_data(b, BOUND(i, st.in_height),
-                                                BOUND(j, st.in_width), c)) *
+                sum_data(c) += float(input_data((Eigen::DenseIndex)b, (Eigen::DenseIndex)BOUND(i, st.in_height),
+                                                (Eigen::DenseIndex)BOUND(j, st.in_width), (Eigen::DenseIndex)c)) *
                                scale_y * scale_x * scale;
 #undef BOUND
               }
             }
           }
           for (int64 c = 0; c < st.channels; ++c) {
-            output_data(b, y, x, c) = sum_data(c);
+            output_data((Eigen::DenseIndex)b, (Eigen::DenseIndex)y, (Eigen::DenseIndex)x, (Eigen::DenseIndex)c) = sum_data(c);
           }
         }
       }

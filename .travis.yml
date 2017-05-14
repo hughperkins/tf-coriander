@@ -1,0 +1,81 @@
+language: objective-c
+matrix:
+  include:
+    - env: OSX=10.11
+      os: osx
+      osx_image: osx10.11
+      rvm: system
+
+branches:
+  only:
+    - travis
+
+before_install:
+  - export BASEDIR=$(pwd)
+  - echo BASEDIR ${BASEDIR}
+  - export BUILD_START=`python ${BASEDIR}/travis/seconds.py`
+  - echo BUILD_START ${BUILD_START}
+  - if [ -f ".git/shallow" ]; then travis_retry git fetch --unshallow; fi
+  - export GIT_COMMIT=`git rev-parse --short HEAD`
+  - echo GIT_COMMIT ${GIT_COMMIT}
+  - git submodule update --init --recursive
+  - pip install --user awscli
+  - bash ${BASEDIR}/travis/download.sh bazelinstall /private/var/tmp/_bazel_travis
+  - bash ${BASEDIR}/travis/download.sh cocl2 ${BASEDIR}/third_party/cuda-on-cl
+  - mkdir soft
+  - cd soft
+  - echo ========= swig ============
+  - bash ${BASEDIR}/travis/build-swig.sh
+  - ls -lh /usr/local/bin/swig
+  - echo =============== bazel =====================
+  - bash ${BASEDIR}/travis/install-bazel.sh
+  - export PATH=$HOME/bin:$PATH
+  - echo ====== python ==============
+  - cd ${BASEDIR}
+  - bash ${BASEDIR}/travis/install-python.sh
+  - echo ================ tensorflow configure ==================
+  - cd ${BASEDIR}
+  # - bash ${BASEDIR}/travis/download.sh bazelinstall /private/var/tmp/_bazel_travis
+  - START=`python ${BASEDIR}/travis/seconds.py`
+  - bash ${BASEDIR}/travis/run-configure.sh
+  - END=`python ${BASEDIR}/travis/seconds.py`
+  - DIFF=`echo "$END - $START" | bc -l`
+  - echo DIFF $DIFF
+  - if [ `echo "${DIFF} > 60" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh bazelinstall /private/var/tmp/_bazel_travis; } fi
+  - echo =========== clang ================================
+  - cd ${BASEDIR}
+  - CLANG_VERSION=3.8.0
+  - time wget http://llvm.org/releases/${CLANG_VERSION}/clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin.tar.xz
+  - time tar -xf clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin.tar.xz
+  - ls
+  - export CLANG_HOME=${PWD}/clang+llvm-${CLANG_VERSION}-x86_64-apple-darwin
+  - cd ${BASEDIR}
+  - echo ============= cuda-on-cl ================
+  - cd ${BASEDIR}/third_party/cuda-on-cl
+  - mkdir -p build
+  - cd build
+  - echo CLANG_HOME ${CLANG_HOME}
+  - cmake .. -DCLANG_HOME=${CLANG_HOME} -DBUILD_TESTS=ON -DTESTS_DUMP_CL=ON
+  - START=`python ${BASEDIR}/travis/seconds.py`
+  - time make -j 8
+  - END=`python ${BASEDIR}/travis/seconds.py`
+  - DIFF=`echo "$END - $START" | bc -l`
+  - echo DIFF $DIFF
+  - make install
+  - if [ `echo "${DIFF} > 60" | bc -l` -eq 1 ]; then { bash ${BASEDIR}/travis/upload.sh cocl2 ${BASEDIR}/third_party/cuda-on-cl; } fi
+  - echo ========= tensorflow install =================
+  - cd ${BASEDIR}
+  - export PATH=$HOME/bin:$PATH
+  - INTERRUPTED=0
+  - bash travis/run-bazel-step.sh //tensorflow/tools/pip_package:build_pip_package || INTERRUPTED=1
+  - cd ${BASEDIR}
+  - if [ $INTERRUPTED -eq 0 ]; then { bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg; } fi
+  - if [ $INTERRUPTED -eq 0 ]; then { bash ${BASEDIR}/travis/upload.sh tensorflowpkg-${TRAVIS_BUILD_NUMBER}-${GIT_COMMIT} /tmp/tensorflowpkg; } fi
+
+script:
+  - cd ${BASEDIR}
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always

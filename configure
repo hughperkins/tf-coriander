@@ -10,7 +10,9 @@ popd > /dev/null
 
 function bazel_clean_and_fetch() {
   bazel clean --expunge
-  bazel fetch //tensorflow/...
+  # bazel fetch //tensorflow/...
+  # from https://github.com/tensorflow/tensorflow/pull/6225/files
+  bazel fetch $(bazel query "//tensorflow/... -//tensorflow/examples/android/...")
 }
 
 ## Set up python-related environment settings
@@ -118,6 +120,13 @@ while [ "$TF_NEED_CUDA" == "" ]; do
   esac
 done
 
+# set so suffix to .dylib or .so, depending on Mac or not
+echo checking operating system
+OSNAME=`uname -s`
+if [[ $OSNAME == Darwin ]]; then
+  perl -pi -e "s,SO_SUFFIX = \".(so|dylib)\",SO_SUFFIX = \".dylib\",s" tensorflow/core/platform/default/build_config.bzl
+fi
+
 export TF_NEED_CUDA
 if [ "$TF_NEED_CUDA" == "0" ]; then
   echo "Configuration finished"
@@ -147,9 +156,6 @@ while true; do
   GCC_HOST_COMPILER_PATH=""
   # Retry
 done
-
-# Find out where the CUDA toolkit is installed
-OSNAME=`uname -s`
 
 while true; do
   # Configure the Cuda SDK version to use.

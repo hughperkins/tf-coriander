@@ -37,7 +37,8 @@ cc_library(
         "-ldl",
         '-lcocl',
         '-lclblast',
-        '-lOpenCL',
+        '-leasycl',
+        '-lclew',
     ],
     visibility = ["//visibility:public"],
     deps = [

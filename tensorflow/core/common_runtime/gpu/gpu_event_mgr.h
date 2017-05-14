@@ -79,7 +79,7 @@ class EventMgr {
   }
 
   inline void ThenExecute(perftools::gputools::Stream* stream,
-                          std::function<void()> func) {
+                          const std::function<void()> &func) {
     ToFreeVector to_free;
     {
       mutex_lock l(mu_);
@@ -102,7 +102,7 @@ class EventMgr {
     perftools::gputools::Event* event;
     TensorReferenceVector* mem;
     BufRec bufrec;
-    std::function<void()> func;
+    const std::function<void()> &func;
   };
 
   typedef gtl::InlinedVector<InUse, 4> ToFreeVector;
@@ -146,7 +146,7 @@ class EventMgr {
   }
 
   void QueueFunc(perftools::gputools::Stream* stream,
-                 std::function<void()> func) EXCLUSIVE_LOCKS_REQUIRED(mu_) {
+                 const std::function<void()> &func) EXCLUSIVE_LOCKS_REQUIRED(mu_) {
     QueueInUse(stream, {nullptr, nullptr, BufRec(), func});
   }
 

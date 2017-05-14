@@ -14,8 +14,8 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
   # These lines need to be changed when updating Eigen. They are parsed from
   # this file by the cmake and make builds to determine the eigen version and
   # hash.
-  eigen_version = "911c278cedc5"
-  eigen_sha256 = "aa6fd99626aa6c96d2e97a982b1823dbc5d2ebe85264a728921af23e432b665e"
+  eigen_version = "64d85aee32f0"
+  eigen_sha256 = "1a559c0469b413c7f25e26e1166ece3a4859ab080c897dba0b37fbdd84238bb5"
 
   native.new_http_archive(
     name = "eigen_archive",
@@ -201,9 +201,9 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
 
   native.new_http_archive(
     name = "zlib_archive",
-    url = "http://zlib.net/zlib-1.2.8.tar.gz",
-    sha256 = "36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d",
-    strip_prefix = "zlib-1.2.8",
+    url = "http://zlib.net/zlib-1.2.11.tar.gz",
+    sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
+    strip_prefix = "zlib-1.2.11",
     build_file = str(Label("//:zlib.BUILD")),
   )
 

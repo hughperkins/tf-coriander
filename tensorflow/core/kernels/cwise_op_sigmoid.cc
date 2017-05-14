@@ -30,7 +30,7 @@ REGISTER5(SimpleBinaryOp, CPU, "SigmoidGrad", functor::sigmoid_grad, float,
 // #if GOOGLE_CUDA
 // REGISTER3(SimpleBinaryOp, GPU, "SigmoidGrad", functor::sigmoid_grad, float,
 //           Eigen::half, double);
-// REGISTER(SimpleBinaryOp, GPU, "SigmoidGrad", functor::sigmoid_grad, float);
+REGISTER(SimpleBinaryOp, GPU, "SigmoidGrad", functor::sigmoid_grad, float);
 // #endif
 
 }  // namespace tensorflow
