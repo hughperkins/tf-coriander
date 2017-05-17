@@ -56,25 +56,27 @@ def test(dtype, tf_func, py_func):
 
             np.random.seed(123)
             shape = (50000, 1600)
-            for it in range(2):
-                a = np.random.choice(50, shape) / 25
-                b = np.random.choice(50, shape) / 25
-                if 'int' in dtype:
-                    a *= 10
-                    b *= 10 + 1
-                else:
-                    b += 0.01
-                a = a.astype(np_dtype)
-                b = b.astype(np_dtype)
-
-                start = time.time()
+            a = np.random.choice(50, shape) / 25
+            b = np.random.choice(50, shape) / 25
+            if 'int' in dtype:
+                a *= 10
+                b *= 10 + 1
+            else:
+                b += 0.01
+            a = a.astype(np_dtype)
+            b = b.astype(np_dtype)
+            average_over = 10
+            for it in range(1 + average_over):
+                # start = time.time()
                 ar, br, cr = sess.run((tf_a, tf_b, tf_c), {tf_a: a, tf_b: b})
                 probe = ar
                 while isinstance(probe, np.ndarray):
                     probe = probe[0]
                 print(probe)
-                if it == 1:
-                    print('time for', tf_func, 'dtype', dtype, time.time() - start)
+                if it == 0:
+                    start = time.time()
+            time_taken = (time.time() - start) / average_over
+            print('time for', tf_func, 'dtype', dtype, time_taken)
 
             # print('a', ar)
             # print('b', br)

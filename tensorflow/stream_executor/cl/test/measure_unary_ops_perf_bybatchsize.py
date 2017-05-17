@@ -22,7 +22,7 @@ funcs = {
 }
 
 
-def test(tf_func, py_func, dtype, shape0, force_gpu):
+def test(tf_func, py_func, dtype, average_over, shape0, force_gpu):
     print('func', tf_func, dtype)
     np_dtype = eval('np.%s' % dtype)
     tf_dtype = eval('tf.%s' % dtype)
@@ -39,7 +39,7 @@ def test(tf_func, py_func, dtype, shape0, force_gpu):
 
                 np.random.seed(123)
                 shape = (shape0, 1600)
-                for it in range(2):
+                for it in range(1 + average_over):
                     a = np.random.choice(50, shape) / 50
                     if 'sqrt' not in tf_func and 'log' not in tf_func:
                         a -= 0.5
@@ -49,19 +49,23 @@ def test(tf_func, py_func, dtype, shape0, force_gpu):
                         a *= 10
                     a = a.astype(np_dtype)
 
-                    start = time.time()
+                    # start = time.time()
                     ar, cr = sess.run((tf_a, tf_c), {tf_a: a})
                     probe = ar
                     while isinstance(probe, np.ndarray):
                         probe = probe[0]
-                    time_taken = time.time() - start
+                    # time_taken = time.time() - start
                     print(probe)
-                    if it == 1:
-                        print('time for', tf_func, 'dtype', dtype, 'shape0', shape0, time_taken)
-                        mb = shape0 * 1600 * 4 / 1024 / 1024
-                        res = {
-                            'tf_func': tf_func, 'shape0': shape0, 'dtype': dtype, 'time': time_taken,
-                            'is_cuda': test_common.is_cuda(), 'MB': mb}
+                    if it == 0:
+                        start = time.time()
+
+                # if it == 1:
+                time_taken = (time.time() - start) / average_over
+                print('time for', tf_func, 'dtype', dtype, 'shape0', shape0, time_taken)
+                mb = shape0 * 1600 * 4 / 1024 / 1024
+                res = {
+                    'tf_func': tf_func, 'shape0': shape0, 'dtype': dtype, 'time': time_taken,
+                    'is_cuda': test_common.is_cuda(), 'MB': mb}
 
                 # print('original ', ar)
                 c_py = eval(py_func)
@@ -73,7 +77,7 @@ def test(tf_func, py_func, dtype, shape0, force_gpu):
     return res
 
 
-def run(force_gpu, max_size, func_list, dtype_list):
+def run(force_gpu, max_size, func_list, dtype_list, average_over):
     results = []
     for dtype in dtype_list:
         for tf_func in func_list:
@@ -89,7 +93,7 @@ def run(force_gpu, max_size, func_list, dtype_list):
                     shape0 = tens * units
                     if shape0 > max_size:
                         break
-                    res = test(tf_func=tf_func, py_func=py_func, dtype=dtype, shape0=shape0, force_gpu=force_gpu)
+                    res = test(tf_func=tf_func, average_over=average_over, py_func=py_func, dtype=dtype, shape0=shape0, force_gpu=force_gpu)
                     results.append(res)
                 tens *= 10
     print(json.dumps(results, indent=2))
@@ -101,6 +105,7 @@ if __name__ == '__main__':
     parser.add_argument('--no-force-gpu', action='store_true')
     parser.add_argument('--dtype-list', default='float32', help='eg: uint8,int32,float32')
     parser.add_argument('--func-list', default='tanh')
+    parser.add_argument('--average-over', default=1, type=int, help='number of runs to average over')
     parser.add_argument('--max-size', type=int, default=100000, help='should be power of 10')
     args = parser.parse_args()
     args_dict = args.__dict__
