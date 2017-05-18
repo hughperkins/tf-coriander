@@ -42,10 +42,10 @@ limitations under the License.
 #include "tensorflow/core/util/tensor_format.h"
 #include "tensorflow/core/util/use_cudnn.h"
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #include "tensorflow/core/kernels/conv_ops_gpu.h"
 #include "tensorflow/core/platform/stream_executor.h"
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 namespace tensorflow {
 
@@ -313,7 +313,7 @@ TF_CALL_float(REGISTER_CPU);
 // To be used inside depthwise_conv_op.cc.
 template class LaunchConv2DOp<CPUDevice, float>;
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 int64 GetCudnnWorkspaceLimit(const string& envvar_in_mb,
                              int64 default_value_in_bytes) {
   const char* workspace_limit_in_mb_str = getenv(envvar_in_mb.c_str());
@@ -622,14 +622,14 @@ namespace functor {
   extern template struct PadInput<GPUDevice, T, int, 4>
 
 DECLARE_GPU_SPEC(float);
-DECLARE_GPU_SPEC(Eigen::half);
+// DECLARE_GPU_SPEC(Eigen::half);
 #undef DECLARE_GPU_SPEC
 }  // namespace functor
 
 // Registration of the GPU implementations.
-REGISTER_KERNEL_BUILDER(
-    Name("Conv2D").Device(DEVICE_GPU).TypeConstraint<Eigen::half>("T"),
-    Conv2DOp<GPUDevice, Eigen::half>);
+// REGISTER_KERNEL_BUILDER(
+//     Name("Conv2D").Device(DEVICE_GPU).TypeConstraint<Eigen::half>("T"),
+//     Conv2DOp<GPUDevice, Eigen::half>);
 REGISTER_KERNEL_BUILDER(
     Name("Conv2D").Device(DEVICE_GPU).TypeConstraint<float>("T"),
     Conv2DOp<GPUDevice, float>);
@@ -637,6 +637,6 @@ REGISTER_KERNEL_BUILDER(
 // To be used inside depthwise_conv_op.cc.
 template class LaunchConv2DOp<GPUDevice, float>;
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow
