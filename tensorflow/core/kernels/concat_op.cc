@@ -32,9 +32,9 @@ limitations under the License.
 namespace tensorflow {
 
 typedef Eigen::ThreadPoolDevice CPUDevice;
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 typedef Eigen::GpuDevice GPUDevice;
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 // --------------------------------------------------------------------------
 template <typename Device, typename T>
@@ -121,12 +121,12 @@ class ConcatOp : public OpKernel {
     if (output->NumElements() > 0) {
       int64 output_dim1 = output->NumElements() / inputs_flat_dim0;
       auto output_flat = output->shaped<T, 2>({inputs_flat_dim0, output_dim1});
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
       if (std::is_same<Device, GPUDevice>::value) {
         ConcatGPU<T>(c, inputs_flat, output, &output_flat);
         return;
       }
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
       ConcatCPU<T>(c->device(), inputs_flat, &output_flat);
     }
   }
@@ -149,7 +149,7 @@ REGISTER_CONCAT(bfloat16);
 
 #undef REGISTER_CONCAT
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define REGISTER_GPU(type)                               \
   REGISTER_KERNEL_BUILDER(Name("Concat")                 \
@@ -159,7 +159,7 @@ REGISTER_CONCAT(bfloat16);
                           ConcatOp<GPUDevice, type>)
 
 TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPU);
-REGISTER_GPU(bfloat16);
+// REGISTER_GPU(bfloat16);
 #undef REGISTER_GPU
 
 // A special GPU kernel for int32.
@@ -173,7 +173,7 @@ REGISTER_KERNEL_BUILDER(Name("Concat")
                             .HostMemory("output"),
                         ConcatOp<CPUDevice, int32>);
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 class ConcatOffsetOp : public OpKernel {
  public:

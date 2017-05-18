@@ -24,7 +24,7 @@ limitations under the License.
 #include "tensorflow/core/framework/tensor_types.h"
 #include "tensorflow/core/framework/types.h"
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #include "tensorflow/core/kernels/cuda_device_array.h"
 
@@ -113,10 +113,10 @@ void ConcatGPU(
       Tensor* output, typename TTypes<T, 2>::Tensor* output_flat);
 
 TF_CALL_GPU_NUMBER_TYPES(REGISTER);
-REGISTER(bfloat16);
+// REGISTER(bfloat16);
 
 #undef REGISTER
 
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

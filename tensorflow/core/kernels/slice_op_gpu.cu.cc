@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -36,12 +36,12 @@ typedef Eigen::GpuDevice GPUDevice;
   template struct functor::Slice<GPUDevice, T, 6>;
 
 TF_CALL_GPU_NUMBER_TYPES(DEFINE_GPU_KERNELS);
-TF_CALL_complex64(DEFINE_GPU_KERNELS);
-TF_CALL_complex128(DEFINE_GPU_KERNELS);
+// TF_CALL_complex64(DEFINE_GPU_KERNELS);
+// TF_CALL_complex128(DEFINE_GPU_KERNELS);
 DEFINE_GPU_KERNELS(int32);
 
 #undef DEFINE_GPU_KERNELS
 
 }  // end namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

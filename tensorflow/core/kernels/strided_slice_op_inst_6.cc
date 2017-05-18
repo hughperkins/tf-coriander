@@ -14,9 +14,9 @@ limitations under the License.
 ==============================================================================*/
 
 #define EIGEN_USE_THREADS
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define EIGEN_USE_GPU
-#endif
+// #endif
 
 #define STRIDED_SLICE_INSTANTIATE_DIM 6
 #include "tensorflow/core/kernels/strided_slice_op_impl.h"
