@@ -31,9 +31,9 @@ limitations under the License.
 namespace tensorflow {
 
 typedef Eigen::ThreadPoolDevice CPUDevice;
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 typedef Eigen::GpuDevice GPUDevice;
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 // --------------------------------------------------------------------------
 template <typename Device, typename T>
@@ -109,12 +109,12 @@ class PackOp : public OpKernel {
         inputs_flat.emplace_back(new typename TTypes<T, 2>::ConstMatrix(
             values[i].shaped<T, 2>({before_dim, after_dim})));
       }
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
       if (std::is_same<Device, GPUDevice>::value) {
         ConcatGPU<T>(c, inputs_flat, output, &output_flat);
         return;
       }
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
       ConcatCPU<T>(c->device(), inputs_flat, &output_flat);
     }
   }
@@ -134,7 +134,7 @@ TF_CALL_bfloat16(REGISTER_PACK);
 
 #undef REGISTER_PACK
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define REGISTER_GPU(type)                                       \
   REGISTER_KERNEL_BUILDER(                                       \
@@ -154,6 +154,6 @@ REGISTER_KERNEL_BUILDER(Name("Pack")
                             .TypeConstraint<int32>("T"),
                         PackOp<CPUDevice, int32>);
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow
