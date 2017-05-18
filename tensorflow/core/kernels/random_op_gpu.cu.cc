@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -144,34 +144,34 @@ void FillPhiloxRandom<GPUDevice, Distribution>::operator()(
 // Explicit instantiation of the GPU distributions functors
 // clang-format off
 // NVCC cannot handle ">>" properly
-template struct FillPhiloxRandom<
-    GPUDevice, random::UniformDistribution<random::PhiloxRandom, Eigen::half> >;
+// template struct FillPhiloxRandom<
+//     GPUDevice, random::UniformDistribution<random::PhiloxRandom, Eigen::half> >;
 template struct FillPhiloxRandom<
     GPUDevice, random::UniformDistribution<random::PhiloxRandom, float> >;
-template struct FillPhiloxRandom<
-    GPUDevice, random::UniformDistribution<random::PhiloxRandom, double> >;
-template struct FillPhiloxRandom<
-    GPUDevice, random::UniformDistribution<random::PhiloxRandom, int32> >;
-template struct FillPhiloxRandom<
-    GPUDevice, random::UniformDistribution<random::PhiloxRandom, int64> >;
-template struct FillPhiloxRandom<
-    GPUDevice, random::NormalDistribution<random::PhiloxRandom, Eigen::half> >;
+// template struct FillPhiloxRandom<
+//     GPUDevice, random::UniformDistribution<random::PhiloxRandom, double> >;
+// template struct FillPhiloxRandom<
+//     GPUDevice, random::UniformDistribution<random::PhiloxRandom, int32> >;
+// template struct FillPhiloxRandom<
+//     GPUDevice, random::UniformDistribution<random::PhiloxRandom, int64> >;
+// template struct FillPhiloxRandom<
+//     GPUDevice, random::NormalDistribution<random::PhiloxRandom, Eigen::half> >;
 template struct FillPhiloxRandom<
     GPUDevice, random::NormalDistribution<random::PhiloxRandom, float> >;
-template struct FillPhiloxRandom<
-    GPUDevice, random::NormalDistribution<random::PhiloxRandom, double> >;
-template struct FillPhiloxRandom<
-    GPUDevice, random::TruncatedNormalDistribution<
-        random::SingleSampleAdapter<random::PhiloxRandom>, Eigen::half> >;
+// template struct FillPhiloxRandom<
+//     GPUDevice, random::NormalDistribution<random::PhiloxRandom, double> >;
+// template struct FillPhiloxRandom<
+//     GPUDevice, random::TruncatedNormalDistribution<
+//         random::SingleSampleAdapter<random::PhiloxRandom>, Eigen::half> >;
 template struct FillPhiloxRandom<
     GPUDevice, random::TruncatedNormalDistribution<
                    random::SingleSampleAdapter<random::PhiloxRandom>, float> >;
-template struct FillPhiloxRandom<
-    GPUDevice, random::TruncatedNormalDistribution<
-                   random::SingleSampleAdapter<random::PhiloxRandom>, double> >;
+// template struct FillPhiloxRandom<
+//     GPUDevice, random::TruncatedNormalDistribution<
+//                    random::SingleSampleAdapter<random::PhiloxRandom>, double> >;
 // clang-format on
 
 }  // namespace functor
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

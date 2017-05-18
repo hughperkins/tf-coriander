@@ -513,7 +513,7 @@ TF_CALL_int64(REGISTER_INT);
 #undef REGISTER
 #undef REGISTER_INT
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define REGISTER(TYPE)                                              \
   REGISTER_KERNEL_BUILDER(                                          \
@@ -553,15 +553,15 @@ TF_CALL_int64(REGISTER_INT);
                               .TypeConstraint<IntType>("Tout"), \
                           RandomUniformIntOp<GPUDevice, IntType>);
 
-TF_CALL_half(REGISTER);
+// TF_CALL_half(REGISTER);
 TF_CALL_float(REGISTER);
-TF_CALL_double(REGISTER);
-TF_CALL_int32(REGISTER_INT);
-TF_CALL_int64(REGISTER_INT);
+// TF_CALL_double(REGISTER);
+// TF_CALL_int32(REGISTER_INT);
+// TF_CALL_int64(REGISTER_INT);
 
 #undef REGISTER
 #undef REGISTER_INT
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // end namespace tensorflow
