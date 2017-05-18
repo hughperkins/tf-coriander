@@ -56,7 +56,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 | [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| missing Adam for matrices, missing random number generator | 
 | [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)|  missing random number generator, and gradients for Sigmoid |  
 
-## Test results, master, as of May 17, 2017
+## Test results, git, as of May 17, 2017
 
 | test | Mac Sierra, using Radeon Pro 450 GPU |
 |----- |-------|
