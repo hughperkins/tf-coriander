@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -43,10 +43,10 @@ struct XentFunctor<GPUDevice, T> {
 }  // end namespace functor
 
 // Instantiate the GPU implementation for half, float and double.
-template struct functor::XentFunctor<GPUDevice, Eigen::half>;
+// template struct functor::XentFunctor<GPUDevice, Eigen::half>;
 template struct functor::XentFunctor<GPUDevice, float>;
-template struct functor::XentFunctor<GPUDevice, double>;
+// template struct functor::XentFunctor<GPUDevice, double>;
 
 }  // end namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

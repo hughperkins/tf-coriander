@@ -29,9 +29,9 @@ limitations under the License.
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/util/padding.h"
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #include "tensorflow/core/kernels/cudnn_pooling_gpu.h"
-#endif
+// #endif
 namespace tensorflow {
 
 typedef Eigen::ThreadPoolDevice CPUDevice;
@@ -435,7 +435,7 @@ REGISTER_KERNEL_BUILDER(Name("AvgPool3DGrad")
                             .HostMemory("orig_input_shape"),
                         AvgPooling3dGradOp<CPUDevice, float>);
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 template <typename T>
 struct LaunchPoolingOp<GPUDevice, T, AVG> {
@@ -512,6 +512,6 @@ REGISTER_KERNEL_BUILDER(Name("AvgPool3DGrad")
                             .HostMemory("orig_input_shape"),
                         AvgPooling3dGradOp<GPUDevice, float>);
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow

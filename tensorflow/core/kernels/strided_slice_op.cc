@@ -17,9 +17,9 @@ limitations under the License.
 
 #define EIGEN_USE_THREADS
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define EIGEN_USE_GPU
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 #include "tensorflow/core/kernels/strided_slice_op.h"
 #include "tensorflow/core/kernels/dense_update_ops.h"
@@ -358,7 +358,7 @@ REGISTER_STRIDED_SLICE(bfloat16);
 
 #undef REGISTER_STRIDED_SLICE
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define REGISTER_GPU(type)                                     \
   REGISTER_KERNEL_BUILDER(Name("StridedSlice")                 \
@@ -397,5 +397,5 @@ REGISTER_KERNEL_BUILDER(Name("StridedSlice")
 
 #undef REGISTER_GPU
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 }  // namespace tensorflow

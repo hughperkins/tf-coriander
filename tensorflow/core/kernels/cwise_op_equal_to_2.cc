@@ -24,9 +24,10 @@ namespace tensorflow {
 
 REGISTER6(BinaryOp, CPU, "Equal", functor::equal_to, int32, int64, complex64,
           complex128, string, bool);
-#if GOOGLE_CUDA
-REGISTER4(BinaryOp, GPU, "Equal", functor::equal_to, int8, int16, int64, bool);
-#endif  // GOOGLE_CUDA
+// #if GOOGLE_CUDA
+// REGISTER4(BinaryOp, GPU, "Equal", functor::equal_to, int8, int16, int64, bool);
+REGISTER(BinaryOp, GPU, "Equal", functor::equal_to, int64);
+// #endif  // GOOGLE_CUDA
 
 #endif  // !defined(__ANDROID_TYPES_SLIM__)
 

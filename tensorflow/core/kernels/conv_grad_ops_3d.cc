@@ -31,10 +31,10 @@ limitations under the License.
 #include "tensorflow/core/util/padding.h"
 #include "tensorflow/core/util/tensor_format.h"
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #include "tensorflow/core/platform/stream_executor.h"
 using perftools::gputools::dnn::DimIndex;
-#endif
+// #endif
 
 namespace tensorflow {
 
@@ -346,7 +346,7 @@ TF_CALL_double(REGISTER_CPU_KERNEL);
 #undef REGISTER_CPU_KERNEL
 
 // GPU definitions of both ops.
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 // This ensures that the custom implementation is used instead of the default
 // Eigen one (which is used for CPU).
@@ -808,6 +808,6 @@ REGISTER_KERNEL_BUILDER(Name("Conv3DBackpropFilterV2")
                             .TypeConstraint<float>("T")
                             .HostMemory("filter_sizes"),
                         Conv3DBackpropFilterOp<GPUDevice, float>);
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow
