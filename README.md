@@ -28,9 +28,9 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 ### Things that arent implemented
 
 - need a random-number generator implementation
-  - ideally this would be an implementation of cuRNG, in [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl), but either way, it's not implemented yet
+  - ideally this would be an implementation of cuRNG, in [Coriander](https://github.com/hughperkins/Coriander), but either way, it's not implemented yet
   - should probalby be sufficient to generate random numbers on the cpu, then copy them to gpu, eg see the analysis at http://stackoverflow.com/questions/9912143/how-to-get-a-random-number-in-opencl/16130111#16130111
-- need to activate cudnn within tensorflow-cl. The hard bit is mostly done, ie implementing the convolutions inside [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl), but need to 'switch it on' here
+- need to activate cudnn within tensorflow-cl. The hard bit is mostly done, ie implementing the convolutions inside [Coriander](https://github.com/hughperkins/Coriander), but need to 'switch it on' here
 
 ## Test results, on v0.14.0 wheel
 
@@ -133,7 +133,7 @@ py.test -v
 ## Design/architecture
 
 - tensorflow code stays 100% [NVIDIA® CUDA™](https://www.nvidia.com/object/cuda_home_new.html)
-- [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) compiles the CUDA code into OpenCL
+- [Coriander](https://github.com/hughperkins/Coriander) compiles the CUDA code into OpenCL
 - Cedric Nugteren's [CLBlast](https://github.com/CNugteren/CLBlast) provides BLAS (matrix multiplications)
 
 ## Related projects
@@ -144,7 +144,7 @@ py.test -v
 
 ### OpenCL middleware
 - [CLBlast](https://github.com/CNugteren/CLBlast) BLAS for OpenCL
-- [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl)  Compile CUDA apps for OpenCL
+- [Coriander](https://github.com/hughperkins/coriander)  Compile NVIDIA® CUDA™ apps for OpenCL 1.2
 - [EasyCL](https://github.com/hughperkins/EasyCL)   Handles running kernels, passing in arguments etc, on OpenCL
 
 ## News
