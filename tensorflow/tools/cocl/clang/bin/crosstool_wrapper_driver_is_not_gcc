@@ -16,7 +16,7 @@
 
 """Crosstool wrapper for compiling CUDA programs into OpenCL, using
 
-    https://github.com/hughperkins/cuda-on-cl
+    https://github.com/hughperkins/coriander
 
 SYNOPSIS:
     crosstool_wrapper_is_not_gcc [options passed in by cc_library()

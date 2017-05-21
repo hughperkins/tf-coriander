@@ -52,7 +52,7 @@ try:
     # print('resource_loader.get_path_to_datafile(name)', resource_loader.get_path_to_datafile('libcocl.so'))
     # tf_dir = os.path.dirname(os.path.dirname(resource_loader.get_path_to_datafile('libcocl.so')))
     # print('tf_dir', tf_dir)
-    # cocl_dir = join(tf_dir, 'third_party', 'cuda-on-cl')
+    # cocl_dir = join(tf_dir, 'third_party', 'coriander')
     # print('cocl_dir', cocl_dir)
 
     # def load_so(soname):
@@ -74,7 +74,7 @@ try:
     # print('resource_loader.get_path_to_datafile(name)', resource_loader.get_path_to_datafile('libcocl.so'))
     # tf_dir = os.path.dirname(os.path.dirname(resource_loader.get_path_to_datafile('libcocl.so')))
     # print('tf_dir', tf_dir)
-    # cocl_dir = join(tf_dir, 'third_party', 'cuda-on-cl')
+    # cocl_dir = join(tf_dir, 'third_party', 'coriander')
     # print('cocl_dir', cocl_dir)
     # clewpath = join(cocl_dir, 'libclew.so')
     # print('clewpath', clewpath)
