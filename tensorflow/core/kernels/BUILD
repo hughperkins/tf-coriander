@@ -98,8 +98,8 @@ tf_kernel_library(
         "concat_lib_cpu.h",
     ],
     #copts = [
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL',
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
+    #    '-Ithird_party/coriander/src/EasyCL',
+    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
     #],
     gpu_srcs = [
         "concat_lib_gpu_impl.cu.cc",
@@ -310,8 +310,8 @@ tf_kernel_library(
         "split_lib.h",
     ],
     #copts = [
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL',
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
+    #    '-Ithird_party/coriander/src/EasyCL',
+    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
     #],
     deps = [
         ":cuda_device_array",
@@ -464,12 +464,12 @@ tf_kernel_libraries(
         "where_op",
     ],
     copts = [
-        # '-Ithird_party/cuda-on-cl/include/cocl',
-        '-Ithird_party/cuda-on-cl/src/EasyCL',
-        '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
+        # '-Ithird_party/coriander/include/cocl',
+        '-Ithird_party/coriander/src/EasyCL',
+        '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
     ],
     #copts = [
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include'
+    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include'
     #],
     #copts = [
     #    '-Iexternal/protobuf/src',  # cant build constantop without this
@@ -725,9 +725,9 @@ tf_kernel_library(
     prefix = "scatter_functor",
     visibility = [":friends"],
     #copts = [
-    #    '-Ithird_party/cuda-on-cl/include',
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL',
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
+    #    '-Ithird_party/coriander/include',
+    #    '-Ithird_party/coriander/src/EasyCL',
+    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
     #],
     deps = [
         ":bounds_check",
@@ -1077,8 +1077,8 @@ tf_kernel_libraries(
         "sample_distorted_bounding_box_op",
     ],
     #copts = [
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL',
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
+    #    '-Ithird_party/coriander/src/EasyCL',
+    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
     #],
     deps = [
         ":bounds_check",
@@ -1625,8 +1625,8 @@ tf_kernel_libraries(
         "xent_op",
     ],
     #copts = [
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL',
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
+    #    '-Ithird_party/coriander/src/EasyCL',
+    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
     #],
     deps = [
         #'//third_party:cocl',
@@ -1803,8 +1803,8 @@ tf_kernel_library(
         "spacetobatch_functor_gpu.cu.cc",
     ],
     #copts = [
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL',
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
+    #    '-Ithird_party/coriander/src/EasyCL',
+    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
     #],
     visibility = ["//visibility:private"],
     deps = [
@@ -1849,8 +1849,8 @@ tf_kernel_library(
         "spacetodepth_op_gpu.cu.cc",
     ],
     #copts = [
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL',
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
+    #    '-Ithird_party/coriander/src/EasyCL',
+    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
     #],
     visibility = ["//visibility:private"],
     deps = [
@@ -2041,8 +2041,8 @@ tf_kernel_libraries(
         "variable_ops",
     ],
 #    copts = [
- #       '-Ithird_party/cuda-on-cl/src/EasyCL',
-  #      '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
+ #       '-Ithird_party/coriander/src/EasyCL',
+  #      '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
    # ],
     deps = [
         ":assign_op",
@@ -2095,8 +2095,8 @@ tf_kernel_library(
     name = "training_ops",
     prefix = "training_ops",
     #copts = [
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL',
-    #    '-Ithird_party/cuda-on-cl/src/EasyCL/thirdparty/clew/include',
+    #    '-Ithird_party/coriander/src/EasyCL',
+    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
     #],
     deps = [
         ":bounds_check",

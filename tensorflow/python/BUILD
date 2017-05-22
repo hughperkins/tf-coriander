@@ -1813,8 +1813,8 @@ tf_py_wrap_cc(
         "util/py_checkpoint_reader.i",
     ],
     linkopts = select({
-        "//tensorflow:darwin": ['-Wl,-rpath,@loader_path/../third_party/cuda-on-cl'],
-        "//conditions:default": ['-Wl,-rpath,$${ORIGIN}/../third_party/cuda-on-cl'],
+        "//tensorflow:darwin": ['-Wl,-rpath,@loader_path/../third_party/coriander'],
+        "//conditions:default": ['-Wl,-rpath,$${ORIGIN}/../third_party/coriander'],
     }),
     deps = [
         ":cpp_shape_inference",

@@ -29,9 +29,9 @@ cc_library(
         "platform/**/*.h",
     ]),
     copts = [
-        '-Ithird_party/cuda-on-cl/include/cocl',
-        '-Ithird_party/cuda-on-cl/src/EasyCL',
-        '-Ithird_party/cuda-on-cl/src/EasyCL/third_party/clew/include',
+        '-Ithird_party/coriander/include/cocl',
+        '-Ithird_party/coriander/src/EasyCL',
+        '-Ithird_party/coriander/src/EasyCL/third_party/clew/include',
     ],
     linkopts = [
         "-ldl",

@@ -91,14 +91,14 @@ function main() {
     echo Linux platform
     SO_SUFFIX=so
   } fi
-  mkdir -p ${TMPDIR}/tensorflow/third_party/cuda-on-cl
-  cp third_party/cuda-on-cl/build/libcocl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
-  cp third_party/cuda-on-cl/build/libeasycl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
-  cp third_party/cuda-on-cl/build/libclew.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
-  cp third_party/cuda-on-cl/build/libclblast.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/cuda-on-cl/ || true
-  ls ${TMPDIR}/tensorflow/third_party/cuda-on-cl
+  mkdir -p ${TMPDIR}/tensorflow/third_party/coriander
+  cp third_party/coriander/build/libcocl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/coriander/ || true
+  cp third_party/coriander/build/libeasycl.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/coriander/ || true
+  cp third_party/coriander/build/libclew.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/coriander/ || true
+  cp third_party/coriander/build/libclblast.${SO_SUFFIX} ${TMPDIR}/tensorflow/third_party/coriander/ || true
+  ls ${TMPDIR}/tensorflow/third_party/coriander
   touch ${TMPDIR}/tensorflow/third_party/__init__.py
-  touch ${TMPDIR}/tensorflow/third_party/cuda-on-cl/__init__.py
+  touch ${TMPDIR}/tensorflow/third_party/coriander/__init__.py
   cp tensorflow/tools/pip_package/MANIFEST.in ${TMPDIR}
   cp tensorflow/tools/pip_package/README ${TMPDIR}
   cp tensorflow/tools/pip_package/setup.py ${TMPDIR}
