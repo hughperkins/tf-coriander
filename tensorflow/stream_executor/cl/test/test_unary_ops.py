@@ -54,6 +54,7 @@ def test(tf_func, py_func, dtype):
                 tf_c = tf.__dict__[tf_func](tf_a, 1, name="c")
             else:
                 tf_c = tf.__dict__[tf_func](tf_a, name="c")
+            print('tf_c', tf_c)
             with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
 
                 np.random.seed(123)

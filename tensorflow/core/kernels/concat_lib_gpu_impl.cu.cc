@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -249,16 +249,16 @@ void ConcatGPUImpl(const Eigen::GpuDevice& gpu_device,
       int split_size, typename TTypes<T, 2>::Matrix* output);
 
 TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPUCONCAT32);
-REGISTER_GPUCONCAT32(bfloat16);
+// REGISTER_GPUCONCAT32(bfloat16);
 
 TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPUCONCAT64);
-REGISTER_GPUCONCAT64(bfloat16);
+// REGISTER_GPUCONCAT64(bfloat16);
 
 TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPU32);
-REGISTER_GPU32(bfloat16);
+// REGISTER_GPU32(bfloat16);
 
 TF_CALL_GPU_NUMBER_TYPES(REGISTER_GPU64);
-REGISTER_GPU64(bfloat16);
+// REGISTER_GPU64(bfloat16);
 
 #undef REGISTER_GPUCONCAT32
 #undef REGISTER_GPUCONCAT64
@@ -267,4 +267,4 @@ REGISTER_GPU64(bfloat16);
 
 }  // end namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

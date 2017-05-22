@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -219,22 +219,22 @@ bool MaxPoolForwardWithOptionalArgmax(
   return d.ok();
 }
 
-bool MaxPoolForwardWithOptionalArgmax(
-    const Eigen::half* bottom_data, const int batch, const int height,
-    const int width, const int channels, const int pooled_height,
-    const int pooled_width, const int kernel_h, const int kernel_w,
-    const int stride_h, const int stride_w, const int pad_t, const int pad_l,
-    Eigen::half* top_data, int64* mask, const Eigen::GpuDevice& d) {
-  const int kThreadsPerBlock = 1024;
-  const int output_size = batch * channels * pooled_height * pooled_width;
+// bool MaxPoolForwardWithOptionalArgmax(
+//     const Eigen::half* bottom_data, const int batch, const int height,
+//     const int width, const int channels, const int pooled_height,
+//     const int pooled_width, const int kernel_h, const int kernel_w,
+//     const int stride_h, const int stride_w, const int pad_t, const int pad_l,
+//     Eigen::half* top_data, int64* mask, const Eigen::GpuDevice& d) {
+//   const int kThreadsPerBlock = 1024;
+//   const int output_size = batch * channels * pooled_height * pooled_width;
 
-  MaxPoolForwardNHWC<<<(output_size + kThreadsPerBlock - 1) / kThreadsPerBlock,
-                       kThreadsPerBlock, 0, d.stream()>>>(
-      output_size, bottom_data, height, width, channels, pooled_height,
-      pooled_width, kernel_h, kernel_w, stride_h, stride_w, pad_t, pad_l,
-      top_data, mask);
-  return d.ok();
-}
+//   MaxPoolForwardNHWC<<<(output_size + kThreadsPerBlock - 1) / kThreadsPerBlock,
+//                        kThreadsPerBlock, 0, d.stream()>>>(
+//       output_size, bottom_data, height, width, channels, pooled_height,
+//       pooled_width, kernel_h, kernel_w, stride_h, stride_w, pad_t, pad_l,
+//       top_data, mask);
+//   return d.ok();
+// }
 
 bool MaxPoolBackwardNoMask(const float* bottom_data, const int batch,
                            const int height, const int width,
@@ -260,29 +260,29 @@ bool MaxPoolBackwardNoMask(const float* bottom_data, const int batch,
   return d.ok();
 }
 
-bool MaxPoolBackwardNoMask(const Eigen::half* bottom_data, const int batch,
-                           const int height, const int width,
-                           const int channels, const int pooled_height,
-                           const int pooled_width, const int kernel_h,
-                           const int kernel_w, const int stride_h,
-                           const int stride_w, const int pad_t, const int pad_l,
-                           const Eigen::half* top_diff, Eigen::half* bottom_diff,
-                           const Eigen::GpuDevice& d) {
-  const int kThreadsPerBlock = 1024;
-  const int bottom_size = batch * channels * height * width;
-  const int top_size = batch * channels * pooled_height * pooled_width;
+// bool MaxPoolBackwardNoMask(const Eigen::half* bottom_data, const int batch,
+//                            const int height, const int width,
+//                            const int channels, const int pooled_height,
+//                            const int pooled_width, const int kernel_h,
+//                            const int kernel_w, const int stride_h,
+//                            const int stride_w, const int pad_t, const int pad_l,
+//                            const Eigen::half* top_diff, Eigen::half* bottom_diff,
+//                            const Eigen::GpuDevice& d) {
+//   const int kThreadsPerBlock = 1024;
+//   const int bottom_size = batch * channels * height * width;
+//   const int top_size = batch * channels * pooled_height * pooled_width;
 
-  SetZero<<<(bottom_size + kThreadsPerBlock - 1) / kThreadsPerBlock,
-            kThreadsPerBlock, 0, d.stream()>>>(bottom_size, bottom_diff);
+//   SetZero<<<(bottom_size + kThreadsPerBlock - 1) / kThreadsPerBlock,
+//             kThreadsPerBlock, 0, d.stream()>>>(bottom_size, bottom_diff);
 
-  MaxPoolBackwardNoMaskNHWC<<<(top_size + kThreadsPerBlock - 1) /
-                                  kThreadsPerBlock,
-                              kThreadsPerBlock, 0, d.stream()>>>(
-      top_size, bottom_data, height, width, channels, pooled_height,
-      pooled_width, kernel_h, kernel_w, stride_h, stride_w, pad_t, pad_l,
-      top_diff, bottom_diff);
-  return d.ok();
-}
+//   MaxPoolBackwardNoMaskNHWC<<<(top_size + kThreadsPerBlock - 1) /
+//                                   kThreadsPerBlock,
+//                               kThreadsPerBlock, 0, d.stream()>>>(
+//       top_size, bottom_data, height, width, channels, pooled_height,
+//       pooled_width, kernel_h, kernel_w, stride_h, stride_w, pad_t, pad_l,
+//       top_diff, bottom_diff);
+//   return d.ok();
+// }
 
 bool MaxPoolBackwardWithArgmax(const int output_size, const int input_size,
                                const float* top_diff, const int64* mask,
@@ -297,19 +297,19 @@ bool MaxPoolBackwardWithArgmax(const int output_size, const int input_size,
   return d.ok();
 }
 
-bool MaxPoolBackwardWithArgmax(const int output_size, const int input_size,
-                               const Eigen::half* top_diff, const int64* mask,
-                               const int top_offset, const int bottom_offset,
-                               Eigen::half* bottom_diff,
-                               const Eigen::GpuDevice& d) {
-  const int kThreadsPerBlock = 1024;
-  SetZero<<<(input_size + kThreadsPerBlock - 1) / kThreadsPerBlock,
-            kThreadsPerBlock, 0, d.stream()>>>(input_size, bottom_diff);
-  MaxPoolBackward<<<(output_size + kThreadsPerBlock - 1) / kThreadsPerBlock,
-                    kThreadsPerBlock, 0, d.stream()>>>(
-      output_size, top_diff, mask, top_offset, bottom_offset, bottom_diff);
-  return d.ok();
-}
+// bool MaxPoolBackwardWithArgmax(const int output_size, const int input_size,
+//                                const Eigen::half* top_diff, const int64* mask,
+//                                const int top_offset, const int bottom_offset,
+//                                Eigen::half* bottom_diff,
+//                                const Eigen::GpuDevice& d) {
+//   const int kThreadsPerBlock = 1024;
+//   SetZero<<<(input_size + kThreadsPerBlock - 1) / kThreadsPerBlock,
+//             kThreadsPerBlock, 0, d.stream()>>>(input_size, bottom_diff);
+//   MaxPoolBackward<<<(output_size + kThreadsPerBlock - 1) / kThreadsPerBlock,
+//                     kThreadsPerBlock, 0, d.stream()>>>(
+//       output_size, top_diff, mask, top_offset, bottom_offset, bottom_diff);
+//   return d.ok();
+// }
 
 typedef Eigen::GpuDevice GPUDevice;
 
@@ -317,10 +317,10 @@ typedef Eigen::GpuDevice GPUDevice;
   template struct functor::SpatialMaxPooling<GPUDevice, T>;
 
 DEFINE_GPU_KERNELS(float)
-DEFINE_GPU_KERNELS(Eigen::half)
+// DEFINE_GPU_KERNELS(Eigen::half)
 
 #undef DEFINE_GPU_KERNELS
 
 }  // end namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

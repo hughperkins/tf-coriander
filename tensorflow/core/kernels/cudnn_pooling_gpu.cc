@@ -27,7 +27,7 @@ typedef Eigen::GpuDevice GPUDevice;
 
 namespace tensorflow {
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 template <typename T>
 void DnnPooling3dOp<T>::Compute(
@@ -213,6 +213,6 @@ void DnnPooling3dGradOp<T>::Compute(
 template class DnnPooling3dOp<float>;
 template class DnnPooling3dGradOp<float>;
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow

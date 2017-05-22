@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -468,48 +468,48 @@ struct NCHWToNHWC<GPUDevice, T, NDIMS> {
 }  // namespace functor
 
 template struct functor::ShuffleAndReverse<GPUDevice, float, 4, int>;
-template struct functor::ShuffleAndReverse<GPUDevice, Eigen::half, 4, int>;
+// template struct functor::ShuffleAndReverse<GPUDevice, Eigen::half, 4, int>;
 
-template struct functor::ShuffleAndReverse<GPUDevice, float, 4,
-                                           Eigen::DenseIndex>;
-template struct functor::ShuffleAndReverse<GPUDevice, Eigen::half, 4,
-                                           Eigen::DenseIndex>;
+// template struct functor::ShuffleAndReverse<GPUDevice, float, 4,
+//                                            Eigen::DenseIndex>;
+// template struct functor::ShuffleAndReverse<GPUDevice, Eigen::half, 4,
+//                                            Eigen::DenseIndex>;
 
 template struct functor::TransformDepth<GPUDevice, float, int>;
-template struct functor::TransformDepth<GPUDevice, Eigen::half, int>;
+// template struct functor::TransformDepth<GPUDevice, Eigen::half, int>;
 
 // For 2d ops.
 template struct functor::TransformFilter<GPUDevice, float, int, 4>;
-template struct functor::TransformFilter<GPUDevice, Eigen::half, int, 4>;
+// template struct functor::TransformFilter<GPUDevice, Eigen::half, int, 4>;
 
 template struct functor::ReverseTransformFilter<GPUDevice, float, 4>;
-template struct functor::ReverseTransformFilter<GPUDevice, Eigen::half, 4>;
+// template struct functor::ReverseTransformFilter<GPUDevice, Eigen::half, 4>;
 
 template struct functor::NHWCToNCHW<GPUDevice, float, 4>;
-template struct functor::NHWCToNCHW<GPUDevice, Eigen::half, 4>;
+// template struct functor::NHWCToNCHW<GPUDevice, Eigen::half, 4>;
 
 template struct functor::NCHWToNHWC<GPUDevice, float, 4>;
-template struct functor::NCHWToNHWC<GPUDevice, Eigen::half, 4>;
+// template struct functor::NCHWToNHWC<GPUDevice, Eigen::half, 4>;
 
 template struct functor::PadInput<GPUDevice, float, int, 4>;
-template struct functor::PadInput<GPUDevice, Eigen::half, int, 4>;
+// template struct functor::PadInput<GPUDevice, Eigen::half, int, 4>;
 
 // For 3d ops.
 template struct functor::TransformFilter<GPUDevice, float, int, 5>;
-template struct functor::TransformFilter<GPUDevice, Eigen::half, int, 5>;
+// template struct functor::TransformFilter<GPUDevice, Eigen::half, int, 5>;
 
 template struct functor::ReverseTransformFilter<GPUDevice, float, 5>;
-template struct functor::ReverseTransformFilter<GPUDevice, Eigen::half, 5>;
+// template struct functor::ReverseTransformFilter<GPUDevice, Eigen::half, 5>;
 
 template struct functor::NHWCToNCHW<GPUDevice, float, 5>;
-template struct functor::NHWCToNCHW<GPUDevice, Eigen::half, 5>;
+// template struct functor::NHWCToNCHW<GPUDevice, Eigen::half, 5>;
 
 template struct functor::NCHWToNHWC<GPUDevice, float, 5>;
-template struct functor::NCHWToNHWC<GPUDevice, Eigen::half, 5>;
+// template struct functor::NCHWToNHWC<GPUDevice, Eigen::half, 5>;
 
 template struct functor::PadInput<GPUDevice, float, int, 5>;
-template struct functor::PadInput<GPUDevice, Eigen::half, int, 5>;
+// template struct functor::PadInput<GPUDevice, Eigen::half, int, 5>;
 
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

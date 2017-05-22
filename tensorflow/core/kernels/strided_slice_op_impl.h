@@ -162,7 +162,7 @@ void HandleStridedSliceAssignCase(OpKernelContext* context,
 
 // before the HandleXXCase's are instantiated to avoid duplicate
 // specialization errors.
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #define PREVENT_INSTANTIATE(T, NDIM)                               \
   namespace functor {                                              \
   template <>                                                      \
@@ -198,9 +198,9 @@ void HandleStridedSliceAssignCase(OpKernelContext* context,
   extern template struct StridedSliceAssign<GPUDevice, T, NDIM>;   \
   }  // namespace functor
 
-#else
-#define PREVENT_INSTANTIATE(T, NDIM)
-#endif
+// #else
+// #define PREVENT_INSTANTIATE(T, NDIM)
+// #endif
 
 #define INSTANTIATE(DEVICE, T, DIM)                                   \
   template void HandleStridedSliceCase<DEVICE, T, DIM>(               \
@@ -231,12 +231,12 @@ void HandleStridedSliceAssignCase(OpKernelContext* context,
 #define DECLARE_FOR_N_GPU(T) \
   INSTANTIATE(GPUDevice, T, STRIDED_SLICE_INSTANTIATE_DIM)
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 TF_CALL_GPU_PROXY_TYPES(PREVENT_FOR_N_GPU);
 
 TF_CALL_GPU_NUMBER_TYPES(DECLARE_FOR_N_GPU);
 DECLARE_FOR_N_GPU(int32);
-#endif  // END GOOGLE_CUDA
+// #endif  // END GOOGLE_CUDA
 
 TF_CALL_ALL_TYPES(DECLARE_FOR_N_CPU);
 DECLARE_FOR_N_CPU(bfloat16);
