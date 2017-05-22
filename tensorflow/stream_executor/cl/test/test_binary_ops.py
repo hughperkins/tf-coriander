@@ -1,7 +1,9 @@
 from __future__ import print_function
-import tensorflow as tf
 import numpy as np
 import pytest
+import tensorflow as tf
+import sys
+import argparse
 
 
 funcs = {
@@ -73,3 +75,16 @@ def test(dtype, tf_func, py_func):
             diff = np.abs(c_py - cr).max()
             print('diff', diff)
             assert diff < 1e-4, 'failed for %s' % tf_func
+
+
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        print('Please run using py.test, ie: py.test -v')
+        sys.exit(0)
+    else:
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--dtype', type=str, default='float32')
+        parser.add_argument('--tf-func', type=str, default='add')
+        args = parser.parse_args()
+        args.py_func = funcs[args.tf_func]
+        test(**args.__dict__)
