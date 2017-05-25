@@ -30,6 +30,7 @@ cc_library(
     ]),
     copts = [
         '-Ithird_party/coriander/include/cocl',
+        '-Ithird_party/coriander/include/cocl/proxy_includes',
         '-Ithird_party/coriander/src/EasyCL',
         '-Ithird_party/coriander/src/EasyCL/third_party/clew/include',
     ],

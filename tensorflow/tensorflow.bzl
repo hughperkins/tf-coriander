@@ -542,6 +542,7 @@ def tf_kernel_library(name, prefix=None, srcs=None, gpu_srcs=None, hdrs=None,
   kwargs['copts'] += [
     '-Iexternal/eigen_archive',
     '-Ithird_party/coriander/include/cocl',
+    '-Ithird_party/coriander/include/cocl/proxy_includes',
     '-Ithird_party/coriander/src/EasyCL',
     '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include'
   ]
