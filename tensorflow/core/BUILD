@@ -1396,7 +1396,12 @@ tf_cuda_library(
         "common_runtime/gpu/pool_allocator.h",
         "common_runtime/gpu/process_state.h",
     ]),
-    copts = tf_copts() + ['-Ithird_party/coriander/include/cocl', '-Ithird_party/coriander/src/EasyCL', '-Ithird_party/coriander/src/EasyCL/thirdparty/clew'],
+    copts = tf_copts() + [
+        '-Ithird_party/coriander/include/cocl',
+        '-Ithird_party/coriander/include/cocl/proxy_includes',
+        '-Ithird_party/coriander/src/EasyCL',
+        '-Ithird_party/coriander/src/EasyCL/thirdparty/clew',
+    ],
     linkstatic = 1,
     deps = [
         ":core_cpu",

@@ -35,3 +35,6 @@ def test_softmax(size):
             diff = np.abs(gpu_out - expected).max()
             print('diff', diff)
             assert diff <= 1e-4
+
+if __name__ == '__main__':
+    test_softmax((1, 3))
