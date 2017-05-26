@@ -13,7 +13,15 @@
 - normal non-GPU tensorflow prerequisites for building from source
 - then do:
 ```
-sudo apt-get install -y opencl-headers cmake clang-3.8 llvm-3.8 clinfo git gcc g++ python3-numpy python3-dev python3-wheel zlib1g-dev
+cd ~/Downloads
+wget http://releases.llvm.org/4.0.0/clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+sudo mkdir -p /usr/local/opt
+cd /usr/local/opt
+sudo tar -xf ~/Downloads/clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+sudo mv clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04 llvm-4.0
+
+cd
+sudo apt-get install -y opencl-headers cmake clinfo git gcc g++ python3-numpy python3-dev python3-wheel zlib1g-dev
 sudo apt-get install -y git gcc g++ python3-numpy python3-dev python3-wheel zlib1g-dev virtualenv swig python3-setuptools
 sudo apt-get install -y default-jdk unzip zip
 sudo apt-get install -y protobuf-c-compiler protobuf-compiler libprotobuf-dev libprotoc-dev
@@ -27,6 +35,17 @@ sudo dpkg -i bazel_0.4.5-linux-x86_64.deb
 
 - normal Mac non-GPU tensorflow prerequisites for building from source
 - then do:
+```
+Download/install llvm-4.0:
+```
+cd ~
+wget http://llvm.org/releases/4.0.0/clang+llvm-4.0.0-x86_64-apple-darwin.tar.xz
+tar -xf clang+llvm-4.0.0-x86_64-apple-darwin.tar.xz
+mv clang+llvm-4.0.0-x86_64-apple-darwin /usr/local/opt
+ln -s /usr/local/opt/clang+llvm-4.0.0-x86_64-apple-darwin /usr/local/opt/llvm-4.0
+```
+
+Install other pre-requisites:
 ```
 brew install bazel
 brew install protobuf
@@ -55,8 +74,8 @@ source ~/env3/bin/activate
 # put python path: /usr/bin/python3
 # 'no' for hadoop, gpu (sic), cloud, etc
 
-# build cuda-on-cl
-pushd third_party/cuda-on-cl
+# build coriander
+pushd third_party/coriander
 mkdir build
 cd build
 cmake ..
@@ -97,10 +116,10 @@ python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_simple.py
 
 ## Updating
 
-- if you pull down new updates from the `tensorflow-cl` repository, you will almost certainly need to update the [cuda-on-cl](https://github.com/hughperkins/cuda-on-cl) installation:
+- if you pull down new updates from the `tensorflow-cl` repository, you will almost certainly need to update the [coriander](https://github.com/hughperkins/coriander) installation:
 ```
 git submodule update
-pushd third_party/cuda-on-cl
+pushd third_party/coriander
 make -j 4
 sudo make install
 popd

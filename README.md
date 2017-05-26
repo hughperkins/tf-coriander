@@ -134,6 +134,8 @@ py.test -v
 
 ## News
 
+- May 27 2017:
+  - upgrade LLVM, in Coriander, from 3.8.0 to 4.0.0. Thank you to @iame6162013 for inspiring me to do this
 - May 10 2017:
   - test results on Mac Sierra with Radeon Pro 450, using v0.16.0 wheel, now approximately in line with earlier results on Ubuntu, using v0.14.0 wheel
     - https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0
