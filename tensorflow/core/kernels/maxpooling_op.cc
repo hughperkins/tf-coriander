@@ -37,11 +37,11 @@ limitations under the License.
 #include "tensorflow/core/util/tensor_format.h"
 #include "tensorflow/core/util/use_cudnn.h"
 
-// #if GOOGLE_CUDA
+#if GOOGLE_CUDA
 #include "tensorflow/core/kernels/maxpooling_op_gpu.h"
 #include "tensorflow/core/kernels/pooling_ops_common_gpu.h"
 #include "tensorflow/core/platform/stream_executor.h"
-// #endif  // GOOGLE_CUDA
+#endif  // GOOGLE_CUDA
 
 namespace tensorflow {
 
@@ -194,7 +194,7 @@ REGISTER_KERNEL_BUILDER(
 //     Name("MaxPool").Device(DEVICE_CPU).TypeConstraint<Eigen::half>("T"),
 //     MaxPoolingOp<CPUDevice, Eigen::half>);
 
-// #if GOOGLE_CUDA
+#if GOOGLE_CUDA
 // Forward declarations for the functor specializations for GPU.
 namespace functor {
 #define DECLARE_GPU_SPEC(T)                                            \
@@ -219,7 +219,7 @@ REGISTER_KERNEL_BUILDER(Name("MaxPool")
                             .TypeConstraint<float>("T")
                             .Label("eigen_tensor"),
                         MaxPoolingOp<Eigen::GpuDevice, float>);
-// #endif  // GOOGLE_CUDA
+#endif  // GOOGLE_CUDA
 
 // The operation to compute MaxPool gradients.
 // It takes three inputs:
@@ -311,7 +311,7 @@ REGISTER_KERNEL_BUILDER(
 //     Name("MaxPoolGrad").Device(DEVICE_CPU).TypeConstraint<Eigen::half>("T"),
 //     MaxPoolingGradOp<CPUDevice, Eigen::half>);
 
-// #ifdef GOOGLE_CUDA
+#ifdef GOOGLE_CUDA
 
 template <typename T>
 static void MaxPoolingBackwardCustomKernel(
@@ -410,7 +410,7 @@ REGISTER_KERNEL_BUILDER(
 //     Name("MaxPoolGrad").Device(DEVICE_GPU).TypeConstraint<Eigen::half>("T"),
 //     MaxPoolingGradOp<Eigen::GpuDevice, Eigen::half>);
 
-// #endif  // GOOGLE_CUDA
+#endif  // GOOGLE_CUDA
 
 template <typename Device, typename T>
 struct LaunchMaxPoolingNoMask;
@@ -564,7 +564,7 @@ class MaxPoolingGradWithArgmaxOp : public OpKernel {
   Padding padding_;
 };
 
-// #if GOOGLE_CUDA
+#if GOOGLE_CUDA
 template <typename T>
 class MaxPoolingNoMaskOp<GPUDevice, T> : public OpKernel {
  public:
@@ -716,6 +716,6 @@ REGISTER_KERNEL_BUILDER(
 //         .TypeConstraint<int64>("Targmax"),
 //     MaxPoolingGradWithArgmaxOp<Eigen::GpuDevice, Eigen::half>);
 
-// #endif  // GOOGLE_CUDA
+#endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow
