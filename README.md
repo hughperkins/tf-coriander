@@ -66,9 +66,9 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 | [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | ok (accuracy 0.92)  |
 | [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)| runs ok, random numbers working now :-) |
 | [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | runs ok, loss decreases, random numbers working now :-) |
-| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| runs ok, loss goes down |
-| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/birectional_rnn.py)| runs ok, loss goes down |
-| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Runs, but loss is nan currently |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| Missing split |
+| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/birectional_rnn.py)| Missing split |
+| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Missing split, unpack |
 | [convolutional_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/convolutional_network.py) | Missing conv |
 
 ## Installation 
@@ -156,10 +156,8 @@ If you want to enable new operations, please take a look at [enabling-operations
 - May 27 2017:
   - upgraded LLVM, in Coriander, from 3.8.0 to 4.0.0. Thank you to @iame6162013 for inspiring me to do this
   - tons of operations are working now, on the github version:
-    - 4 out of the 6 `3_NeuralNetworks` examples from Aymeric Damien's [Tensorflow-Examples](https://github.com/hughperkins/TensorFlow-Examples/tree/enforce-gpu/examples/3_NeuralNetworks) repo run now :-).
-    - `tf.random_normal` works now
-    - enabled a few operations like slicing, aggregation, concat, gather, scatter
-    - note that `split` is currently broken, see https://github.com/hughperkins/tensorflow-cl/issues/33
+    - `tf.random_normal` and `tf.random_uniform` work now
+    - enabled a few operations like slicing, aggregation, concat, gather
 - May 10 2017:
   - test results on Mac Sierra with Radeon Pro 450, using v0.16.0 wheel, now approximately in line with earlier results on Ubuntu, using v0.14.0 wheel
     - https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0
