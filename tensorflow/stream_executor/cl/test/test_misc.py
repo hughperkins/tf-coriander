@@ -155,6 +155,30 @@ def test_pack(shape):
                 # print(b2)
                 # print(c)
 
+def test_split():
+    shape = (12, 1)
+    graph = tf.Graph()
+    with graph.as_default():
+        with tf.device('/cpu:0'):
+            a_tf = tf.placeholder(tf.float32, shape)
+            c_tf = tf.split(0, 4, a_tf)
+            sess = tf.Session()
+            with sess.as_default():
+                # print(sess.run(a_tf, feed_dict={a_tf: np.random.randn(3).astype(np.float32)}))
+                a = np.random.randn(*shape).astype(np.float32)
+                c = sess.run(c_tf, feed_dict={a_tf: a})
+                # print('len(a)', len(a), 'a[0].shape', a[0].shape)
+                # print('a.shape', a.shape)
+                # print('c.shape', c.shape)
+                if(np.prod(shape)) < 20:
+                    print('a', a)
+                    print('c', c)
+                # print('c.shape', c.shape)
+                # for i, a_row in enumerate(a):
+                #     assert c[0][i].shape == a_row.shape
+                #     # assert c.shape[1:] == a.shape
+                #     assert np.all(c[0][i] == a_row)
+
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
