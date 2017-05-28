@@ -13,6 +13,7 @@
 - normal non-GPU tensorflow prerequisites for building from source
 - then do:
 ```
+mkdir ~/Downloads
 cd ~/Downloads
 wget http://releases.llvm.org/4.0.0/clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
 sudo mkdir -p /usr/local/opt
@@ -143,6 +144,13 @@ cd ~/git/tensorflow-cl
 py.test -v
 # hopefully no errors :-)
 ```
+
+If you do get errors, please collect together as much inforamtion as possible, and save to a gist, then create an issue on the github.  I'll want:
+  - the github commit of tensorflow-cl and coriander, that you are using
+  - which operating system
+  - which GPU(s)
+  - the output of `clinfo`
+  - the full output of the command that produced the error, as well as the command
 
 ## Updating
 
