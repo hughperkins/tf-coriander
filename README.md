@@ -58,7 +58,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## Test results, this branch, as of May 28 2017
 
-| test | Mac Sierra, using Radeon Pro 450 GPU |
+| test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) |
 |----- |-------|
 | unit tests (`py.test -v`) | pass |
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | slow, but works   |
