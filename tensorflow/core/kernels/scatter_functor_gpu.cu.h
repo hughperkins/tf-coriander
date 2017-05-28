@@ -16,7 +16,7 @@ limitations under the License.
 #ifndef TENSORFLOW_KERNELS_SCATTER_FUNCTOR_GPU_CU_H_
 #define TENSORFLOW_KERNELS_SCATTER_FUNCTOR_GPU_CU_H_
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -94,6 +94,6 @@ struct ScatterFunctor<GPUDevice, T, Index, op> {
 }  // namespace functor
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 #endif  // TENSORFLOW_KERNELS_SCATTER_FUNCTOR_GPU_CU_H_

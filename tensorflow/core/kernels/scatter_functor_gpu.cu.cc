@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -34,11 +34,11 @@ typedef Eigen::GpuDevice GPUDevice;
   DEFINE_GPU_SPECS_OP(T, Index, scatter_op::UpdateOp::DIV);
 
 #define DEFINE_GPU_SPECS(T)         \
-  DEFINE_GPU_SPECS_INDEX(T, int32); \
-  DEFINE_GPU_SPECS_INDEX(T, int64);
+  DEFINE_GPU_SPECS_INDEX(T, int32); 
+  // DEFINE_GPU_SPECS_INDEX(T, int64);
 
 DEFINE_GPU_SPECS(float);
-DEFINE_GPU_SPECS(double);
+// DEFINE_GPU_SPECS(double);
 // TODO(b/27222123): The following fails to compile due to lack of support for
 // fp16.
 // TF_CALL_GPU_NUMBER_TYPES(DEFINE_GPU_SPECS);
@@ -49,4 +49,4 @@ DEFINE_GPU_SPECS(double);
 
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

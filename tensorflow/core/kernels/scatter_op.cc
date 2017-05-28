@@ -159,7 +159,27 @@ TF_CALL_NUMBER_TYPES(REGISTER_SCATTER_ARITHEMTIC_CPU);
 TF_CALL_ALL_TYPES(REGISTER_SCATTER_UPDATE_CPU);
 
 // Registers GPU kernels.
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
+
+// added by Hugh:
+#undef REGISTER_SCATTER_KERNEL
+#undef REGISTER_SCATTER_ARITHEMTIC
+#undef REGISTER_SCATTER_UPDATE
+
+#define REGISTER_SCATTER_KERNEL(type, dev, name, op)         \
+  REGISTER_SCATTER_KERNEL_INDEX(type, int32, dev, name, op); 
+  // REGISTER_SCATTER_KERNEL_INDEX(type, int64, dev, name, op);
+
+#define REGISTER_SCATTER_ARITHEMTIC(type, dev)                                 \
+  REGISTER_SCATTER_KERNEL(type, dev, "ScatterAdd", scatter_op::UpdateOp::ADD); \
+  REGISTER_SCATTER_KERNEL(type, dev, "ScatterDiv", scatter_op::UpdateOp::DIV); \
+  REGISTER_SCATTER_KERNEL(type, dev, "ScatterMul", scatter_op::UpdateOp::MUL); \
+  REGISTER_SCATTER_KERNEL(type, dev, "ScatterSub", scatter_op::UpdateOp::SUB);
+
+#define REGISTER_SCATTER_UPDATE(type, dev)            \
+  REGISTER_SCATTER_KERNEL(type, dev, "ScatterUpdate", \
+                          scatter_op::UpdateOp::ASSIGN);
+
 #define REGISTER_SCATTER_ARITHEMTIC_GPU(type) \
   REGISTER_SCATTER_ARITHEMTIC(type, GPU);
 
@@ -168,7 +188,7 @@ TF_CALL_ALL_TYPES(REGISTER_SCATTER_UPDATE_CPU);
 TF_CALL_GPU_NUMBER_TYPES_NO_HALF(REGISTER_SCATTER_ARITHEMTIC_GPU);
 TF_CALL_GPU_NUMBER_TYPES_NO_HALF(REGISTER_SCATTER_UPDATE_GPU);
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 #undef REGISTER_SCATTER_ADD
 #undef REGISTER_SCATTER_ARITHEMTIC
