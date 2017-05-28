@@ -136,6 +136,10 @@ py.test -v
 - [Coriander](https://github.com/hughperkins/Coriander) compiles the CUDA code into OpenCL
 - Cedric Nugteren's [CLBlast](https://github.com/CNugteren/CLBlast) provides BLAS (matrix multiplications)
 
+## Hacking
+
+If you want to enable new operations, please take a look at [enabling-operations.md](doc/enabling-operations.md).
+
 ## Related projects
 
 ### DNN Libraries
@@ -151,10 +155,11 @@ py.test -v
 
 - May 27 2017:
   - upgraded LLVM, in Coriander, from 3.8.0 to 4.0.0. Thank you to @iame6162013 for inspiring me to do this
-  - tons of operations are working now, on branch [llvm-4.0-adding-conv](https://github.com/hughperkins/tensorflow-cl/tree/llvm-4.0-adding-conv):
+  - tons of operations are working now, on the github version:
     - 4 out of the 6 `3_NeuralNetworks` examples from Aymeric Damien's [Tensorflow-Examples](https://github.com/hughperkins/TensorFlow-Examples/tree/enforce-gpu/examples/3_NeuralNetworks) repo run now :-).
     - `tf.random_normal` works now
-    - added a few operations like slicing, aggregation, concat
+    - enabled a few operations like slicing, aggregation, concat, gather, scatter
+    - note that `split` is currently broken, see https://github.com/hughperkins/tensorflow-cl/issues/33
 - May 10 2017:
   - test results on Mac Sierra with Radeon Pro 450, using v0.16.0 wheel, now approximately in line with earlier results on Ubuntu, using v0.14.0 wheel
     - https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0
