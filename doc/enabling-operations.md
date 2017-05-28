@@ -18,7 +18,7 @@ So, the way operations on the gpu work is:
 
 What this means:
 - not defining `GOOGLE_CUDA` is why when we run `./configure`, we put 'No' for 'GPU': thats the bit that sets `GOOGLE_CUDA`, or not.  We want: not
-- I have activated a bunch of operations, but not all
+- I have activated a bunch of operations, by commenting out the `#if GOOGLE_CUDA` guards, but not all
 - to add new operations, in many cases it is almost sufficient just to find the relevant file, in `tensorflow/core/kernels`, and comment out the `#if GOOGLE_CUDA ... #endif` guards
 
 ## Types
