@@ -159,7 +159,7 @@ def test_split():
     shape = (12, 1)
     graph = tf.Graph()
     with graph.as_default():
-        with tf.device('/cpu:0'):
+        with tf.device('/gpu:0'):
             a_tf = tf.placeholder(tf.float32, shape)
             c_tf = tf.split(0, 4, a_tf)
             sess = tf.Session()
