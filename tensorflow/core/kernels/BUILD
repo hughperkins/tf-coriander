@@ -84,6 +84,7 @@ tf_kernel_library(
         "//tensorflow/core:framework",
         "//tensorflow/core:lib",
         "//third_party/eigen3",
+        "//third_party:cocl"
     ],
 )
 
@@ -111,7 +112,10 @@ tf_kernel_library(
         ":bounds_check",
         "//tensorflow/core:framework",
         "//third_party/eigen3",
-        #"//third_party:cocl",
+        "//tensorflow/stream_executor:stream_executor",
+        "//tensorflow/core:stream_executor",
+        "//tensorflow/core:core",
+        # "//third_party:cocl",
     ],
     alwayslink = 0,
 )
@@ -608,6 +612,7 @@ tf_kernel_library(
         ":bounds_check",
         "//tensorflow/core:framework_lite",
         "//third_party/eigen3",
+        "//tensorflow/core:framework"
     ],
 )
 

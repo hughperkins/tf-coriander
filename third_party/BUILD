@@ -24,6 +24,7 @@ cc_library(
         'coriander/src/EasyCL/*.h',
         'coriander/include/cocl/*.h',
         'coriander/include/cocl/cuda/*.h',
+        'coriander/include/cocl/proxy_includes/*.h',
     ]),
     visibility = ["//visibility:public"],
 )
