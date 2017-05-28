@@ -121,12 +121,15 @@ def test_concat2():
         (20, 128, 64)
     ])
 def test_pack(shape):
+    print('shape', shape)
     graph = tf.Graph()
     with graph.as_default():
         with tf.device('/gpu:0'):
             a_tf = tf.placeholder(tf.float32, shape)
             # b_tf = tf.placeholder(tf.float32, [None, None])
-            a = np.random.randn(*shape).astype(np.float32)
+            a = []
+            for i in range(shape[0]):
+                a.append(np.random.randn(*shape[1:]).astype(np.float32))
             # b = np.random.randn(3, 2).astype(np.float32)
             # a2_tf = a_tf * 2
             # b2_tf = b_tf + 2
@@ -138,14 +141,17 @@ def test_pack(shape):
             with sess.as_default():
                 # print(sess.run(a_tf, feed_dict={a_tf: np.random.randn(3).astype(np.float32)}))
                 c = sess.run(c_tf, feed_dict={a_tf: a})
-                print('a.shape', a.shape)
+                print('len(a)', len(a), 'a[0].shape', a[0].shape)
+                # print('a.shape', a.shape)
                 print('c.shape', c.shape)
-                if(np.prod(a.shape)) < 20:
+                if(np.prod(shape)) < 20:
                     print('a', a)
                     print('c', c)
-                assert c.shape[0] == 1
-                assert c.shape[1:] == a.shape
-                assert np.all(c[0] == a)
+                print('c.shape', c.shape)
+                for i, a_row in enumerate(a):
+                    assert c[0][i].shape == a_row.shape
+                    # assert c.shape[1:] == a.shape
+                    assert np.all(c[0][i] == a_row)
                 # print(b2)
                 # print(c)
 
