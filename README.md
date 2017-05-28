@@ -68,8 +68,8 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 | [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | runs ok, loss decreases, random numbers working now :-) |
 | [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| runs ok, loss goes down |
 | [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/birectional_rnn.py)| runs ok, loss goes down |
-| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | FAIL: missing LessEqual |
-| [convolutional_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/convolutional_network.py) | FAIL: abort 6 trap |
+| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Missing Reshape gradients |
+| [convolutional_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/convolutional_network.py) | Missing conv operation |
 
 ## Installation 
 

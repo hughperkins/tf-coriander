@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -109,8 +109,8 @@ struct GatherNdSlice<GPUDevice, T, Index, IXDIM> {
   DEFINE_GPU_SPECS_INDEX_NDIM(T, Index, 5);
 
 #define DEFINE_GPU_SPECS(T)         \
-  DEFINE_GPU_SPECS_INDEX(T, int32); \
-  DEFINE_GPU_SPECS_INDEX(T, int64);
+  DEFINE_GPU_SPECS_INDEX(T, int32);
+  // DEFINE_GPU_SPECS_INDEX(T, int64);
 
 TF_CALL_GPU_NUMBER_TYPES(DEFINE_GPU_SPECS);
 
@@ -119,4 +119,4 @@ TF_CALL_GPU_NUMBER_TYPES(DEFINE_GPU_SPECS);
 
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA

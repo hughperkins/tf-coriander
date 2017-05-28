@@ -16,7 +16,7 @@ limitations under the License.
 #ifndef THIRD_PARTY_TENSORFLOW_CORE_KERNELS_GATHER_FUNCTOR_GPU_CU_H_
 #define THIRD_PARTY_TENSORFLOW_CORE_KERNELS_GATHER_FUNCTOR_GPU_CU_H_
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 
 #define EIGEN_USE_GPU
 
@@ -82,6 +82,6 @@ struct GatherFunctor<GPUDevice, T, Index> {
 }  // namespace functor
 }  // namespace tensorflow
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 #endif  // THIRD_PARTY_TENSORFLOW_CORE_KERNELS_GATHER_FUNCTOR_GPU_CU_H_
