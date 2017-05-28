@@ -90,26 +90,64 @@ def test_concat():
             # assert diff <= 1e-4
 
 
-def test_cross_entropy():
-    with tf.Graph().as_default():
+def test_concat2():
+    graph = tf.Graph()
+    with graph.as_default():
         with tf.device('/gpu:0'):
-            tf_pred = tf.placeholder(tf.float32, [rows, cols], 'pred')
-            tf_y = tf.placeholder(tf.float32, [rows, cols], 'y')
-            # tf_b = tf.placeholder(tf.float32, [rows, cols], 'a')
-            # tf_out = tf.concat(0, [tf_a, tf_b])
-            # tf_out1 = tf.concat(1, [tf_a, tf_b])
-            tf_out = tf.nn.softmax_cross_entropy_with_logits(logits=tf_pred, labels=tf_y)
-
-            pred = np.random.randn(rows, cols).astype(np.float32)
-            y = np.random.randn(rows, cols).astype(np.float32)
-            with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
-                out = sess.run(tf_out, {tf_pred: pred, tf_y: y})
+            a_tf = tf.placeholder(tf.float32, [None, None])
+            b_tf = tf.placeholder(tf.float32, [None, None])
+            a = np.random.randn(3, 2).astype(np.float32)
+            b = np.random.randn(3, 2).astype(np.float32)
+            a2_tf = a_tf * 2
+            b2_tf = b_tf + 2
+            print()
             # print('a', a)
-            print('out', out)
-            # print('out1', out1)
-            # diff = np.abs(gpu_out - expected).max()
-            # print('diff', diff)
-            # assert diff <= 1e-4
+            # print('b', b)
+            c_tf = tf.concat(values=[a2_tf, b2_tf], concat_dim=1)
+            sess = tf.Session()
+            with sess.as_default():
+                # print(sess.run(a_tf, feed_dict={a_tf: np.random.randn(3).astype(np.float32)}))
+                a2, b2, c = sess.run((a2_tf, b2_tf, c_tf), feed_dict={a_tf: a, b_tf: b})
+                print(a2)
+                print(b2)
+                print(c)
+
+
+@pytest.mark.parametrize(
+    'shape',
+    [
+        (3, 4),
+        (50, 70, 12),
+        (20, 128, 64)
+    ])
+def test_pack(shape):
+    graph = tf.Graph()
+    with graph.as_default():
+        with tf.device('/gpu:0'):
+            a_tf = tf.placeholder(tf.float32, shape)
+            # b_tf = tf.placeholder(tf.float32, [None, None])
+            a = np.random.randn(*shape).astype(np.float32)
+            # b = np.random.randn(3, 2).astype(np.float32)
+            # a2_tf = a_tf * 2
+            # b2_tf = b_tf + 2
+            # print()
+            # print('a', a)
+            # print('b', b)
+            c_tf = tf.pack(values=[a_tf])
+            sess = tf.Session()
+            with sess.as_default():
+                # print(sess.run(a_tf, feed_dict={a_tf: np.random.randn(3).astype(np.float32)}))
+                c = sess.run(c_tf, feed_dict={a_tf: a})
+                print('a.shape', a.shape)
+                print('c.shape', c.shape)
+                if(np.prod(a.shape)) < 20:
+                    print('a', a)
+                    print('c', c)
+                assert c.shape[0] == 1
+                assert c.shape[1:] == a.shape
+                assert np.all(c[0] == a)
+                # print(b2)
+                # print(c)
 
 
 if __name__ == '__main__':
