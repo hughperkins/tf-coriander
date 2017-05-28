@@ -58,60 +58,86 @@ brew install autoconf automake libtool shtool gflags
 ```
 mkdir -p ~/git
 cd ~/git
+```
 
-# prepare python virtual env
+### Create Python virtualenv
+
+Note that you dont strictly *need* a virtualenv, but it's mildly easier for me to document using a virtualenv, and I use a virtualenv for dev/testing.
+
+```
 # (this might be slightly different on mac)
 if [[ ! -d ~/env3 ]]; then { virtualenv -p python3 ~/env3; } fi
 source ~/env3/bin/activate
 pip install numpy
 deactivate
+```
 
-# download tensorflow, and configure
+### Download Tensorflow
+
+```
+cd
 git clone --recursive https://github.com/hughperkins/tensorflow-cl
-cd tensorflow-cl
+```
+
+### Configure Tensorflow
+
+```
+cd ~/tensorflow-cl
 source ~/env3/bin/activate
 ./configure
-# put python path: /usr/bin/python3
-# 'no' for hadoop, gpu (sic), cloud, etc
+# you can accept all defaults, just press enter tons, ie 'no' for everything, including for gpu (sic)
+```
 
-# build coriander
-pushd third_party/coriander
+### Build Coriander
+
+```
+cd ~/git/tensorflow-cl/third_party/coriander
 mkdir build
 cd build
 cmake ..
-make -j 4
-# note: on Mac: following command might not need `sudo`:
+make -j 8
+# note: on Mac: dont use `sudo` in following command:
 sudo make install
-popd
+```
 
-# build grpc_cpp_plugin and protobuf
-# (these should probably be in the BUILD dependencies somehow, but
-# I didnt figure out how to do this yet)
+### Build grpc_cpp_plugin and protobuf
+
+(these should probably be in the BUILD dependencies somehow, but I didnt figure out how to do this yet)
+```
+cd ~/git/tensorflow-cl
 bazel build @grpc//:grpc_cpp_plugin
 bazel build @protobuf//:protoc
 
-# create directories and links
 if [[ ! -h bazel-out ]]; then { echo ERROR: bazel-out should be a link; } fi
+
 # ^^^ make sure bazel-out is a link, if it's not, then stop, cos nothing
 # else will work if it's not :-)
+
 mkdir -p bazel-out/host/bin/external/grpc
 mkdir -p bazel-out/host/bin/external/protobuf
 ln -sf $PWD/bazel-bin/external/grpc/grpc_cpp_plugin bazel-out/host/bin/external/grpc/grpc_cpp_plugin
 ln -sf $PWD/bazel-bin/external/protobuf/protoc bazel-out/host/bin/external/protobuf/protoc
+```
 
-# build tensorflow
+### Build Tensorflow
+
+```
+cd ~/git/tensorflow-cl
 bazel build --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
 bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
 pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
+```
 
-# test/validate
+### Test/validate
+
+```
 cd
 python -c 'import tensorflow'
+python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_simple.py
 # hopefully no errors :-)
-# and the expected result:
+# expected result:
 # [[  4.   7.   9.]
 # [  8.  10.  12.]]
-python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_simple.py
 cd ~/git/tensorflow-cl
 py.test -v
 # hopefully no errors :-)
@@ -119,19 +145,9 @@ py.test -v
 
 ## Updating
 
-- if you pull down new updates from the `tensorflow-cl` repository, you will almost certainly need to update the [coriander](https://github.com/hughperkins/coriander) installation:
+- if you pull down new updates from the `tensorflow-cl` repository, you need to update the [coriander](https://github.com/hughperkins/coriander) installation:
 ```
-git submodule update
-pushd third_party/coriander
-make -j 4
-sudo make install
-popd
+cd ~/git/tensorflow-cl
+git submodule update --init --recursive
 ```
-- you will probably need to do also `bazel clean`
-- and then, as before:
-```
-source ~/env3/bin/activate
-bazel run --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
-bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
-pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
-```
+- .. and then redo the build process, starting at section `Configure Tensorflow`
