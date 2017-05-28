@@ -107,22 +107,6 @@ def test_cross_entropy():
             # assert diff <= 1e-4
 
 
-def test_random_normal():
-    with tf.Graph().as_default():
-        with tf.device('/gpu:0'):
-            W = tf.Variable(tf.random_normal([3, 4]))
-
-            with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
-                sess.run(tf.initialize_all_variables())
-                out = sess.run(W)
-            # print('a', a)
-            print('out', out)
-            # print('out1', out1)
-            # diff = np.abs(gpu_out - expected).max()
-            # print('diff', diff)
-            # assert diff <= 1e-4
-
-
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print('Please run using py.test')
