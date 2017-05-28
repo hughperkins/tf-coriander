@@ -17,20 +17,20 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## What works, what doesnt
 
-### Things that are working:
+### What's working
 
 - per-element unary operations
 - per-element binary operations
 - reductions
 - backprop
 - BLAS, ie matrix multiplications, using Cedric Nugteren's [CLBlast](https://github.com/cnugteren/CLBlast) library
+- random number generation (in github version)
 
-### Things that arent implemented
+### What's missing
 
-- need a random-number generator implementation
-  - ideally this would be an implementation of cuRNG, in [Coriander](https://github.com/hughperkins/Coriander), but either way, it's not implemented yet
-  - should probalby be sufficient to generate random numbers on the cpu, then copy them to gpu, eg see the analysis at http://stackoverflow.com/questions/9912143/how-to-get-a-random-number-in-opencl/16130111#16130111
-- need to activate cudnn within tensorflow-cl. The hard bit is mostly done, ie implementing the convolutions inside [Coriander](https://github.com/hughperkins/Coriander), but need to 'switch it on' here
+- ~~need a random-number generator implementation~~ Implemented in github `tensorflow-cl` branch now :-)
+- `tf.split` is missing, along with `tf.unpack`.  Technical stuff: Coriander needs to be able to handle `float **` parameters to GPU kernels, see https://github.com/hughperkins/coriander/issues/26 for gorier details
+- Convolutions are missing.  Need to activate cudnn within tensorflow-cl. The hard bit is mostly done, ie implementing the convolutions inside [Coriander](https://github.com/hughperkins/Coriander), but need to 'switch them on', here, in Tensorflow-cl
 
 ## Test results, on v0.14.0 wheel
 
@@ -56,7 +56,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 | [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| missing Adam for matrices, missing random number generator | 
 | [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)|  missing random number generator, and gradients for Sigmoid |  
 
-## Test results, this branch, as of May 28 2017
+## Test results, github, as of May 28 2017
 
 | test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) |
 |----- |-------|
@@ -77,7 +77,7 @@ The environments used for testing/development are:
 - Ubuntu 16.04, with:
   - NVIDIA K80, and
 - Mac Sierra, with:
-  - Intel HD Graphics 530
+  - ~~Intel HD Graphics 530~~ I'm not testing on this currently, though I might, in the future
   - Radeon Pro 450
   (using a nice Mac Book Pro 4th generation that my employer [ASAPP](http://www.asapp.com) have provided me with recently :-) )
 
