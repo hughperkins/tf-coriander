@@ -112,6 +112,9 @@ python -c 'import tensorflow'
 # [[  4.   7.   9.]
 # [  8.  10.  12.]]
 python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_simple.py
+cd ~/git/tensorflow-cl
+py.test -v
+# hopefully no errors :-)
 ```
 
 ## Updating
