@@ -56,7 +56,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 | [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| missing Adam for matrices, missing random number generator | 
 | [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)|  missing random number generator, and gradients for Sigmoid |  
 
-## Test results, this branch, as of May 27 2017
+## Test results, this branch, as of May 28 2017
 
 | test | Mac Sierra, using Radeon Pro 450 GPU |
 |----- |-------|
@@ -152,10 +152,9 @@ py.test -v
 - May 27 2017:
   - upgraded LLVM, in Coriander, from 3.8.0 to 4.0.0. Thank you to @iame6162013 for inspiring me to do this
   - tons of operations are working now, on branch [llvm-4.0-adding-conv](https://github.com/hughperkins/tensorflow-cl/tree/llvm-4.0-adding-conv):
-    - 4 out of the 6 `3_NeuralNetworks` examples from Aymeric Damien's [Tensorflow-Examples](https://github.com/hughperkins/TensorFlow-Examples/tree/enforce-gpu/examples/3_NeuralNetworks) repo run now :-).  (this fork enforces that things run on gpu, for testing; they also use numpy for random; but in this latest branch of tensorflow-cl, thats no longer necessary :-) )
+    - 4 out of the 6 `3_NeuralNetworks` examples from Aymeric Damien's [Tensorflow-Examples](https://github.com/hughperkins/TensorFlow-Examples/tree/enforce-gpu/examples/3_NeuralNetworks) repo run now :-).
     - `tf.random_normal` works now
     - added a few operations like slicing, aggregation, concat
-    - note that convolution kernels are registered, but not working, so they'll crash your program, unless you force them to run on the cpu. Thats why this is on a branch
 - May 10 2017:
   - test results on Mac Sierra with Radeon Pro 450, using v0.16.0 wheel, now approximately in line with earlier results on Ubuntu, using v0.14.0 wheel
     - https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0
