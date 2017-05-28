@@ -39,7 +39,8 @@ REGISTER3(SimpleBinaryOp, GPU, "TanhGrad", functor::tanh_grad, float,
 #endif
 ```
 
-If/when you comment-out the `GOOGLE_CUDA` bit, you'll want to remove pretty much anything that's not a single float, or a 32-bit integer, eg:
+What we want to do is to change these to only register/instantiate the float32 and int32 types. All other types should be commented out for now.  So,
+if/when you comment-out the `GOOGLE_CUDA` bit, you'll want to remove pretty much anything that's not a single float, or a 32-bit integer, eg:
 ```
 #define DEFINE_GPU_SPECS(T)         \
   DEFINE_GPU_SPECS_INDEX(T, int32);
