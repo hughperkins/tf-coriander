@@ -52,7 +52,8 @@ and
 // REGISTER3(SimpleBinaryOp, GPU, "TanhGrad", functor::tanh_grad, float,
 //           Eigen::half, double);
 REGISTER(SimpleBinaryOp, GPU, "TanhGrad", functor::tanh_grad, float);
-// #endif```
+// #endif
+```
 
 As you can see, this might need a small-ish amount of hacking, eg to change `REGISTER3` into `REGISTER` in this case, since we are only registering
 one type (`float`), instead of three (`float`, `half`, `double`)
