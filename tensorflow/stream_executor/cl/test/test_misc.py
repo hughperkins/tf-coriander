@@ -20,13 +20,18 @@ def test_indexing():
             a = np.random.randn(rows, cols).astype(np.float32)
             with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
                 out, out2, out3 = sess.run((tf_out, tf_out2, tf_out3), {tf_a: a})
-            print('a', a)
+            # print('a', a)
             print('out', out)
+            print('a[0]', a[0])
+            assert np.all(a[0] == out)
+
+            print('a[0:3]', a[0:3])
             print('out2', out2)
+            assert np.all(a[0:3] == out2)
+
+            print('a.T[0:3]', a.T[0:3])
             print('out3', out3)
-            # diff = np.abs(gpu_out - expected).max()
-            # print('diff', diff)
-            # assert diff <= 1e-4
+            assert np.all(a.T[0:3] == out3)
 
 
 def test_slice():
