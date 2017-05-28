@@ -27,6 +27,7 @@ sudo apt-get install -y default-jdk unzip zip
 sudo apt-get install -y protobuf-c-compiler protobuf-compiler libprotobuf-dev libprotoc-dev
 
 # bazel
+cd ~/Downloads
 wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel_0.4.5-linux-x86_64.deb
 sudo dpkg -i bazel_0.4.5-linux-x86_64.deb
 ```
@@ -35,7 +36,7 @@ sudo dpkg -i bazel_0.4.5-linux-x86_64.deb
 
 - normal Mac non-GPU tensorflow prerequisites for building from source
 - then do:
-```
+
 Download/install llvm-4.0:
 ```
 cd ~
