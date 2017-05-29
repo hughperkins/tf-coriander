@@ -48,49 +48,29 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 
 ## Installation 
 
-The environments used for testing/development are:
-- Ubuntu 16.04, with:
-  - NVIDIA K80, and
-- Mac Sierra, with:
-  - ~~Intel HD Graphics 530~~ I'm not testing on this currently, though I might, in the future
-  - Radeon Pro 450
-
-### Ubuntu 16.04
-
-You can install from wheel:
 - You will need:
-  - the tensorflow non-gpu installation pre-requisites,
-   - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
-   - python 3
-- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.17.2/tensorflow-cl-v0.17.2-ubuntu1604-python3.zip , and
-- Install using pip:
+  - the tensorflow non-gpu installation pre-requisites
+  - an OpenCL 1.2-enabled GPU, and OpenCL 1.2-enabled drivers (check that `clinfo` shows your GPU, and that is shows as a GPU device)
+  - python 3
+
+For Ubuntu 16.04 and Mac Sierra, there are pre-built wheels available:
+
+- [Mac Sierra](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.17.2/tensorflow-cl-v0.17.2-macsierra-python3.zip)
+- [Ubuntu 16.04](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.17.2/tensorflow-cl-v0.17.2-ubuntu1604-python3.zip)
+
+Simply download, unzip, then install using `pip`:
 ```
-unzip tensorflow-cl-v0.17.2-ubuntu1604-python3.zip
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
-### Mac Sierra
+For other operating systems, please [build from source](doc/build-from-source.md)
 
-For Mac Sierra, python 3.6, there is a wheel at [https://github.com/hughperkins/tensorflow-cl/releases/download/v0.17.2/tensorflow-cl-v0.17.2-macsierra-python3.zip](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.17.2/tensorflow-cl-v0.17.2-macsierra-python3.zip)
-- tested on Mac Sierra, using Radeon Pro 450
-- to select the Radeon, given that there's probably an Intel HD530 at gpu index 0, make sure to `export CL_GPUOFFSET=1`, which will select the gpu at index 1, ie the Radeon
-- you'll need to install python 3.6, and create a virtualenv from it, activate it
-- download the zip file from the link just above, and install by doing:
-```
-unzip tensorflow-cl-v0.17.2-macsierra-python3.zip
-pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
-```
+By default, Tensorflow-cl will run using the first GPU available on your system. You can use the environment variable `CL_GPUOFFSET` to choose others:
 
-Piccie of tests running on Mac Sierra:
-
-<img src="doc/img/mac_sierra_tests.png" width="600" />
-
-### Build from source
-
-If you want, you can [build from source](doc/build-from-source.md)
+- `export CL_GPUOFFSET=1` chooses the second GPU (ie, index 1)
+- `export CL_GPUOFFSET=2` chooses the third GPU
 
 ## Testing
-
 
 ### Setup
 
@@ -103,6 +83,8 @@ pip install -r tensorflow/stream_executor/cl/test/requirements.txt
 ```
 py.test -v
 ```
+
+<img src="doc/img/mac_sierra_tests.png" width="600" />
 
 ## Design/architecture
 
