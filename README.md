@@ -1,19 +1,9 @@
 # Tensorflow-cl
 
-Run Tensorflow on OpenCL™ 1.2 devices
+Run [Tensorflow](https://github.com/tensorflow/tensorflow) on OpenCL™ 1.2 devices
 
-## Summary
-
-This repo was created from the original Tensorflow repository at:
-
-- https://github.com/tensorflow/tensorflow
-
-Please see the main repository for full Tensorflow documentation.  This readme will only focus on the OpenCL porting aspects of Tensorflow.
-
-## Good points of this compared to other OpenCL Tensorflows
-
-- compatible with Mac, since doesnt need SPIR ingestor
-- should work theoretically on any OpenCL 1.2 GPU device, without needing SPIR 1.2 extension, or OpenCL 2.0.
+- runs on Mac
+- should work theoretically on any OpenCL 1.2 GPU device
 
 ## What works, what doesnt
 
@@ -31,7 +21,7 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - `tf.split`
 - Convolutions
 
-## Test results, github, on [v0.17.2 wheel](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.17.2)
+## Test results, [v0.17.2 wheel](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.17.2)
 
 | test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 |
 |----- |-------|-------|
