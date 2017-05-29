@@ -5,9 +5,7 @@ Run [Tensorflow](https://github.com/tensorflow/tensorflow) on OpenCL™ 1.2 devi
 - runs on Mac
 - should work theoretically on any OpenCL 1.2 GPU device
 
-## What works, what doesnt
-
-### What's working
+## What's working
 
 - per-element unary operations
 - per-element binary operations
@@ -16,10 +14,16 @@ Run [Tensorflow](https://github.com/tensorflow/tensorflow) on OpenCL™ 1.2 devi
 - `tf.random_normal`, `tf.random_uniform`
 - trainers, including Adam
 
-### What's missing
+## What's missing
 
 - `tf.split`
 - Convolutions
+
+## Piccie
+
+On a Mac:
+
+<img src="doc/img/multilayerperceptron.png" />
 
 ## Test results, [v0.17.2 wheel](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.17.2)
 
@@ -35,10 +39,6 @@ Run [Tensorflow](https://github.com/tensorflow/tensorflow) on OpenCL™ 1.2 devi
 | [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/birectional_rnn.py)| Missing split | Missing split |
 | [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Missing split, unpack | Missing split, unpack |
 | [convolutional_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/convolutional_network.py) | Missing conv | Missing conv |
-
-On a Mac:
-
-<img src="doc/img/multilayerperceptron.png" />
 
 ## Installation 
 
