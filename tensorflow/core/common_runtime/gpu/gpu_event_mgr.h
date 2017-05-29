@@ -119,17 +119,17 @@ class EventMgr {
   void FreeMemory(ToFreeVector& to_free)
      EXCLUSIVE_LOCKS_REQUIRED(mu_) {
     // pthread_mutex_lock(&free_memory_mutex);
-    std::cout << "core/common_runtime/gpu/gpu_event_mgr.h FreeMemory()" << std::endl;
+    // std::cout << "core/common_runtime/gpu/gpu_event_mgr.h FreeMemory()" << std::endl;
     for (auto& iu : to_free) {
-      std::cout << "   FreeMemory iteration" << std::endl;
-      std::cout << "   Freememory iu=" << debugIU(iu) << std::endl;
+      // std::cout << "   FreeMemory iteration" << std::endl;
+      // std::cout << "   Freememory iu=" << debugIU(iu) << std::endl;
       if (iu.mem != nullptr) {
         for (auto& t : *(iu.mem)) {
           t.Unref();
         }
         delete iu.mem;
       }
-      std::cout << "   Freememory 2 iu=" << debugIU(iu) << std::endl;
+      // std::cout << "   Freememory 2 iu=" << debugIU(iu) << std::endl;
       if (iu.bufrec.buf) {
         if (LogMemory::IsEnabled()) {
           LogMemory::RecordRawDeallocation(iu.bufrec.operation,
@@ -138,16 +138,16 @@ class EventMgr {
         }
         iu.bufrec.alloc->DeallocateRaw(iu.bufrec.buf);
       }
-      std::cout << "   Freememory 3 iu=" << debugIU(iu) << std::endl;
+      // std::cout << "   Freememory 3 iu=" << debugIU(iu) << std::endl;
       // The function must be called in another thread.
       // std::cout << debugIU(iu);
       if (iu.func != nullptr) threadpool_.Schedule(iu.func);
       iu.func = nullptr;
       // iu.func.assign(nullptr);
-      std::cout << "   Freemeory 4 after scheudle" << std::endl;
-      std::cout << "   Freememory 5 " << debugIU(iu) << std::endl;
+      // std::cout << "   Freemeory 4 after scheudle" << std::endl;
+      // std::cout << "   Freememory 5 " << debugIU(iu) << std::endl;
     }
-    std::cout << "    FreeMemory done" << std::endl;
+    // std::cout << "    FreeMemory done" << std::endl;
     // pthread_mutex_unlock(&free_memory_mutex);
   }
 
