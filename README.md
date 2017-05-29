@@ -22,54 +22,29 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 - per-element unary operations
 - per-element binary operations
 - reductions
-- backprop
 - BLAS, ie matrix multiplications, using Cedric Nugteren's [CLBlast](https://github.com/cnugteren/CLBlast) library
-- random number generation (in github version)
+- `tf.random_normal`, `tf.random_uniform`
+- trainers, including Adam
 
 ### What's missing
 
-- ~~need a random-number generator implementation~~ Implemented in github `tensorflow-cl` branch now :-)
-- `tf.split` is missing, along with `tf.unpack`.  Technical stuff: Coriander needs to be able to handle `float **` parameters to GPU kernels, see https://github.com/hughperkins/coriander/issues/26 for gorier details
-- Convolutions are missing.  Need to activate cudnn within tensorflow-cl. The hard bit is mostly done, ie implementing the convolutions inside [Coriander](https://github.com/hughperkins/Coriander), but need to 'switch them on', here, in Tensorflow-cl
+- `tf.split`
+- Convolutions
 
-## Test results, on v0.14.0 wheel
+## Test results, github, on [v0.17.2 wheel](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.17.2)
 
-| test | Intel HD5500, beignet 1.2.1 | NVIDIA 940M, driver v367.57 |
-|----- |-------|-----|
-| unit tests (`py.test -v`) | pass | pass |
-| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | slow, but works   | slow, but works   |
-| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | ok  | ok   |
-| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | ok (accuracy 0.92)  | ok (accuracy 0.92)   |
-| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | missing adam  | missing adam |
-| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| missing adam   |  missing adam  |
-| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)|  missing rmsprop  |    |
-
-## Test results, on v0.16.0 wheel
-
-| test | Mac Sierra, using Radeon Pro 450 GPU |
-|----- |-------|
-| unit tests (`py.test -v`) | pass | pass |
-| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | slow, but works   | 
-| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | ok  | 
-| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | ok (accuracy 0.92)  |
-| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | missing random number generator, and slice |
-| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| missing Adam for matrices, missing random number generator | 
-| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)|  missing random number generator, and gradients for Sigmoid |  
-
-## Test results, github, as of May 28 2017
-
-| test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) |
-|----- |-------|
-| unit tests (`py.test -v`) | pass |
-| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) | slow, but works   |
-| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | ok  |
-| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | ok (accuracy 0.92)  |
-| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)| runs ok, random numbers working now :-) |
-| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | runs ok, loss decreases, random numbers working now :-) |
-| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| Missing split |
-| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/birectional_rnn.py)| Missing split |
-| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Missing split, unpack |
-| [convolutional_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/convolutional_network.py) | Missing conv |
+| test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 |
+|----- |-------|-------|
+| unit tests (`py.test -v`) | All pass :-) | `tf.random_normal` fails. Others pass ok |
+| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) |    | Runs ok, loss decreases |
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) |   | Runs ok, loss decreases |
+| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) |   | Ok, accuracy 0.92 |
+| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)| Runs ok, loss decreases | Runs ok, loss decreases |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | runs ok, loss decreases | runs ok, loss decreases |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)| Missing split | Missing split |
+| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/birectional_rnn.py)| Missing split | Missing split |
+| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Missing split, unpack | Missing split, unpack |
+| [convolutional_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/convolutional_network.py) | Missing conv | Missing conv |
 
 ## Installation 
 
@@ -88,22 +63,22 @@ You can install from wheel:
   - the tensorflow non-gpu installation pre-requisites,
    - an OpenCL 1.2-enabled GPU, and  OpenCL 1.2-enabled drivers
    - python 3
-- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.14.0/tensorflow-0.11.0rc0-py3-none-any.whl , and
+- Simply download https://github.com/hughperkins/tensorflow-cl/releases/download/v0.17.2/tensorflow-cl-v0.17.2-ubuntu1604-python3.zip , and
 - Install using pip:
 ```
+unzip tensorflow-cl-v0.17.2-ubuntu1604-python3.zip
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
 ### Mac Sierra
 
-For Mac Sierra, python 3.6, there is a wheel at [https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0)
+For Mac Sierra, python 3.6, there is a wheel at [https://github.com/hughperkins/tensorflow-cl/releases/download/v0.17.2/tensorflow-cl-v0.17.2-macsierra-python3.zip](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.17.2/tensorflow-cl-v0.17.2-macsierra-python3.zip)
 - tested on Mac Sierra, using Radeon Pro 450
 - to select the Radeon, given that there's probably an Intel HD530 at gpu index 0, make sure to `export CL_GPUOFFSET=1`, which will select the gpu at index 1, ie the Radeon
 - you'll need to install python 3.6, and create a virtualenv from it, activate it
-- download the tar file from the link just above, and install by doing:
+- download the zip file from the link just above, and install by doing:
 ```
-tar -xf tf-v0.16-wheel-mac-sierra-py36.tar
-cd tf-v0.16-wheel-mac-sierra-py36
+unzip tensorflow-cl-v0.17.2-macsierra-python3.zip
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
@@ -153,6 +128,12 @@ If you want to enable new operations, please take a look at [enabling-operations
 
 ## News
 
+- May 30 2017:
+  - created [v0.17.2 release](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.17.2):
+    - wheels available for both Ubuntu 16.04 and Mac Sierra, for Python 3.5
+    - Aymeric Damien's [autoencoder.py]() and [multilayer_perceptron.py]() run ok now
+    - `tf.random_normal` and `tf.random_uniform` working ok on Mac/Radeon
+    - Adam works now
 - May 27 2017:
   - upgraded LLVM, in Coriander, from 3.8.0 to 4.0.0. Thank you to @iame6162013 for inspiring me to do this
   - tons of operations are working now, on the github version:
