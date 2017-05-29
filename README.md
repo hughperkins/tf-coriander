@@ -86,7 +86,7 @@ Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this ye
 
 ## Enabling new operations
 
-If you want to enable new operations, please take a look at [enabling-operations.md](doc/enabling-operations.md).
+- [enabling operations](doc/enabling-operations.md).
 
 ## Related projects
 
