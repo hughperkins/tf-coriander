@@ -92,7 +92,7 @@ py.test -v
 - [Coriander](https://github.com/hughperkins/Coriander) compiles the CUDA code into OpenCL
 - Cedric Nugteren's [CLBlast](https://github.com/CNugteren/CLBlast) provides BLAS (matrix multiplications)
 
-## Hacking
+## Enabling new operations
 
 If you want to enable new operations, please take a look at [enabling-operations.md](doc/enabling-operations.md).
 
