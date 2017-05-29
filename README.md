@@ -46,6 +46,8 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 | [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Missing split, unpack | Missing split, unpack |
 | [convolutional_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/convolutional_network.py) | Missing conv | Missing conv |
 
+On a Mac:
+
 <img src="doc/img/multilayerperceptron.png" />
 
 ## Installation 
