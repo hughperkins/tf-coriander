@@ -76,8 +76,8 @@ class EventMgr {
       mutex_lock l(mu_);
       QueueBuffer(stream, bufrec);
       PollEvents(false, &to_free);
+      FreeMemory(to_free);
     }
-    FreeMemory(to_free);
   }
 
   inline void ThenExecute(perftools::gputools::Stream* stream,
@@ -87,8 +87,8 @@ class EventMgr {
       mutex_lock l(mu_);
       QueueFunc(stream, func);
       PollEvents(false, &to_free);
+      FreeMemory(to_free);
     }
-    FreeMemory(to_free);
   }
 
  private:
@@ -110,7 +110,8 @@ class EventMgr {
     long long post;
   };
 
-  typedef gtl::InlinedVector<InUse, 4> ToFreeVector;
+  // typedef gtl::InlinedVector<InUse, 4> ToFreeVector;
+  typedef std::vector<InUse> ToFreeVector;
 
   // added by Hugh, to try to fix https://github.com/hughperkins/tensorflow-cl/issues/34
   static pthread_mutex_t free_memory_mutex;

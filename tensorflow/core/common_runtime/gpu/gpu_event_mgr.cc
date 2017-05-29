@@ -147,8 +147,8 @@ void EventMgr::PollLoop() {
       PollEvents(true, &to_free);
       std::cout << "  PollLoop iteration after PollEVents" << std::endl;
       queue_empty = used_events_.empty();
+      FreeMemory(to_free);
     }
-    FreeMemory(to_free);
   }
   std::cout << "  PollLoop() calling notify" << std::endl;
   polling_stopped_->Notify();
@@ -219,7 +219,7 @@ void EventMgr::QueueInUse(gpu::Stream* stream, InUse iu) {
 // be to throttle new Op execution until the pending event queue
 // clears.
 void EventMgr::PollEvents(bool is_dedicated_poller,
-                          gtl::InlinedVector<InUse, 4>* to_free) {
+                          std::vector<InUse>* to_free) {
 //   pthread_mutex_lock(&free_memory_mutex);
   VLOG(2) << "PollEvents  free_events_ " << free_events_.size()
           << " used_events_ " << used_events_.size();
