@@ -2,7 +2,7 @@
 
 Run [Tensorflow](https://github.com/tensorflow/tensorflow) on OpenCL™ 1.2 devices
 
-- runs on Mac
+- tested on Mac and Ubuntu 16.04
 - should work theoretically on any OpenCL 1.2 GPU device
 
 ## What's working
