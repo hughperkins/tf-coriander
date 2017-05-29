@@ -46,6 +46,8 @@ Please see the main repository for full Tensorflow documentation.  This readme w
 | [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Missing split, unpack | Missing split, unpack |
 | [convolutional_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/convolutional_network.py) | Missing conv | Missing conv |
 
+<img src="doc/img/multilayerperceptron.png" />
+
 ## Installation 
 
 - You will need:
@@ -72,19 +74,7 @@ By default, Tensorflow-cl will run using the first GPU available on your system.
 
 ## Testing
 
-### Setup
-
-```
-pip install -r tensorflow/stream_executor/cl/test/requirements.txt
-```
-
-### Run
-
-```
-py.test -v
-```
-
-<img src="doc/img/mac_sierra_tests.png" width="600" />
+- [testing](doc/testing.md)
 
 ## Design/architecture
 
