@@ -54,7 +54,6 @@ The environments used for testing/development are:
 - Mac Sierra, with:
   - ~~Intel HD Graphics 530~~ I'm not testing on this currently, though I might, in the future
   - Radeon Pro 450
-  (using a nice Mac Book Pro 4th generation that my employer [ASAPP](http://www.asapp.com) have provided me with recently :-) )
 
 ### Ubuntu 16.04
 
