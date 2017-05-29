@@ -89,8 +89,10 @@ py.test -v
 ## Design/architecture
 
 - tensorflow code stays 100% [NVIDIA® CUDA™](https://www.nvidia.com/object/cuda_home_new.html)
-- [Coriander](https://github.com/hughperkins/Coriander) compiles the CUDA code into OpenCL
+- [Coriander](https://github.com/hughperkins/Coriander) compiles the NVIDIA® CUDA™ code into OpenCL
 - Cedric Nugteren's [CLBlast](https://github.com/CNugteren/CLBlast) provides BLAS (matrix multiplications)
+
+Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this year's [IWOCL 2017](wocl.org/iwocl-2017/conference-program/)
 
 ## Enabling new operations
 
@@ -101,11 +103,6 @@ If you want to enable new operations, please take a look at [enabling-operations
 ### DNN Libraries
 - [OpenCL Torch](https://github.com/hughperkins/distro-cl)
 - [DeepCL](https://github.com/hughperkins/DeepCL)
-
-### OpenCL middleware
-- [CLBlast](https://github.com/CNugteren/CLBlast) BLAS for OpenCL
-- [Coriander](https://github.com/hughperkins/coriander)  Compile NVIDIA® CUDA™ apps for OpenCL 1.2
-- [EasyCL](https://github.com/hughperkins/EasyCL)   Handles running kernels, passing in arguments etc, on OpenCL
 
 ## News
 
