@@ -10,9 +10,13 @@ Run [Tensorflow](https://github.com/tensorflow/tensorflow) on OpenCL™ 1.2 devi
 - per-element unary operations
 - per-element binary operations
 - reductions
-- BLAS, ie matrix multiplications, using Cedric Nugteren's [CLBlast](https://github.com/cnugteren/CLBlast) library
-- `tf.random_normal`, `tf.random_uniform`
+- variables
+- matrix multiplication
+- random numbers
+- softmax
+- gradients
 - trainers, including Adam
+- ReLU
 
 ## Piccie
 
