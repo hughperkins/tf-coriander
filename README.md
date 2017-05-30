@@ -61,7 +61,7 @@ By default, Tensorflow-cl will run using the first GPU available on your system.
 
 ## Testing
 
-- [testing](doc/testing.md)
+- [Testing](doc/testing.md)
 
 ## Design/architecture
 
@@ -73,7 +73,7 @@ Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this ye
 
 ## Enabling new operations
 
-- [enabling operations](doc/enabling-operations.md).
+- [Enabling operations](doc/enabling-operations.md).
 
 ## Related projects
 
