@@ -74,13 +74,13 @@ deactivate
 ```
 mkdir -p ~/git
 cd ~/git
-git clone --recursive https://github.com/hughperkins/tensorflow-cl
+git clone --recursive https://github.com/hughperkins/tf-coriander
 ```
 
 ### Configure Tensorflow
 
 ```
-cd ~/git/tensorflow-cl
+cd ~/git/tf-coriander
 source ~/env3/bin/activate
 ./configure
 # you can accept all defaults, just press enter tons, ie 'no' for everything, including for gpu (sic)
@@ -89,7 +89,7 @@ source ~/env3/bin/activate
 ### Build Coriander
 
 ```
-cd ~/git/tensorflow-cl/third_party/coriander
+cd ~/git/tf-coriander/third_party/coriander
 mkdir build
 cd build
 cmake ..
@@ -102,7 +102,7 @@ sudo make install
 
 (these should probably be in the BUILD dependencies somehow, but I didnt figure out how to do this yet)
 ```
-cd ~/git/tensorflow-cl
+cd ~/git/tf-coriander
 bazel build @grpc//:grpc_cpp_plugin
 bazel build @protobuf//:protoc
 
@@ -120,7 +120,7 @@ ln -sf $PWD/bazel-bin/external/protobuf/protoc bazel-out/host/bin/external/proto
 ### Build Tensorflow
 
 ```
-cd ~/git/tensorflow-cl
+cd ~/git/tf-coriander
 bazel build --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
 bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
 pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
@@ -131,18 +131,18 @@ pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 cd
 python -c 'import tensorflow'
-python ~/git/tensorflow-cl/tensorflow/stream_executor/cl/test/test_simple.py
+python ~/git/tf-coriander/tensorflow/stream_executor/cl/test/test_simple.py
 # hopefully no errors :-)
 # expected result:
 # [[  4.   7.   9.]
 # [  8.  10.  12.]]
-cd ~/git/tensorflow-cl
+cd ~/git/tf-coriander
 py.test -v
 # hopefully no errors :-)
 ```
 
 If you do get errors, please collect together as much inforamtion as possible, and save to a gist, then create an issue on the github.  I'll want:
-  - the github commit of tensorflow-cl and coriander, that you are using
+  - the github commit of tf-coriander and coriander, that you are using
   - which operating system
   - which GPU(s)
   - the output of `clinfo`
@@ -150,9 +150,9 @@ If you do get errors, please collect together as much inforamtion as possible, a
 
 ## Updating
 
-- if you pull down new updates from the `tensorflow-cl` repository, you need to update the [coriander](https://github.com/hughperkins/coriander) installation:
+- if you pull down new updates from the `tf-coriander` repository, you need to update the [coriander](https://github.com/hughperkins/coriander) installation:
 ```
-cd ~/git/tensorflow-cl
+cd ~/git/tf-coriander
 git submodule update --init --recursive
 ```
 - .. and then redo the build process, starting at section `Configure Tensorflow`
