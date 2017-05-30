@@ -1,6 +1,6 @@
 # Event Manager
 
-This document is general to Tensorflow, not specific to Tensorflow-cl. It is my notes on how the event manager works, to try to solve a horrible bug in it https://github.com/hughperkins/tensorflow-cl/issues/34
+This document is general to Tensorflow, not specific to Tensorflow-cl. It is my notes on how the event manager works, to try to solve a horrible bug related to it https://github.com/hughperkins/tensorflow-cl/issues/34
 
 Approximate diagram of how the event manager looks:
 
