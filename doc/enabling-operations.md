@@ -64,7 +64,7 @@ Ideally, it would be good to create new unit-tests, in tensorflow/stream_executo
 there's a realistic (> 10% chance) that the newly enabled operations have some bug in them that needs to be fixed.
 
 If you add such a test:
-- please create a pull request to add the test to main `tensorflow-cl` branch.  Writing tests takes a bunch of time, and this would be super helpful :-)
+- please create a pull request to add the test to github.  Writing tests takes a bunch of time, and this would be super helpful :-)
 - if the tests are failing, please create a branch somewhere, with the failing test, and the uncommented operations on it, and point me at it, by creating a new issue. I'll want to know:
   - which operation(s) you've enabled
   - where is your test
