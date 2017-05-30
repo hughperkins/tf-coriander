@@ -45,4 +45,5 @@ In passing, note that the new event object was passed into `Stream->RecordEvent(
 
 - the `PollLoop` (or possibly the initial `ThenExecute`) method calls `FreeMemory`, passing in the list of completed `InUse` structs, from calling `PollEvents` earlier
 - for each of the `InUse` structs in `to_free`, `FreeMemory` does:
+
 (at this point, I had figured out how to fix the problem :-) )
