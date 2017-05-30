@@ -24,7 +24,7 @@ On a Mac:
 
 <img src="doc/img/multilayerperceptron.png" />
 
-## Test results, [v0.17.2](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.17.2)
+## Test results, [v0.17.2](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.2)
 
 | test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 |
 |----- |-------|-------|
@@ -44,8 +44,8 @@ On a Mac:
 
 For Ubuntu 16.04 and Mac Sierra, there are pre-built wheels available:
 
-- [Mac Sierra](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.17.2/tensorflow-cl-v0.17.2-macsierra-python3.zip)
-- [Ubuntu 16.04](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.17.2/tensorflow-cl-v0.17.2-ubuntu1604-python3.zip)
+- [Mac Sierra](https://github.com/hughperkins/tf-coriander/releases/download/v0.17.2/tensorflow-cl-v0.17.2-macsierra-python3.zip)
+- [Ubuntu 16.04](https://github.com/hughperkins/tf-coriander/releases/download/v0.17.2/tensorflow-cl-v0.17.2-ubuntu1604-python3.zip)
 
 Simply download, unzip, then install using `pip`:
 ```
@@ -84,11 +84,12 @@ Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this ye
 ## News
 
 - May 30 2017:
-  - created [v0.17.2 release](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.17.2):
+  - created [v0.17.2 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.2):
     - wheels available for both Ubuntu 16.04 and Mac Sierra, for Python 3.5
     - Aymeric Damien's [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py) and [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py) run ok now
     - `tf.random_normal` and `tf.random_uniform` working ok on Mac/Radeon
     - Adam works now
+  - changed name to `tf-coriander`
 - May 27 2017:
   - upgraded LLVM, in Coriander, from 3.8.0 to 4.0.0. Thank you to @iame6162013 for inspiring me to do this
   - tons of operations are working now, on the github version:
