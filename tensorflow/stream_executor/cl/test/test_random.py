@@ -57,6 +57,9 @@ def test_random_uniform(shape):
             assert var > 0.05
             assert var < 4.0
 
-# @pytest.mark.parametrize(
-#     'dtype, tf_func, py_func',
-#     [d['mark']((d['dtype'], d['tf_func'], d['py_func'])) for d in get_test_params()])
+
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        print('Please run using py.test')
+    else:
+        eval('%s((3, 4))' % sys.argv[1])
