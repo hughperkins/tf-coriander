@@ -33,7 +33,7 @@ wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel_0.4.5-lin
 sudo dpkg -i bazel_0.4.5-linux-x86_64.deb
 ```
 
-### Mac Sierra (draft)
+### Mac Sierra
 
 - normal Mac non-GPU tensorflow prerequisites for building from source
 - then do:
@@ -57,11 +57,6 @@ brew install autoconf automake libtool shtool gflags
 
 ## Procedure
 
-```
-mkdir -p ~/git
-cd ~/git
-```
-
 ### Create Python virtualenv
 
 Note that you dont strictly *need* a virtualenv, but it's mildly easier for me to document using a virtualenv, and I use a virtualenv for dev/testing.
@@ -77,14 +72,15 @@ deactivate
 ### Download Tensorflow
 
 ```
-cd
+mkdir -p ~/git
+cd ~/git
 git clone --recursive https://github.com/hughperkins/tensorflow-cl
 ```
 
 ### Configure Tensorflow
 
 ```
-cd ~/tensorflow-cl
+cd ~/git/tensorflow-cl
 source ~/env3/bin/activate
 ./configure
 # you can accept all defaults, just press enter tons, ie 'no' for everything, including for gpu (sic)
