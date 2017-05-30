@@ -49,9 +49,9 @@ ln -s /usr/local/opt/clang+llvm-4.0.0-x86_64-apple-darwin /usr/local/opt/llvm-4.
 
 Install other pre-requisites:
 ```
-brew install bazel
-brew install protobuf
-brew install grpc
+cd ~/Downloads
+wget https://github.com/bazelbuild/bazel/releases/download/0.4.5/bazel-0.4.5-installer-darwin-x86_64.sh
+sh ./bazel-0.4.5-installer-darwin-x86_64.sh --user
 brew install autoconf automake libtool shtool gflags
 ```
 
