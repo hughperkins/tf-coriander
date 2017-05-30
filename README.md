@@ -69,7 +69,7 @@ By default, Tensorflow-cl will run using the first GPU available on your system.
 - [Coriander](https://github.com/hughperkins/Coriander) compiles the NVIDIA® CUDA™ code into OpenCL
 - Cedric Nugteren's [CLBlast](https://github.com/CNugteren/CLBlast) provides BLAS (matrix multiplications)
 
-Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this year's [IWOCL 2017](wocl.org/iwocl-2017/conference-program/)
+Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this year's [IWOCL 2017](http://www.iwocl.org/iwocl-2017/conference-program/)
 
 ## Enabling new operations
 
