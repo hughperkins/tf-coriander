@@ -7,12 +7,12 @@ Run [Tensorflow](https://github.com/tensorflow/tensorflow) on OpenCL™ 1.2 devi
 
 ## What's working
 
-- per-element unary operations
-- per-element binary operations
-- reductions
+- unary operations, eg `tanh`, `log`, `exp`, `sigmoid`, `sqrt`, `abs`, `ceil`, `floor`, `argmax`, `argmin`
+- binary operations, eg `pow`, `mul`, `add`, `maximum`, `minimum`, `squared_difference`
+- reductions, eg `reduce_sum`, `reduce_max`, `reduce_min`, `reduce_prod`, `reduce_mean`
 - variables
-- matrix multiplication
-- random numbers
+- matrix multiplication, `matmul`
+- random numbers, eg `tf.random_uniform`, `tf.random_normal`
 - softmax
 - gradients
 - trainers, including Adam
