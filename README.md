@@ -24,7 +24,7 @@ On a Mac:
 
 <img src="doc/img/multilayerperceptron.png" />
 
-## Test results, [v0.17.2](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.17.2) Release
+## Test results, [v0.17.2](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.17.2)
 
 | test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 |
 |----- |-------|-------|
