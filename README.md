@@ -14,11 +14,6 @@ Run [Tensorflow](https://github.com/tensorflow/tensorflow) on OpenCL™ 1.2 devi
 - `tf.random_normal`, `tf.random_uniform`
 - trainers, including Adam
 
-## What's missing
-
-- `tf.split`
-- Convolutions
-
 ## Piccie
 
 On a Mac:
