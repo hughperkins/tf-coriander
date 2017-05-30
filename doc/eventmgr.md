@@ -4,7 +4,7 @@ This document is general to Tensorflow, not specific to Tensorflow-cl. It is my 
 
 Approximate diagram of how the event manager looks:
 
-<img src="img/eventmng.png" />
+<img src="img/eventmgr.png" />
 
 ## Life cycle of a function/event
 
