@@ -12,50 +12,43 @@ shapes = [
 ]
 
 
+def test_random_func(func_name, shape):
+    print('func_name', func_name)
+    func = eval(func_name)
+    with tf.Graph().as_default():
+        with tf.device('/cpu:0'):
+            W_t = tf.Variable(func(shape, seed=123))
+
+            with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
+                sess.run(tf.initialize_all_variables())
+                W_cpu = sess.run(W_t)
+        with tf.device('/gpu:0'):
+            W_t = tf.Variable(func(shape, seed=123))
+
+            with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
+                sess.run(tf.initialize_all_variables())
+                W_gpu = sess.run(W_t)
+            if np.prod(W_gpu.shape) < 20:
+                print('W_cpu', W_cpu)
+                print('W_gpu', W_gpu)
+            else:
+                print('W_cpu.reshape(-1)[:20]', W_cpu.reshape(-1)[:20])
+                print('W_gpu.reshape(-1)[:20]', W_gpu.reshape(-1)[:20])
+            assert np.all(W_cpu == W_gpu)
+
+
 @pytest.mark.parametrize(
     'shape',
     shapes)
 def test_random_normal(shape):
-    with tf.Graph().as_default():
-        with tf.device('/gpu:0'):
-            W_t = tf.Variable(tf.random_normal(shape))
-            mu_t = tf.reduce_mean(W_t)
-            var_t = tf.reduce_mean(W_t * W_t)
-
-            with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
-                sess.run(tf.initialize_all_variables())
-                W, mu, var = sess.run((W_t, mu_t, var_t))
-            if np.prod(W.shape) < 20:
-                print('W', W)
-            else:
-                print('W.reshape(-1)[:20]', W.reshape(-1)[:20])
-            print('mu', mu, 'var', var)
-            assert abs(mu) < 1.0
-            assert var > 0.05
-            assert var < 4.0
+    test_random_func('tf.random_normal', shape)
 
 
 @pytest.mark.parametrize(
     'shape',
     shapes)
 def test_random_uniform(shape):
-    with tf.Graph().as_default():
-        with tf.device('/gpu:0'):
-            W_t = tf.Variable(tf.random_uniform(shape))
-            mu_t = tf.reduce_mean(W_t)
-            var_t = tf.reduce_mean(W_t * W_t)
-
-            with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
-                sess.run(tf.initialize_all_variables())
-                W, mu, var = sess.run((W_t, mu_t, var_t))
-            if np.prod(W.shape) < 20:
-                print('W', W)
-            else:
-                print('W.reshape(-1)[:20]', W.reshape(-1)[:20])
-            print('mu', mu, 'var', var)
-            assert abs(mu) < 1.0
-            assert var > 0.05
-            assert var < 4.0
+    test_random_func('tf.random_uniform', shape)
 
 
 if __name__ == '__main__':
