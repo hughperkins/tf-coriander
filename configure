@@ -4,6 +4,7 @@ set -e
 set -o pipefail
 
 ln -sf util/BUILD.d/* .
+cp -f tensorflow/core/platform/default/build_config.bzl.templ tensorflow/core/platform/default/build_config.bzl
 
 # Find out the absolute path to where ./configure resides
 pushd `dirname $0` #> /dev/null
