@@ -29,6 +29,8 @@ limitations under the License.
 #include "tensorflow/core/platform/thread_annotations.h"
 #include "tensorflow/core/platform/types.h"
 
+#include "pthread.h"
+
 namespace perftools {
 namespace gputools {
 class Event;
@@ -74,19 +76,19 @@ class EventMgr {
       mutex_lock l(mu_);
       QueueBuffer(stream, bufrec);
       PollEvents(false, &to_free);
+      FreeMemory(to_free);
     }
-    FreeMemory(to_free);
   }
 
   inline void ThenExecute(perftools::gputools::Stream* stream,
-                          const std::function<void()> &func) {
+                          std::function<void()> func) {
     ToFreeVector to_free;
     {
       mutex_lock l(mu_);
       QueueFunc(stream, func);
       PollEvents(false, &to_free);
+      FreeMemory(to_free);
     }
-    FreeMemory(to_free);
   }
 
  private:
@@ -102,19 +104,32 @@ class EventMgr {
     perftools::gputools::Event* event;
     TensorReferenceVector* mem;
     BufRec bufrec;
-    const std::function<void()> &func;
+    long funcOrig;
+    long long pre;
+    std::function<void()> func;
+    long long post;
   };
 
-  typedef gtl::InlinedVector<InUse, 4> ToFreeVector;
+  // typedef gtl::InlinedVector<InUse, 4> ToFreeVector;
+  typedef std::vector<InUse> ToFreeVector;
 
-  void FreeMemory(const ToFreeVector& to_free) {
-    for (const auto& iu : to_free) {
+  // added by Hugh, to try to fix https://github.com/hughperkins/tensorflow-cl/issues/34
+  static pthread_mutex_t free_memory_mutex;
+
+  void FreeMemory(ToFreeVector& to_free)
+     EXCLUSIVE_LOCKS_REQUIRED(mu_) {
+    // pthread_mutex_lock(&free_memory_mutex);
+    // std::cout << "core/common_runtime/gpu/gpu_event_mgr.h FreeMemory()" << std::endl;
+    for (auto& iu : to_free) {
+      // std::cout << "   FreeMemory iteration" << std::endl;
+      // std::cout << "   Freememory iu=" << debugIU(iu) << std::endl;
       if (iu.mem != nullptr) {
         for (auto& t : *(iu.mem)) {
           t.Unref();
         }
         delete iu.mem;
       }
+      // std::cout << "   Freememory 2 iu=" << debugIU(iu) << std::endl;
       if (iu.bufrec.buf) {
         if (LogMemory::IsEnabled()) {
           LogMemory::RecordRawDeallocation(iu.bufrec.operation,
@@ -123,10 +138,20 @@ class EventMgr {
         }
         iu.bufrec.alloc->DeallocateRaw(iu.bufrec.buf);
       }
+      // std::cout << "   Freememory 3 iu=" << debugIU(iu) << std::endl;
       // The function must be called in another thread.
+      // std::cout << debugIU(iu);
       if (iu.func != nullptr) threadpool_.Schedule(iu.func);
+      iu.func = nullptr;
+      // iu.func.assign(nullptr);
+      // std::cout << "   Freemeory 4 after scheudle" << std::endl;
+      // std::cout << "   Freememory 5 " << debugIU(iu) << std::endl;
     }
+    // std::cout << "    FreeMemory done" << std::endl;
+    // pthread_mutex_unlock(&free_memory_mutex);
   }
+
+  std::string debugIU(const InUse &iu);
 
   // Stream-enqueue an unused Event and save with it a collection of
   // Tensors and/or a BufRec to be deleted only after the Event
@@ -137,17 +162,17 @@ class EventMgr {
   void QueueTensors(perftools::gputools::Stream* stream,
                     TensorReferenceVector* tensors)
       EXCLUSIVE_LOCKS_REQUIRED(mu_) {
-    QueueInUse(stream, {nullptr, tensors, BufRec(), nullptr});
+    QueueInUse(stream, {nullptr, tensors, BufRec(), 0, 123, nullptr, 123});
   }
 
   void QueueBuffer(perftools::gputools::Stream* stream, BufRec bufrec)
       EXCLUSIVE_LOCKS_REQUIRED(mu_) {
-    QueueInUse(stream, {nullptr, nullptr, bufrec, nullptr});
+    QueueInUse(stream, {nullptr, nullptr, bufrec, 0, 123, nullptr, 123});
   }
 
   void QueueFunc(perftools::gputools::Stream* stream,
                  const std::function<void()> &func) EXCLUSIVE_LOCKS_REQUIRED(mu_) {
-    QueueInUse(stream, {nullptr, nullptr, BufRec(), func});
+    QueueInUse(stream, {nullptr, nullptr, BufRec(), *(long *)(char *)&func, 123, func, 123});
   }
 
   // This function should be called at roughly the same tempo as

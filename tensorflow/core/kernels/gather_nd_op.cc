@@ -170,7 +170,7 @@ TF_CALL_ALL_TYPES(REGISTER_GATHER_ND_CPU);
 
 #undef REGISTER_GATHER_ND_CPU
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 // Forward declarations of the functor specializations for GPU.
 namespace functor {
 #define DECLARE_GPU_SPECS_INDEX_NDIM(T, Index, NDIM)          \
@@ -192,14 +192,19 @@ namespace functor {
   DECLARE_GPU_SPECS_INDEX_NDIM(T, Index, 5)
 
 #define DECLARE_GPU_SPECS(T)         \
-  DECLARE_GPU_SPECS_INDEX(T, int32); \
-  DECLARE_GPU_SPECS_INDEX(T, int64)
+  DECLARE_GPU_SPECS_INDEX(T, int32); 
+  // DECLARE_GPU_SPECS_INDEX(T, int64)
 
 TF_CALL_GPU_NUMBER_TYPES(DECLARE_GPU_SPECS);
 
 #undef DECLARE_GPU_SPECS
 #undef DECLARE_GPU_SPECS_INDEX
 }  // namespace functor
+
+#undef REGISTER_GATHER_ND_ALL_INDICES
+#define REGISTER_GATHER_ND_ALL_INDICES(dev, type) \
+  REGISTER_GATHER_ND_FULL(dev, type, int32);      
+  // REGISTER_GATHER_ND_FULL(dev, type, int64)
 
 // Registration of the GPU implementations.
 #define REGISTER_GATHER_ND_GPU(type) REGISTER_GATHER_ND_ALL_INDICES(GPU, type)
@@ -208,7 +213,7 @@ TF_CALL_GPU_NUMBER_TYPES(REGISTER_GATHER_ND_GPU);
 
 #undef REGISTER_GATHER_ND_GPU
 
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 #undef REGISTER_GATHER_ND_ALL_INDICES
 #undef REGISTER_GATHER_ND_FULL

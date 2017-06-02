@@ -69,7 +69,7 @@ REGISTER_GPU_KERNEL(bfloat16);
                           IdentityOp)
 
 REGISTER_GPU_HOST_KERNEL(int32);
-// REGISTER_GPU_HOST_KERNEL(bool);
+REGISTER_GPU_HOST_KERNEL(bool);
 
 #undef REGISTER_GPU_HOST_KERNEL
 

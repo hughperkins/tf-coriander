@@ -22,3 +22,6 @@ env/
 
 junit-pytest-report.xml
 .cache/
+
+/*BUILD
+/WORKSPACE

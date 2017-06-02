@@ -72,12 +72,12 @@ REGISTER_KERNEL_BUILDER(Name("Shape")
                               .TypeConstraint<type>("T"),        \
                           ShapeOp<int32>);                       
 
-//  REGISTER_KERNEL_BUILDER(Name("Shape")                          \
-                              .Device(DEVICE_GPU)                \
-                              .HostMemory("output")              \
-                              .TypeConstraint<int64>("out_type") \
-                              .TypeConstraint<type>("T"),        \
-                          ShapeOp<int64>);
+//  REGISTER_KERNEL_BUILDER(Name("Shape")                          
+                          //     .Device(DEVICE_GPU)                
+                          //     .HostMemory("output")              
+                          //     .TypeConstraint<int64>("out_type") 
+                          //     .TypeConstraint<type>("T"),        
+                          // ShapeOp<int64>);
 
 TF_CALL_NUMBER_TYPES_NO_INT32(REGISTER_GPU_KERNEL);
 #undef REGISTER_GPU_KERNEL
@@ -148,11 +148,11 @@ REGISTER_KERNEL_BUILDER(Name("ShapeN")
                               .TypeConstraint<int32>("out_type") \
                               .TypeConstraint<type>("T"),        \
                           ShapeNOp<int32>);                      \
-  // REGISTER_KERNEL_BUILDER(Name("ShapeN")                         \
-  //                             .Device(DEVICE_GPU)                \
-  //                             .HostMemory("output")              \
-  //                             .TypeConstraint<int64>("out_type") \
-  //                             .TypeConstraint<type>("T"),        \
+  // REGISTER_KERNEL_BUILDER(Name("ShapeN")                         
+  //                             .Device(DEVICE_GPU)                
+  //                             .HostMemory("output")              
+  //                             .TypeConstraint<int64>("out_type") 
+  //                             .TypeConstraint<type>("T"),        
   //                         ShapeNOp<int64>)
 
 TF_CALL_NUMBER_TYPES_NO_INT32(REGISTER_GPU_KERNEL);
@@ -262,11 +262,11 @@ REGISTER_KERNEL_BUILDER(Name("Size")
                               .TypeConstraint<int32>("out_type") \
                               .HostMemory("output"),             \
                           SizeOp<int32>);                        \
-  // REGISTER_KERNEL_BUILDER(Name("Size")                           \
-  //                             .Device(DEVICE_GPU)                \
-  //                             .TypeConstraint<type>("T")         \
-  //                             .TypeConstraint<int64>("out_type") \
-  //                             .HostMemory("output"),             \
+  // REGISTER_KERNEL_BUILDER(Name("Size")                           
+  //                             .Device(DEVICE_GPU)                
+  //                             .TypeConstraint<type>("T")         
+  //                             .TypeConstraint<int64>("out_type") 
+  //                             .HostMemory("output"),             
   //                         SizeOp<int64>);
 TF_CALL_NUMBER_TYPES_NO_INT32(REGISTER_GPU_KERNEL);
 #undef REGISTER_GPU_KERNEL

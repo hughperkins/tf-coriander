@@ -20,13 +20,18 @@ def test_indexing():
             a = np.random.randn(rows, cols).astype(np.float32)
             with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
                 out, out2, out3 = sess.run((tf_out, tf_out2, tf_out3), {tf_a: a})
-            print('a', a)
+            # print('a', a)
             print('out', out)
+            print('a[0]', a[0])
+            assert np.all(a[0] == out)
+
+            print('a[0:3]', a[0:3])
             print('out2', out2)
+            assert np.all(a[0:3] == out2)
+
+            print('a.T[0:3]', a.T[0:3])
             print('out3', out3)
-            # diff = np.abs(gpu_out - expected).max()
-            # print('diff', diff)
-            # assert diff <= 1e-4
+            assert np.all(a.T[0:3] == out3)
 
 
 def test_slice():
@@ -85,42 +90,96 @@ def test_concat():
             # assert diff <= 1e-4
 
 
-def test_cross_entropy():
-    with tf.Graph().as_default():
+def test_concat2():
+    graph = tf.Graph()
+    with graph.as_default():
         with tf.device('/gpu:0'):
-            tf_pred = tf.placeholder(tf.float32, [rows, cols], 'pred')
-            tf_y = tf.placeholder(tf.float32, [rows, cols], 'y')
-            # tf_b = tf.placeholder(tf.float32, [rows, cols], 'a')
-            # tf_out = tf.concat(0, [tf_a, tf_b])
-            # tf_out1 = tf.concat(1, [tf_a, tf_b])
-            tf_out = tf.nn.softmax_cross_entropy_with_logits(logits=tf_pred, labels=tf_y)
-
-            pred = np.random.randn(rows, cols).astype(np.float32)
-            y = np.random.randn(rows, cols).astype(np.float32)
-            with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
-                out = sess.run(tf_out, {tf_pred: pred, tf_y: y})
+            a_tf = tf.placeholder(tf.float32, [None, None])
+            b_tf = tf.placeholder(tf.float32, [None, None])
+            a = np.random.randn(3, 2).astype(np.float32)
+            b = np.random.randn(3, 2).astype(np.float32)
+            a2_tf = a_tf * 2
+            b2_tf = b_tf + 2
+            print()
             # print('a', a)
-            print('out', out)
-            # print('out1', out1)
-            # diff = np.abs(gpu_out - expected).max()
-            # print('diff', diff)
-            # assert diff <= 1e-4
+            # print('b', b)
+            c_tf = tf.concat(values=[a2_tf, b2_tf], concat_dim=1)
+            sess = tf.Session()
+            with sess.as_default():
+                # print(sess.run(a_tf, feed_dict={a_tf: np.random.randn(3).astype(np.float32)}))
+                a2, b2, c = sess.run((a2_tf, b2_tf, c_tf), feed_dict={a_tf: a, b_tf: b})
+                print(a2)
+                print(b2)
+                print(c)
 
 
-def test_random_normal():
-    with tf.Graph().as_default():
+@pytest.mark.parametrize(
+    'shape',
+    [
+        (3, 4),
+        (50, 70, 12),
+        (20, 128, 64)
+    ])
+def test_pack(shape):
+    print('shape', shape)
+    graph = tf.Graph()
+    with graph.as_default():
         with tf.device('/gpu:0'):
-            W = tf.Variable(tf.random_normal([3, 4]))
-
-            with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
-                sess.run(tf.initialize_all_variables())
-                out = sess.run(W)
+            a_tf = tf.placeholder(tf.float32, shape)
+            # b_tf = tf.placeholder(tf.float32, [None, None])
+            a = []
+            for i in range(shape[0]):
+                a.append(np.random.randn(*shape[1:]).astype(np.float32))
+            # b = np.random.randn(3, 2).astype(np.float32)
+            # a2_tf = a_tf * 2
+            # b2_tf = b_tf + 2
+            # print()
             # print('a', a)
-            print('out', out)
-            # print('out1', out1)
-            # diff = np.abs(gpu_out - expected).max()
-            # print('diff', diff)
-            # assert diff <= 1e-4
+            # print('b', b)
+            c_tf = tf.pack(values=[a_tf])
+            sess = tf.Session()
+            with sess.as_default():
+                # print(sess.run(a_tf, feed_dict={a_tf: np.random.randn(3).astype(np.float32)}))
+                c = sess.run(c_tf, feed_dict={a_tf: a})
+                print('len(a)', len(a), 'a[0].shape', a[0].shape)
+                # print('a.shape', a.shape)
+                print('c.shape', c.shape)
+                if(np.prod(shape)) < 20:
+                    print('a', a)
+                    print('c', c)
+                print('c.shape', c.shape)
+                for i, a_row in enumerate(a):
+                    assert c[0][i].shape == a_row.shape
+                    # assert c.shape[1:] == a.shape
+                    assert np.all(c[0][i] == a_row)
+                # print(b2)
+                # print(c)
+
+
+@pytest.mark.skip(reason='Need to fix passing float** to kernel for this to work')
+def test_split():
+    shape = (12, 1)
+    graph = tf.Graph()
+    with graph.as_default():
+        with tf.device('/gpu:0'):
+            a_tf = tf.placeholder(tf.float32, shape)
+            c_tf = tf.split(0, 4, a_tf)
+            sess = tf.Session()
+            with sess.as_default():
+                # print(sess.run(a_tf, feed_dict={a_tf: np.random.randn(3).astype(np.float32)}))
+                a = np.random.randn(*shape).astype(np.float32)
+                c = sess.run(c_tf, feed_dict={a_tf: a})
+                # print('len(a)', len(a), 'a[0].shape', a[0].shape)
+                # print('a.shape', a.shape)
+                # print('c.shape', c.shape)
+                if(np.prod(shape)) < 20:
+                    print('a', a)
+                    print('c', c)
+                # print('c.shape', c.shape)
+                # for i, a_row in enumerate(a):
+                #     assert c[0][i].shape == a_row.shape
+                #     # assert c.shape[1:] == a.shape
+                #     assert np.all(c[0][i] == a_row)
 
 
 if __name__ == '__main__':

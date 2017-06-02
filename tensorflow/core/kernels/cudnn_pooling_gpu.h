@@ -22,15 +22,15 @@ limitations under the License.
 
 #include "tensorflow/core/framework/op_kernel.h"
 
-// #if GOOGLE_CUDA
+#if GOOGLE_CUDA
 #include "tensorflow/core/platform/stream_executor.h"
-// #endif
+#endif
 
 #include "tensorflow/core/util/padding.h"
 
 namespace tensorflow {
 
-// #if GOOGLE_CUDA
+#if GOOGLE_CUDA
 
 // Runs (avg/max)pooling on GPU.
 // Dimension order for all array arguments is: x, y, z.
@@ -62,7 +62,7 @@ class DnnPooling3dGradOp {
                       Tensor* input_backprop);
 };
 
-// #endif
+#endif
 
 }  // namespace tensorflow
 

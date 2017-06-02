@@ -13,9 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-// #if !GOOGLE_CUDA
+#if !GOOGLE_CUDA
 // #error This file must only be included when building with Cuda support
-// #endif
+#endif
 
 #ifndef TENSORFLOW_CORE_KERNELS_MAXPOOLING_OP_GPU_H_
 #define TENSORFLOW_CORE_KERNELS_MAXPOOLING_OP_GPU_H_

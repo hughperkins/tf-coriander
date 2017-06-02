@@ -3,6 +3,8 @@
 set -e
 set -o pipefail
 
+ln -sf util/BUILD.d/* .
+
 # Find out the absolute path to where ./configure resides
 pushd `dirname $0` #> /dev/null
 SOURCE_BASE_DIR=`pwd -P`

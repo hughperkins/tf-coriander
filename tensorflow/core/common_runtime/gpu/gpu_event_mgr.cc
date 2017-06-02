@@ -18,9 +18,13 @@ limitations under the License.
 #include "tensorflow/core/platform/stream_executor.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
+#include <sstream>
+
 namespace gpu = ::perftools::gputools;
 
 namespace tensorflow {
+
+pthread_mutex_t EventMgr::free_memory_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 EventMgr::EventMgr(gpu::StreamExecutor* se, const GPUOptions& gpu_options)
     : exec_(se),
@@ -124,41 +128,75 @@ void EventMgr::PollLoop() {
   const int32 kPollingDelayUsecs = 10;
   const int32 kPollingSuspendMsecs = 1;
   bool queue_empty = false;
+  // std::cout << "PollLoop()" << std::endl;
   while (!stop_polling_->HasBeenNotified()) {
+    // std::cout << "  PollLoop iteration start" << std::endl;
     if (queue_empty) {
+      // std::cout << "  PollLoop iteration queue_empty" << std::endl;
       mutex_lock l(mu_);
       WaitForMilliseconds(&l, &events_pending_, kPollingSuspendMsecs);
     } else {
+      // std::cout << "  PollLoop iteration not queue_empty" << std::endl;
       Env::Default()->SleepForMicroseconds(kPollingDelayUsecs);
     }
     ToFreeVector to_free;
     {
+      // std::cout << "  PollLoop iteration lock mu_" << std::endl;
       mutex_lock l(mu_);
+      // std::cout << "  PollLoop iteration call PollEVents" << std::endl;
       PollEvents(true, &to_free);
+      // std::cout << "  PollLoop iteration after PollEVents" << std::endl;
       queue_empty = used_events_.empty();
+      FreeMemory(to_free);
     }
-    FreeMemory(to_free);
   }
+  // std::cout << "  PollLoop() calling notify" << std::endl;
   polling_stopped_->Notify();
+  // std::cout << "  PollLoop() done" << std::endl;
+}
+
+std::string EventMgr::debugIU(const InUse &iu) {
+   std::ostringstream ss;
+   std::cout << "         debugui iu=" << &iu << std::endl;
+   std::cout << "         debugui origfn=" << iu.funcOrig << std::endl;
+   std::cout << "         debugui pre=" << iu.pre << std::endl;
+   std::cout << "         debugui post=" << iu.post << std::endl;
+   std::cout << "         debugui &iu.func=" << &iu.func << std::endl;
+   // std::cout << "         debugui (char *)&iu.func=" << (char *)&iu.func << std::endl;
+   //std::cout << "         debugui (long *)(char *)&iu.func=" << (long *)(char *)&iu.func << std::endl;
+   std::cout << "         debugui *(long *)(char *)&iu.func=" << *(long *)(char *)&iu.func << std::endl;
+   ss << "iu=" << &iu << " origfn=" << iu.funcOrig <<  " pre=" << iu.pre << " func=" << *(long*)(char*)(&iu.func) << " post=" << iu.post;
+   return ss.str();
 }
 
 void EventMgr::QueueInUse(gpu::Stream* stream, InUse iu) {
+  // pthread_mutex_lock(&free_memory_mutex);
   VLOG(2) << "QueueInUse  free_events_ " << free_events_.size()
           << " used_events_ " << used_events_.size();
+      // std::cout << "QueueInUse() " << debugIU(iu) << std::endl;
+
   // Events are created on demand, and repeatedly reused.  There is no
   // limit placed here on the number of allocated Events.
   if (free_events_.empty()) {
+   // std::cout << "    queueInUse no free events: creating new one" << std::endl;
     free_events_.push_back(new gpu::Event(exec_));
     free_events_.back()->Init();
   }
   gpu::Event* e = free_events_.back();
+  // std::cout << "    queueInUse event " << e << std::endl;
   free_events_.pop_back();
   stream->ThenRecordEvent(e);
   iu.event = e;
+  // std::cout << "    queueInUse event=" << e << " " << debugIU(iu) << std::endl;
   bool was_empty = used_events_.empty();
   used_events_.push_back(iu);
+  // std::cout << "    queueInUse queued iu used_events[used_events.size() - 1] " << debugIU(used_events_[used_events_.size() - 1]) << " used_events_.size() " << used_events_.size() << std::endl;
+  //InUse *iuqueued = &used_events_[used_events_.size() - 1];
   // Maybe wake up the polling thread
+  // pthread_mutex_unlock(&free_memory_mutex);
   if (was_empty) events_pending_.notify_all();
+  // std::cout << "    queueInUse after notify_all(): used_events_.size() " << used_events_.size() << std::endl;
+//  std::cout << "    queueInUse final " << debugIU(used_events_[used_events_.size() - 1]) << std::endl;
 }
 
 // This function must be called periodically to check whether pending
@@ -181,15 +219,25 @@ void EventMgr::QueueInUse(gpu::Stream* stream, InUse iu) {
 // be to throttle new Op execution until the pending event queue
 // clears.
 void EventMgr::PollEvents(bool is_dedicated_poller,
-                          gtl::InlinedVector<InUse, 4>* to_free) {
+                          std::vector<InUse>* to_free) {
+//   pthread_mutex_lock(&free_memory_mutex);
   VLOG(2) << "PollEvents  free_events_ " << free_events_.size()
           << " used_events_ " << used_events_.size();
   // Sweep the remaining events in order.  If this is the dedicated
   // polling thread, check the entire set.  Otherwise, just sweep up to
   // the first non-complete record that is still pending.
+  // std::cout << "Pollevents()" << std::endl;
   for (auto& iu : used_events_) {
-    if (iu.event == nullptr) continue;
+    // std::cout << "iterate iu:" << &iu << std::endl;
+    if (iu.event == nullptr) {
+       // std::cout << "  nullptr" << std::endl;
+       continue;
+    }
+    // std::cout << "  pollevents pollfortatus" << std::endl;
+    // std::cout << "    ui: " << debugIU(iu) << std::endl;
+    
     gpu::Event::Status s = iu.event->PollForStatus();
+    // std::cout << "   pollevents pollforstatus s=" << (int)s << std::endl;
     switch (s) {
       case gpu::Event::Status::kUnknown:
       case gpu::Event::Status::kError:
@@ -198,26 +246,39 @@ void EventMgr::PollEvents(bool is_dedicated_poller,
         LOG(FATAL) << "Unexpected Event status: " << static_cast<int>(s);
         break;
       case gpu::Event::Status::kPending:
+        // std::cout << "status is kpending" << std::endl;
         if (!is_dedicated_poller) return;  // quit processing queue
         break;
       case gpu::Event::Status::kComplete:
         // Make a copy of the InUse record so we can free it after releasing
         // the lock
+        // std::cout << "status is kcomplete" << std::endl;
         to_free->push_back(iu);
+        iu.func = nullptr;
+    // std::cout << "    ui: " << debugIU(iu) << std::endl;
+    // std::cout << "    to_free last: " << debugIU(to_free->operator[](to_free->size() - 1)) << std::endl;
+        // std::cout << "pushed back iu to to_free" << std::endl;
         free_events_.push_back(iu.event);
-        // Mark this InUse record as completed.
         iu.event = nullptr;
+    // std::cout << "    ui: " << debugIU(iu) << std::endl;
+    // std::cout << "    free_events_  last: " << free_events_[free_events_.size() - 1] << std::endl;
+    //     std::cout << "pushed iu.event " << iu.event << " to free_events_" << std::endl;
+        // Mark this InUse record as completed.
     }
   }
   // Then clear any completed InUse records from the front of the queue.
   while (!used_events_.empty()) {
     InUse& iu = used_events_.front();
     if (iu.event == nullptr) {
+      // auto e = iu.event;
+      // iu.event = nullptr;
+      //  free_events_.push_back(e);
       used_events_.pop_front();
     } else {
       break;
     }
   }
+  // pthread_mutex_unlock(&free_memory_mutex);
 }
 
 }  // namespace tensorflow
