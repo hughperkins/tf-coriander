@@ -24,16 +24,16 @@ On a Mac:
 
 <img src="doc/img/multilayerperceptron.png" />
 
-## Test results, [v0.17.2](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.2)
+## Test results, [v0.17.3](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.3)
 
 | test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 |
 |----- |-------|-------|
-| unit tests (`py.test -v`) | All pass :-) | `tf.random_normal` fails. Others pass ok |
+| unit tests (`py.test -v`) | All pass :-) | All pass :-) |
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) |  Runs ok, loss decreases  | Runs ok, loss decreases |
 | [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) |  Runs ok, loss decreases | Runs ok, loss decreases |
 | [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) |  Ok, accuracy 0.92 | Ok, accuracy 0.92 |
 | [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)| Runs ok, loss decreases | Runs ok, loss decreases |
-| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | Runs ok, loss decreases | Runs, but probably needs `tf.random_normal` working |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | Runs ok, loss decreases | Runs ok, loss decreases |
 
 ## Installation 
 
@@ -44,8 +44,8 @@ On a Mac:
 
 For Ubuntu 16.04 and Mac Sierra, there are pre-built wheels available:
 
-- [Mac Sierra](https://github.com/hughperkins/tf-coriander/releases/download/v0.17.2/tensorflow-cl-v0.17.2-macsierra-python3.zip)
-- [Ubuntu 16.04](https://github.com/hughperkins/tf-coriander/releases/download/v0.17.2/tensorflow-cl-v0.17.2-ubuntu1604-python3.zip)
+- [Mac Sierra](https://github.com/hughperkins/tf-coriander/releases/download/v0.17.3/tensorflow-cl-v0.17.3-macsierra-python3.zip)
+- [Ubuntu 16.04](https://github.com/hughperkins/tf-coriander/releases/download/v0.17.3/tensorflow-cl-v0.17.3-ubuntu1604-python3.zip)
 
 Simply download, unzip, then install using `pip`:
 ```
@@ -83,6 +83,12 @@ Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this ye
 
 ## News
 
+- June 2 2017:
+  - created [v0.17.3 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.3):
+    - bug fix release:
+      - `tf.random_uniform` and `tf.random_normal` should give equal results to the cpu version, on both Mac and Ubuntu
+      - `tf.random_normal` should no longer give all zeros results on Ubuntu, ie should fix https://github.com/hughperkins/tf-coriander/issues/35
+      - the Mac wheel should have `RPATH` set correctly, ie hopefully should not give error messages about unable to load `libclew.dylib` or similar, ie should fix https://github.com/hughperkins/tf-coriander/issues/39
 - May 30 2017:
   - created [v0.17.2 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.2):
     - wheels available for both Ubuntu 16.04 and Mac Sierra, for Python 3.5
