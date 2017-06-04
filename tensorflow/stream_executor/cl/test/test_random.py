@@ -53,6 +53,14 @@ def test_random_uniform(shape):
     _test_random_func('tf.random_uniform', shape)
 
 
+@pytest.mark.parametrize(
+    'shape',
+    shapes)
+@pytest.mark.skip(reason='Causes abort currently')
+def test_truncated_normal(shape):
+    _test_random_func('tf.truncated_normal', shape)
+
+
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print('Please run using py.test')
