@@ -156,7 +156,7 @@ def test_pack(shape):
                 # print(c)
 
 
-@pytest.mark.skip(reason='Need to fix passing float** to kernel for this to work')
+# @pytest.mark.skip(reason='Need to fix passing float** to kernel for this to work')
 def test_split():
     shape = (72, 1)
     graph = tf.Graph()
