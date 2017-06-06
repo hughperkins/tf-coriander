@@ -235,6 +235,13 @@ class SplitOpGPU : public SplitOpBase<GPUDevice, T> {
     }
     OP_REQUIRES_OK(context, ptrs.Finalize());
 
+    if(!ptrs.temphack_inlined()) {
+      std::cout << std::endl;
+      std::cout << "ERROR: split is implemented by tf-coriander only for up to " << ptrs.temphack_maxsize() << " splits, but you want to use: " << ptrs.temphack_size() << " splits" << std::endl;
+      std::cout << "This is missing feature in tf-coriander, so please feel free to create an issue at https://github.com/hughperkins/tf-coriander for this" << std::endl;
+      std::cout << std::endl;
+      throw std::runtime_error("Split not implemented for more than max available inline splits");
+    }
     SplitOpGPULaunch<T>().Run(context->eigen_device<GPUDevice>(),
                               input.flat<T>().data(), prefix_dim_size,
                               split_dim_size, suffix_dim_size, ptrs.data());

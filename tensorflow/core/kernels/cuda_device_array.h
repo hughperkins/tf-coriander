@@ -99,6 +99,10 @@ class CudaDeviceArrayOnHost {
     return data_;
   }
 
+  bool temphack_inlined() const { return inlined(); }
+  int temphack_size() const { return (int)data_.size; }
+  int temphack_maxsize() const { return (int)MaxInlineValues; }
+
  private:
   bool inlined() const { return data_.size <= MaxInlineValues; }
 
