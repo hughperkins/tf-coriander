@@ -31,7 +31,7 @@ def get_test_params():
     return tests
 
 
-@pytest.mark.parametrize('tf_func, py_func, axes, tf_type', [(d['tf_func'], d['py_func'], d['axes'], d['tf_type'], d['shape']) for d in get_test_params()])
+@pytest.mark.parametrize('tf_func, py_func, axes, tf_type, shape', [(d['tf_func'], d['py_func'], d['axes'], d['tf_type'], d['shape']) for d in get_test_params()])
 def test(tf_func, py_func, axes, tf_type, shape):
     print('func', tf_func, 'axes', axes, tf_type, shape)
     tf_type = eval(tf_type)
@@ -46,7 +46,6 @@ def test(tf_func, py_func, axes, tf_type, shape):
 
             with tf.Session(config=tf.ConfigProto(log_device_placement=show_placement)) as sess:
                 np.random.seed(123)
-                shape = (3, 17)
                 if tf_type == tf.float32:
                     a = np.random.choice(50, shape) / 25 - 1
                 else:
