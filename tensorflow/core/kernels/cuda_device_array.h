@@ -37,7 +37,7 @@ namespace tensorflow {
 //   launchKernel(..., ptrs.data, ...);
 //
 // ValueType must be memcopyable.
-template <typename ValueType, int MaxInlineValues = 8>
+template <typename ValueType, int MaxInlineValues = 64>
 class CudaDeviceArrayOnHost {
  public:
   CudaDeviceArrayOnHost(OpKernelContext* context, int32 size)
@@ -98,6 +98,10 @@ class CudaDeviceArrayOnHost {
     DCHECK(inlined() || out_of_line_values_on_gpu_.IsInitialized());
     return data_;
   }
+
+  bool temphack_inlined() const { return inlined(); }
+  int temphack_size() const { return (int)data_.size; }
+  int temphack_maxsize() const { return (int)MaxInlineValues; }
 
  private:
   bool inlined() const { return data_.size <= MaxInlineValues; }

@@ -18,21 +18,22 @@ funcs = {
 
 def get_test_params():
     tests = []
-    for tf_type in ['tf.float32', 'tf.int32']:
-        for tf_func, py_func in funcs.items():
-            for axes in ['0', '1', 'None']:
-                if tf_type == 'tf.int32' and tf_func == 'reduce_mean':
-                    continue
-                if tf_type == 'tf.int32' and tf_func == 'reduce_prod' and axes == '1':
-                    # these all fail on CUDA too, soooo... I guess it's ok???
-                    continue
-                tests.append({'tf_func': tf_func, 'py_func': py_func, 'axes': axes, 'tf_type': tf_type})
+    for shape in [(3, 17)]:
+        for tf_type in ['tf.float32', 'tf.int32']:
+            for tf_func, py_func in funcs.items():
+                for axes in ['0', '1', 'None']:
+                    if tf_type == 'tf.int32' and tf_func == 'reduce_mean':
+                        continue
+                    if tf_type == 'tf.int32' and tf_func == 'reduce_prod' and axes == '1':
+                        # these all fail on CUDA too, soooo... I guess it's ok???
+                        continue
+                    tests.append({'tf_func': tf_func, 'py_func': py_func, 'axes': axes, 'tf_type': tf_type, 'shape': shape})
     return tests
 
 
-@pytest.mark.parametrize('tf_func, py_func, axes, tf_type', [(d['tf_func'], d['py_func'], d['axes'], d['tf_type']) for d in get_test_params()])
-def test(tf_func, py_func, axes, tf_type):
-    print('func', tf_func, 'axes', axes, tf_type)
+@pytest.mark.parametrize('tf_func, py_func, axes, tf_type, shape', [(d['tf_func'], d['py_func'], d['axes'], d['tf_type'], d['shape']) for d in get_test_params()])
+def test(tf_func, py_func, axes, tf_type, shape):
+    print('func', tf_func, 'axes', axes, tf_type, shape)
     tf_type = eval(tf_type)
     if axes != 'None':
         axes = '(%s,)' % axes
@@ -45,7 +46,6 @@ def test(tf_func, py_func, axes, tf_type):
 
             with tf.Session(config=tf.ConfigProto(log_device_placement=show_placement)) as sess:
                 np.random.seed(123)
-                shape = (3, 17)
                 if tf_type == tf.float32:
                     a = np.random.choice(50, shape) / 25 - 1
                 else:
@@ -59,3 +59,7 @@ def test(tf_func, py_func, axes, tf_type):
                     print('c_py', c_py)
                     print('cr', cr)
                     assert diff < 1e-4, 'failed for %s' % tf_func
+
+
+if __name__ == '__main__':
+    test('reduce_sum', 'np.sum', 'None', 'tf.float32', (1024, 32))

@@ -22,10 +22,10 @@ limitations under the License.
 
 namespace tensorflow {
 
-static constexpr int kMaxInlineCudaPointers = 8;
+static constexpr int kMaxInlineCudaPointers = 64;
 // To decode on the device side, use GetCudaDeviceArrayOnDevice.
 // To encode on the host side, use CudaDeviceArrayOnHost.
-template <typename ValueType, int MaxInlineValues = 8>
+template <typename ValueType, int MaxInlineValues = 64>
 struct CudaDeviceArrayStruct {
   int32 size;
   // used if size <= MaxInlineValues;
