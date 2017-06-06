@@ -37,7 +37,7 @@ namespace tensorflow {
 //   launchKernel(..., ptrs.data, ...);
 //
 // ValueType must be memcopyable.
-template <typename ValueType, int MaxInlineValues = 8>
+template <typename ValueType, int MaxInlineValues = 64>
 class CudaDeviceArrayOnHost {
  public:
   CudaDeviceArrayOnHost(OpKernelContext* context, int32 size)
