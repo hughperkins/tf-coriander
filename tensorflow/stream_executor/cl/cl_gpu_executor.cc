@@ -821,7 +821,7 @@ rng::RngSupport *CLExecutor::CreateRng() {
 
 // TODO(rspringer): Remove in b/18544742.
 bool CLExecutor::SupportsDnn() const {
-  // std::cout << "CLExecutor::SupportsDnn" << std::endl;
+  std::cout << "CLExecutor::SupportsDnn" << std::endl;
   return false;
 }
 

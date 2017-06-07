@@ -20,10 +20,10 @@ limitations under the License.
 #include "tensorflow/core/framework/resource_mgr.h"
 #include "tensorflow/core/util/tensor_format.h"
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #include "tensorflow/core/kernels/conv_ops_gpu.h"
 #include "tensorflow/core/platform/stream_executor.h"
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 namespace tensorflow {
 
@@ -49,7 +49,7 @@ struct Im2ColBufferResource : public ResourceBase {
   string DebugString() { return "Im2ColBufferResource"; }
 };
 
-#ifdef GOOGLE_CUDA
+// #ifdef GOOGLE_CUDA
 template <typename T>
 class LaunchConv2DOp<Eigen::GpuDevice, T> {
  public:
@@ -62,7 +62,7 @@ class LaunchConv2DOp<Eigen::GpuDevice, T> {
   AutoTuneMap<ConvParameters, perftools::gputools::dnn::AlgorithmConfig>
       autotune_results_;
 };
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow
 

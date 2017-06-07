@@ -40,10 +40,10 @@ limitations under the License.
 #include "tensorflow/core/util/use_cudnn.h"
 #include "tensorflow/core/util/work_sharder.h"
 
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 #include "tensorflow/core/kernels/conv_ops_gpu.h"
 #include "tensorflow/core/platform/stream_executor.h"
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 namespace {
 
@@ -392,7 +392,7 @@ TF_CALL_float(REGISTER_CPU_KERNELS);
 #undef REGISTER_CPU_KERNELS
 
 // GPU definitions.
-#if GOOGLE_CUDA
+// #if GOOGLE_CUDA
 // The slow version (but compiles for GPU)
 
 // Backprop for input.
@@ -783,7 +783,7 @@ namespace functor {
   extern template struct PadInput<GPUDevice, T, int, 4>;
 
 DECLARE_GPU_SPEC(float);
-DECLARE_GPU_SPEC(Eigen::half);
+// DECLARE_GPU_SPEC(Eigen::half);
 #undef DECLARE_GPU_SPEC
 }  // namespace functor
 
@@ -797,6 +797,6 @@ REGISTER_KERNEL_BUILDER(Name("Conv2DBackpropInput")
 //                             .TypeConstraint<Eigen::half>("T")
 //                             .HostMemory("input_sizes"),
 //                         Conv2DSlowBackpropInputOp<GPUDevice, Eigen::half>);
-#endif  // GOOGLE_CUDA
+// #endif  // GOOGLE_CUDA
 
 }  // namespace tensorflow
