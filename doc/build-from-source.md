@@ -80,46 +80,28 @@ git clone --recursive https://github.com/hughperkins/tf-coriander
 ### Configure Tensorflow
 
 ```
+cd ~/git/tf-coriander
 util/run_configure.sh
 ```
 
 ### Build Coriander
 
 ```
-cd ~/git/tf-coriander/third_party/coriander
-mkdir build
-cd build
-cmake ..
-make -j 8
-# note: on Mac: dont use `sudo` in following command:
-sudo make install
-```
-
-### Build grpc_cpp_plugin and protobuf
-
-(these should probably be in the BUILD dependencies somehow, but I didnt figure out how to do this yet)
-```
 cd ~/git/tf-coriander
-bazel build @grpc//:grpc_cpp_plugin
-bazel build @protobuf//:protoc
-
-if [[ ! -h bazel-out ]]; then { echo ERROR: bazel-out should be a link; } fi
-
-# ^^^ make sure bazel-out is a link, if it's not, then stop, cos nothing
-# else will work if it's not :-)
-
-mkdir -p bazel-out/host/bin/external/grpc
-mkdir -p bazel-out/host/bin/external/protobuf
-ln -sf $PWD/bazel-bin/external/grpc/grpc_cpp_plugin bazel-out/host/bin/external/grpc/grpc_cpp_plugin
-ln -sf $PWD/bazel-bin/external/protobuf/protoc bazel-out/host/bin/external/protobuf/protoc
+util/build_coriander.sh
 ```
 
 ### Build Tensorflow
 
 ```
 cd ~/git/tf-coriander
-bazel build --verbose_failures --logging 6 //tensorflow/tools/pip_package:build_pip_package
-bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
+util/build.sh
+```
+
+### Install Tensorflow
+
+```
+cd ~/git/tf-coriander
 pip install --upgrade /tmp/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
