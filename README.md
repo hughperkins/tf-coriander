@@ -24,16 +24,19 @@ On a Mac:
 
 <img src="doc/img/multilayerperceptron.png" />
 
-## Test results, [v0.17.3](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.3)
+## Test results, [v0.18.2](https://github.com/hughperkins/tf-coriander/releases/tag/v0.18.2)
 
 | test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 |
 |----- |-------|-------|
 | unit tests (`py.test -v`) | All pass :-) | All pass :-) |
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) |  Runs ok, loss decreases  | Runs ok, loss decreases |
-| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) |  Runs ok, loss decreases | Runs ok, loss decreases |
-| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) |  Ok, accuracy 0.92 | Ok, accuracy 0.92 |
-| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)| Runs ok, loss decreases | Runs ok, loss decreases |
-| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | Runs ok, loss decreases | Runs ok, loss decreases |
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | Runs ok, loss decreases  | Runs ok, loss decreases |
+| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | Runs ok, accuracy 0.92  | Runs ok, accuracy 0.92 |
+| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)| Hangs | Runs ok, loss decreases |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | Runs ok, loss  | Runs ok, loss decreases |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) | Runs ok, loss decreases | Runs ok, loss decreases |
+| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/bidirectional_rnn.py) | Runs ok, loss decreases | Runs ok, loss decreases |
+| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Runs ok, loss decreases | Runs ok, loss decreases |
 
 ## Installation 
 
@@ -44,8 +47,8 @@ On a Mac:
 
 For Ubuntu 16.04 and Mac Sierra, there are pre-built wheels available:
 
-- [Mac Sierra](https://github.com/hughperkins/tf-coriander/releases/download/v0.17.3/tensorflow-cl-v0.17.3-macsierra-python3.zip)
-- [Ubuntu 16.04](https://github.com/hughperkins/tf-coriander/releases/download/v0.17.3/tensorflow-cl-v0.17.3-ubuntu1604-python3.zip)
+- [Mac Sierra](https://github.com/hughperkins/tf-coriander/releases/download/v0.18.2/tensorflow-cl-v0.18.2-macsierra-python3.zip)
+- [Ubuntu 16.04](https://github.com/hughperkins/tf-coriander/releases/download/v0.18.2/tensorflow-cl-v0.18.2-ubuntu1604-python3.zip)
 
 Simply download, unzip, then install using `pip`:
 ```
@@ -83,6 +86,13 @@ Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this ye
 
 ## News
 
+- June 7 2017:
+  - created [v0.18.2 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.18.2):
+    - `tf.split` enabled
+    - following examples from Aymeric Damien's [Tensorflow-Examples](https://github.com/aymericdamien/TensorFlow-Examples) run now:
+      - [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)
+      - [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/bidirectional_rnn.py)
+      - [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py)
 - June 2 2017:
   - created [v0.17.3 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.3):
     - bug fix release:
