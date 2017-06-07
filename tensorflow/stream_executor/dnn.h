@@ -936,23 +936,23 @@ class DnnSupport {
       const dnn::AlgorithmConfig& algorithm_config,
       ProfileResult* output_profile_result) = 0;
 
-  // Variation of the above with the weight matrix split into two matrices.
-  // first_weights: Coefficients of the first matrix.
-  // second_weights: Coefficients of the second matrix.
-  // depth_multiplier: specifies the columns of the first matrix and rows
-  // of the second one - first_weights columns = depth_multiplier,
-  // second_weights rows = depth_multiplier *
-  //                       filter_descriptor.input_feature_map_count().
-  // see go/separable for documentation on separable convolutions.
-  virtual bool DoSeparableConvolve(
-      Stream* stream, const BatchDescriptor& input_descriptor,
-      const DeviceMemory<float>& input_data,
-      const FilterDescriptor& filter_descriptor, int depth_multiplier,
-      const DeviceMemory<float>& first_weights,
-      const DeviceMemory<float>& second_weights,
-      const ConvolutionDescriptor& convolution_descriptor,
-      const BatchDescriptor& output_descriptor,
-      DeviceMemory<float>* output_data) = 0;
+  // // Variation of the above with the weight matrix split into two matrices.
+  // // first_weights: Coefficients of the first matrix.
+  // // second_weights: Coefficients of the second matrix.
+  // // depth_multiplier: specifies the columns of the first matrix and rows
+  // // of the second one - first_weights columns = depth_multiplier,
+  // // second_weights rows = depth_multiplier *
+  // //                       filter_descriptor.input_feature_map_count().
+  // // see go/separable for documentation on separable convolutions.
+  // virtual bool DoSeparableConvolve(
+  //     Stream* stream, const BatchDescriptor& input_descriptor,
+  //     const DeviceMemory<float>& input_data,
+  //     const FilterDescriptor& filter_descriptor, int depth_multiplier,
+  //     const DeviceMemory<float>& first_weights,
+  //     const DeviceMemory<float>& second_weights,
+  //     const ConvolutionDescriptor& convolution_descriptor,
+  //     const BatchDescriptor& output_descriptor,
+  //     DeviceMemory<float>* output_data) = 0;
 
   // Enqueues a single-precision backward convolution (for data) operation onto
   // the stream.
@@ -1138,29 +1138,29 @@ class DnnSupport {
                         const dnn::BatchDescriptor& output_dimensions,
                         DeviceMemory<float>* output_data) = 0;
 
-  // Version of DoMatMul that uses pre-quantized 8 bit weights.
-  // weight_scales specifies the scaling of each column of weights:
-  // original float weight[row * num_columns + column] =
-  //     quantized_weight[row * nnum_columns + column] * weight_scales[column].
-  virtual bool DoMatMulQuantized(Stream* stream,
-                                 const DeviceMemory<float>& input_data,
-                                 const DeviceMemory<int8>& quantized_weights,
-                                 const DeviceMemory<float>& weight_scales,
-                                 const dnn::BatchDescriptor& input_dimensions,
-                                 const dnn::BatchDescriptor& output_dimensions,
-                                 DeviceMemory<float>* output_data) = 0;
+  // // Version of DoMatMul that uses pre-quantized 8 bit weights.
+  // // weight_scales specifies the scaling of each column of weights:
+  // // original float weight[row * num_columns + column] =
+  // //     quantized_weight[row * nnum_columns + column] * weight_scales[column].
+  // virtual bool DoMatMulQuantized(Stream* stream,
+  //                                const DeviceMemory<float>& input_data,
+  //                                const DeviceMemory<int8>& quantized_weights,
+  //                                const DeviceMemory<float>& weight_scales,
+  //                                const dnn::BatchDescriptor& input_dimensions,
+  //                                const dnn::BatchDescriptor& output_dimensions,
+  //                                DeviceMemory<float>* output_data) = 0;
 
-  // Version of DoMatMul that uses pre-quantized 16 bit weights.
-  // weight_scales specifies the scaling of each column of weights:
-  // original float weight[row * num_columns + column] =
-  //     quantized_weight[row * nnum_columns + column] * weight_scales[column].
-  virtual bool DoMatMulQuantized(Stream* stream,
-                                 const DeviceMemory<float>& input_data,
-                                 const DeviceMemory<int16>& quantized_weights,
-                                 const DeviceMemory<float>& weight_scales,
-                                 const dnn::BatchDescriptor& input_dimensions,
-                                 const dnn::BatchDescriptor& output_dimensions,
-                                 DeviceMemory<float>* output_data) = 0;
+  // // Version of DoMatMul that uses pre-quantized 16 bit weights.
+  // // weight_scales specifies the scaling of each column of weights:
+  // // original float weight[row * num_columns + column] =
+  // //     quantized_weight[row * nnum_columns + column] * weight_scales[column].
+  // virtual bool DoMatMulQuantized(Stream* stream,
+  //                                const DeviceMemory<float>& input_data,
+  //                                const DeviceMemory<int16>& quantized_weights,
+  //                                const DeviceMemory<float>& weight_scales,
+  //                                const dnn::BatchDescriptor& input_dimensions,
+  //                                const dnn::BatchDescriptor& output_dimensions,
+  //                                DeviceMemory<float>* output_data) = 0;
 
   // Adds biases to the feature maps in input_data producing
   // output_data. input_data can equal output_data, but must not
@@ -1191,412 +1191,412 @@ class DnnSupport {
                          const dnn::BatchDescriptor& dimensions,
                          DeviceMemory<float>* output_data) = 0;
 
-  // Performs a forward pooling operation on input_data, writing to
-  // output_data. See PoolingDescriptor for how to configure the
-  // pooling operation.
-  //
-  // Pooling happens as a window that moves across the Y and X
-  // dimensions of input_data, where each position of the window
-  // yields one output value. E.g. for max pooling, the computed value
-  // is the maximum element in the window. The operation is applied
-  // independently to each batch and at each feature map (depth), so
-  // that the output depth and feature_map_count are the same as for
-  // the input. The output width and height can be different.
-  //
-  // See PoolingDescriptor for how to configure the pooling operation.
-  virtual bool DoPoolForward(Stream* stream,
-                             const dnn::PoolingDescriptor& pooling_dimensions,
-                             const dnn::BatchDescriptor& input_dimensions,
-                             const DeviceMemory<float>& input_data,
-                             const dnn::BatchDescriptor& output_dimensions,
-                             DeviceMemory<float>* output_data) = 0;
+  // // Performs a forward pooling operation on input_data, writing to
+  // // output_data. See PoolingDescriptor for how to configure the
+  // // pooling operation.
+  // //
+  // // Pooling happens as a window that moves across the Y and X
+  // // dimensions of input_data, where each position of the window
+  // // yields one output value. E.g. for max pooling, the computed value
+  // // is the maximum element in the window. The operation is applied
+  // // independently to each batch and at each feature map (depth), so
+  // // that the output depth and feature_map_count are the same as for
+  // // the input. The output width and height can be different.
+  // //
+  // // See PoolingDescriptor for how to configure the pooling operation.
+  // virtual bool DoPoolForward(Stream* stream,
+  //                            const dnn::PoolingDescriptor& pooling_dimensions,
+  //                            const dnn::BatchDescriptor& input_dimensions,
+  //                            const DeviceMemory<float>& input_data,
+  //                            const dnn::BatchDescriptor& output_dimensions,
+  //                            DeviceMemory<float>* output_data) = 0;
 
-  virtual bool DoPoolForward(Stream* stream,
-                             const dnn::PoolingDescriptor& pooling_dimensions,
-                             const dnn::BatchDescriptor& input_dimensions,
-                             const DeviceMemory<Eigen::half>& input_data,
-                             const dnn::BatchDescriptor& output_dimensions,
-                             DeviceMemory<Eigen::half>* output_data) = 0;
+  // virtual bool DoPoolForward(Stream* stream,
+  //                            const dnn::PoolingDescriptor& pooling_dimensions,
+  //                            const dnn::BatchDescriptor& input_dimensions,
+  //                            const DeviceMemory<Eigen::half>& input_data,
+  //                            const dnn::BatchDescriptor& output_dimensions,
+  //                            DeviceMemory<Eigen::half>* output_data) = 0;
 
-  // Performs differentiation of the pooling operation.
-  virtual bool DoPoolBackward(Stream* stream,
-                              const dnn::PoolingDescriptor& pooling_dimensions,
-                              const dnn::BatchDescriptor& input_dimensions,
-                              const DeviceMemory<float>& input_data,
-                              const dnn::BatchDescriptor& output_dimensions,
-                              const DeviceMemory<float>& output_data,
-                              const DeviceMemory<float>& input_diff_data,
-                              DeviceMemory<float>* output_diff_data) = 0;
+  // // Performs differentiation of the pooling operation.
+  // virtual bool DoPoolBackward(Stream* stream,
+  //                             const dnn::PoolingDescriptor& pooling_dimensions,
+  //                             const dnn::BatchDescriptor& input_dimensions,
+  //                             const DeviceMemory<float>& input_data,
+  //                             const dnn::BatchDescriptor& output_dimensions,
+  //                             const DeviceMemory<float>& output_data,
+  //                             const DeviceMemory<float>& input_diff_data,
+  //                             DeviceMemory<float>* output_diff_data) = 0;
 
-  virtual bool DoPoolBackward(Stream* stream,
-                              const dnn::PoolingDescriptor& pooling_dimensions,
-                              const dnn::BatchDescriptor& input_dimensions,
-                              const DeviceMemory<Eigen::half>& input_data,
-                              const dnn::BatchDescriptor& output_dimensions,
-                              const DeviceMemory<Eigen::half>& output_data,
-                              const DeviceMemory<Eigen::half>& input_diff_data,
-                              DeviceMemory<Eigen::half>* output_diff_data) = 0;
+  // virtual bool DoPoolBackward(Stream* stream,
+  //                             const dnn::PoolingDescriptor& pooling_dimensions,
+  //                             const dnn::BatchDescriptor& input_dimensions,
+  //                             const DeviceMemory<Eigen::half>& input_data,
+  //                             const dnn::BatchDescriptor& output_dimensions,
+  //                             const DeviceMemory<Eigen::half>& output_data,
+  //                             const DeviceMemory<Eigen::half>& input_diff_data,
+  //                             DeviceMemory<Eigen::half>* output_diff_data) = 0;
 
-  // Applies local response normalization to the values from
-  // input_data and writes the result to output_data. See comments on
-  // NormalizeDescriptor for a description of local response
-  // normalization.
-  virtual bool DoNormalize(Stream* stream,
-                           const dnn::NormalizeDescriptor& normalize_descriptor,
-                           const DeviceMemory<float>& input_data,
-                           DeviceMemory<float>* output_data) = 0;
+  // // Applies local response normalization to the values from
+  // // input_data and writes the result to output_data. See comments on
+  // // NormalizeDescriptor for a description of local response
+  // // normalization.
+  // virtual bool DoNormalize(Stream* stream,
+  //                          const dnn::NormalizeDescriptor& normalize_descriptor,
+  //                          const DeviceMemory<float>& input_data,
+  //                          DeviceMemory<float>* output_data) = 0;
 
-  // Applies local response normalization to the values from input_data and
-  // writes the result to output_data.
-  //
-  // Similar to DoNormalize, but normalizes across feature maps and allows for
-  // specifying the dimensions of the tensor.
-  //
-  // See comments on NormalizeDescriptor for a description of local response
-  // normalization.
-  virtual bool DoNormalizeWithDimensions(
-      Stream* stream, const dnn::NormalizeDescriptor& normalize_descriptor,
-      const dnn::BatchDescriptor& dimensions,
-      const DeviceMemory<float>& input_data, DeviceMemory<float>* output_data) {
-    return false;
-  }
+  // // Applies local response normalization to the values from input_data and
+  // // writes the result to output_data.
+  // //
+  // // Similar to DoNormalize, but normalizes across feature maps and allows for
+  // // specifying the dimensions of the tensor.
+  // //
+  // // See comments on NormalizeDescriptor for a description of local response
+  // // normalization.
+  // virtual bool DoNormalizeWithDimensions(
+  //     Stream* stream, const dnn::NormalizeDescriptor& normalize_descriptor,
+  //     const dnn::BatchDescriptor& dimensions,
+  //     const DeviceMemory<float>& input_data, DeviceMemory<float>* output_data) {
+  //   return false;
+  // }
 
-  // Performs backpropagation for the normalization operation
-  //
-  // Given raw data, its corresponding normalized output, and a gradient of some
-  // unspecified function with respect to the normalized variables, computes the
-  // gradient of that unspecified function with respect to the raw variables.
-  //
-  // The normalized data input array is expected to match the output that would
-  // be obtained by running the raw data input array through the DoNormalize
-  // method above.
-  //
-  // See comments on NormalizeDescriptor for a description of local response
-  // normalization.
-  virtual bool DoNormalizeBackwardWithDimensions(
-      Stream* stream, const dnn::NormalizeDescriptor& normalize_descriptor,
-      const dnn::BatchDescriptor& dimensions,
-      const DeviceMemory<float>& raw_data,
-      const DeviceMemory<float>& normalized_data,
-      const DeviceMemory<float>& normalized_variable_gradient,
-      DeviceMemory<float>* raw_variable_gradient) {
-    return false;
-  }
+  // // Performs backpropagation for the normalization operation
+  // //
+  // // Given raw data, its corresponding normalized output, and a gradient of some
+  // // unspecified function with respect to the normalized variables, computes the
+  // // gradient of that unspecified function with respect to the raw variables.
+  // //
+  // // The normalized data input array is expected to match the output that would
+  // // be obtained by running the raw data input array through the DoNormalize
+  // // method above.
+  // //
+  // // See comments on NormalizeDescriptor for a description of local response
+  // // normalization.
+  // virtual bool DoNormalizeBackwardWithDimensions(
+  //     Stream* stream, const dnn::NormalizeDescriptor& normalize_descriptor,
+  //     const dnn::BatchDescriptor& dimensions,
+  //     const DeviceMemory<float>& raw_data,
+  //     const DeviceMemory<float>& normalized_data,
+  //     const DeviceMemory<float>& normalized_variable_gradient,
+  //     DeviceMemory<float>* raw_variable_gradient) {
+  //   return false;
+  // }
 
-  // Applies an activation function (see ActivationMode) to all of the values
-  // held on the device in 'input_data', whose dimensions are described by
-  // 'dimensions'.
-  //
-  // Arguments (all borrowed):
-  //  stream: borrowed pointer to the stream that the 'activate' operation
-  //    should be enqueued onto.
-  //  activation_mode: Type of activation to perform.
-  //  input_data: un-owned device memory region which contains the
-  //    activate input.
-  //  output_data: un-owned device memory region in which to place the
-  //    activate result.
-  virtual bool DoActivate(Stream* stream, ActivationMode activation_mode,
-                          const BatchDescriptor& dimensions,
-                          const DeviceMemory<float>& input_data,
-                          DeviceMemory<float>* output_data) = 0;
+  // // Applies an activation function (see ActivationMode) to all of the values
+  // // held on the device in 'input_data', whose dimensions are described by
+  // // 'dimensions'.
+  // //
+  // // Arguments (all borrowed):
+  // //  stream: borrowed pointer to the stream that the 'activate' operation
+  // //    should be enqueued onto.
+  // //  activation_mode: Type of activation to perform.
+  // //  input_data: un-owned device memory region which contains the
+  // //    activate input.
+  // //  output_data: un-owned device memory region in which to place the
+  // //    activate result.
+  // virtual bool DoActivate(Stream* stream, ActivationMode activation_mode,
+  //                         const BatchDescriptor& dimensions,
+  //                         const DeviceMemory<float>& input_data,
+  //                         DeviceMemory<float>* output_data) = 0;
 
-  // Concatenates several layers into one, by concatenating the depth of each
-  // layer at matching x and y coordinates.
-  // The inputs must all have the same width and height, the output will have
-  // the same width and height as the inputs and its depth will be the sum of
-  // the input depths.
-  //
-  // Arguments (all borrowed):
-  //  stream: borrowed pointer to the stream that the 'depth concatenate'
-  // operation should be enqueued onto.
-  //  input_dimensions: The dimensions of each input.
-  //  input_data: un-owned device memory region which contains the
-  //    input data for each input layer.
-  //  output_data: un-owned device memory region in which to place the
-  //    depth concatenate result.
-  virtual bool DoDepthConcatenate(
-      Stream* stream, port::ArraySlice<dnn::BatchDescriptor> input_dimensions,
-      port::ArraySlice<const DeviceMemory<float>*> input_data,
-      DeviceMemory<float>* output_data) = 0;
+  // // Concatenates several layers into one, by concatenating the depth of each
+  // // layer at matching x and y coordinates.
+  // // The inputs must all have the same width and height, the output will have
+  // // the same width and height as the inputs and its depth will be the sum of
+  // // the input depths.
+  // //
+  // // Arguments (all borrowed):
+  // //  stream: borrowed pointer to the stream that the 'depth concatenate'
+  // // operation should be enqueued onto.
+  // //  input_dimensions: The dimensions of each input.
+  // //  input_data: un-owned device memory region which contains the
+  // //    input data for each input layer.
+  // //  output_data: un-owned device memory region in which to place the
+  // //    depth concatenate result.
+  // virtual bool DoDepthConcatenate(
+  //     Stream* stream, port::ArraySlice<dnn::BatchDescriptor> input_dimensions,
+  //     port::ArraySlice<const DeviceMemory<float>*> input_data,
+  //     DeviceMemory<float>* output_data) = 0;
 
-  // Computes the specified operation (e.g. addition or multiplication)
-  // between corresponding elements in the inputs and stores the result in the
-  // output element.
-  // The inputs and output must all have the same dimensions, but may have
-  // different quantization parameters (min_value and max_value).
-  //
-  // Arguments (all borrowed):
-  //  stream: borrowed pointer to the stream that the 'elementwise operation'
-  // should be enqueued onto.
-  //  operation: The operation to perform.
-  //  input_dimensions: The dimensions of each input.
-  //  input_data: un-owned device memory region which contains the
-  //    input data for each input layer.
-  //  output_dimensions: The dimensions of the output.
-  //  output_data: un-owned device memory region in which to place the
-  //    operation result.
-  virtual bool DoElementwiseOperate(
-      Stream* stream, ElementwiseOperation operation,
-      port::ArraySlice<dnn::BatchDescriptor> input_dimensions,
-      port::ArraySlice<const DeviceMemory<float>*> input_data,
-      const dnn::BatchDescriptor& output_dimensions,
-      DeviceMemory<float>* output_data) = 0;
+  // // Computes the specified operation (e.g. addition or multiplication)
+  // // between corresponding elements in the inputs and stores the result in the
+  // // output element.
+  // // The inputs and output must all have the same dimensions, but may have
+  // // different quantization parameters (min_value and max_value).
+  // //
+  // // Arguments (all borrowed):
+  // //  stream: borrowed pointer to the stream that the 'elementwise operation'
+  // // should be enqueued onto.
+  // //  operation: The operation to perform.
+  // //  input_dimensions: The dimensions of each input.
+  // //  input_data: un-owned device memory region which contains the
+  // //    input data for each input layer.
+  // //  output_dimensions: The dimensions of the output.
+  // //  output_data: un-owned device memory region in which to place the
+  // //    operation result.
+  // virtual bool DoElementwiseOperate(
+  //     Stream* stream, ElementwiseOperation operation,
+  //     port::ArraySlice<dnn::BatchDescriptor> input_dimensions,
+  //     port::ArraySlice<const DeviceMemory<float>*> input_data,
+  //     const dnn::BatchDescriptor& output_dimensions,
+  //     DeviceMemory<float>* output_data) = 0;
 
-  // Pads the input with zeros in the X and Y dimensions. The feature_map
-  // dimension is unchanged.
-  //
-  // Arguments (all borrowed):
-  //  stream: borrowed pointer to the stream that the 'elementwise operation'
-  // should be enqueued onto.
-  //  dimensions: The dimensions of the input.
-  //  input_data: un-owned device memory region which contains the
-  //    input data for the input layer.
-  //  left_pad: Amount to pad the input on the left.
-  //  right_pad: Amount to pad the input on the right.
-  //  top_pad: Amount to pad the input at the top (low Y).
-  //  bottom_pad: Amount to pad the input at the bottom (high Y).
-  //  output_data: un-owned device memory region in which to place the
-  //    padded result.
-  virtual bool DoXYPad(Stream* stream, const dnn::BatchDescriptor &dimensions,
-                       const DeviceMemory<float> &input_data,
-                       int64 left_pad, int64 right_pad, int64 top_pad,
-                       int64 bottom_pad, DeviceMemory<float> *output_data) = 0;
+  // // Pads the input with zeros in the X and Y dimensions. The feature_map
+  // // dimension is unchanged.
+  // //
+  // // Arguments (all borrowed):
+  // //  stream: borrowed pointer to the stream that the 'elementwise operation'
+  // // should be enqueued onto.
+  // //  dimensions: The dimensions of the input.
+  // //  input_data: un-owned device memory region which contains the
+  // //    input data for the input layer.
+  // //  left_pad: Amount to pad the input on the left.
+  // //  right_pad: Amount to pad the input on the right.
+  // //  top_pad: Amount to pad the input at the top (low Y).
+  // //  bottom_pad: Amount to pad the input at the bottom (high Y).
+  // //  output_data: un-owned device memory region in which to place the
+  // //    padded result.
+  // virtual bool DoXYPad(Stream* stream, const dnn::BatchDescriptor &dimensions,
+  //                      const DeviceMemory<float> &input_data,
+  //                      int64 left_pad, int64 right_pad, int64 top_pad,
+  //                      int64 bottom_pad, DeviceMemory<float> *output_data) = 0;
 
-  // Extracts a slice of the input in the X and Y dimensions. The feature_map
-  // dimension is unchanged.
-  //
-  // Arguments (all borrowed):
-  //  stream: borrowed pointer to the stream that the 'elementwise operation'
-  // should be enqueued onto.
-  //  dimensions: The dimensions of the input.
-  //  input_data: un-owned device memory region which contains the
-  //    input data for the input layer.
-  //  left_trim: Amount to cut off the input on the left.
-  //  right_trim: Amount to cut off the input on the right.
-  //  top_trim: Amount to cut off the input at the top (low y).
-  //  bottom_trim: Amount to cut off the input at the bottom (high Y).
-  //  output_data: un-owned device memory region in which to place the
-  //    padded result.
-  virtual bool DoXYSlice(Stream* stream, const dnn::BatchDescriptor &dimensions,
-                    const DeviceMemory<float> &input_data,
-                    int64 left_trim, int64 right_trim, int64 top_trim,
-                    int64 bottom_trim, DeviceMemory<float> *output_data) = 0;
+  // // Extracts a slice of the input in the X and Y dimensions. The feature_map
+  // // dimension is unchanged.
+  // //
+  // // Arguments (all borrowed):
+  // //  stream: borrowed pointer to the stream that the 'elementwise operation'
+  // // should be enqueued onto.
+  // //  dimensions: The dimensions of the input.
+  // //  input_data: un-owned device memory region which contains the
+  // //    input data for the input layer.
+  // //  left_trim: Amount to cut off the input on the left.
+  // //  right_trim: Amount to cut off the input on the right.
+  // //  top_trim: Amount to cut off the input at the top (low y).
+  // //  bottom_trim: Amount to cut off the input at the bottom (high Y).
+  // //  output_data: un-owned device memory region in which to place the
+  // //    padded result.
+  // virtual bool DoXYSlice(Stream* stream, const dnn::BatchDescriptor &dimensions,
+  //                   const DeviceMemory<float> &input_data,
+  //                   int64 left_trim, int64 right_trim, int64 top_trim,
+  //                   int64 bottom_trim, DeviceMemory<float> *output_data) = 0;
 
-  // Enqueues an asynchronous memcpy of the *quantized* output of a layer (that
-  // is, bytes instead of scaled floats) into 'host_dst' if they are available
-  // for the underlying DNN implementation. If this quantized output is not
-  // available, false is returned, which will place 'stream' into an error
-  // state.
-  //
-  // Arguments (all borrowed):
-  //  stream: borrowed pointer to the stream that the 'quantized memcpy'
-  //    operation should be enqueued onto.
-  //  gpu_unquantized_src: the device memory that contains the unquantized data
-  //    -- this data should also have a corresponding quantized representation
-  //    on the device for this operation to succeed.
-  //  mode: Type of quantization of the data to write into host_dst.
-  //  host_dst: un-owned host memory region that is mutated in place,
-  //    it is clobbered by the values in 'gpu_unquantized_src' when the enqueued
-  //    (asynchronous) memcpy operation is performed.
-  //  size: size in bytes of the host_dst host memory region.
-  virtual bool DoMemcpyD2HQuantized(
-      Stream* stream, const DeviceMemory<float>& gpu_unquantized_src,
-      QuantizedActivationMode mode, void* host_dst, int64 size) = 0;
+  // // Enqueues an asynchronous memcpy of the *quantized* output of a layer (that
+  // // is, bytes instead of scaled floats) into 'host_dst' if they are available
+  // // for the underlying DNN implementation. If this quantized output is not
+  // // available, false is returned, which will place 'stream' into an error
+  // // state.
+  // //
+  // // Arguments (all borrowed):
+  // //  stream: borrowed pointer to the stream that the 'quantized memcpy'
+  // //    operation should be enqueued onto.
+  // //  gpu_unquantized_src: the device memory that contains the unquantized data
+  // //    -- this data should also have a corresponding quantized representation
+  // //    on the device for this operation to succeed.
+  // //  mode: Type of quantization of the data to write into host_dst.
+  // //  host_dst: un-owned host memory region that is mutated in place,
+  // //    it is clobbered by the values in 'gpu_unquantized_src' when the enqueued
+  // //    (asynchronous) memcpy operation is performed.
+  // //  size: size in bytes of the host_dst host memory region.
+  // virtual bool DoMemcpyD2HQuantized(
+  //     Stream* stream, const DeviceMemory<float>& gpu_unquantized_src,
+  //     QuantizedActivationMode mode, void* host_dst, int64 size) = 0;
 
-  // Enqueues an asynchronous memcpy of 'host_dst' into the *quantized* input
-  // of a layer (that is, bytes instead of scaled floats) if they are supported
-  // by the underlying DNN implementation. If this quantized input is not
-  // supported, false is returned, which will place 'stream' into an error
-  // state.
-  //
-  // Arguments (all borrowed):
-  //  stream: borrowed pointer to the stream that the 'quantized memcpy'
-  //    operation should be enqueued onto.
-  //  host_src: un-owned host memory region that contains the quantized data.
-  //  size: size in bytes of the host_src host memory region.
-  //  mode: Type of quantization of the data to read from host_src.
-  //  gpu_unquantized_dst: the device memory that is clobbered by the values in
-  //    'host_src' when the enqueued (asynchronous) memcpy operation is
-  //    performed. -- this data should also have a corresponding quantized
-  //    representation on the device for this operation to
-  //    succeed.
-  virtual bool DoMemcpyH2DQuantized(
-      Stream* stream, const void* host_src, int64 size,
-      QuantizedActivationMode mode,
-      DeviceMemory<float>* gpu_unquantized_dst) = 0;
+  // // Enqueues an asynchronous memcpy of 'host_dst' into the *quantized* input
+  // // of a layer (that is, bytes instead of scaled floats) if they are supported
+  // // by the underlying DNN implementation. If this quantized input is not
+  // // supported, false is returned, which will place 'stream' into an error
+  // // state.
+  // //
+  // // Arguments (all borrowed):
+  // //  stream: borrowed pointer to the stream that the 'quantized memcpy'
+  // //    operation should be enqueued onto.
+  // //  host_src: un-owned host memory region that contains the quantized data.
+  // //  size: size in bytes of the host_src host memory region.
+  // //  mode: Type of quantization of the data to read from host_src.
+  // //  gpu_unquantized_dst: the device memory that is clobbered by the values in
+  // //    'host_src' when the enqueued (asynchronous) memcpy operation is
+  // //    performed. -- this data should also have a corresponding quantized
+  // //    representation on the device for this operation to
+  // //    succeed.
+  // virtual bool DoMemcpyH2DQuantized(
+  //     Stream* stream, const void* host_src, int64 size,
+  //     QuantizedActivationMode mode,
+  //     DeviceMemory<float>* gpu_unquantized_dst) = 0;
 
 
-  // Create an RNN descriptor based on model shapes and configurations.
-  // The caller retains the ownership of the descriptor.
-  //
-  // Arguments:
-  //  num_layers: the number of layers for a RNN model.
-  //  hidden_size: the size of the hidden state.
-  //  input_size: the size of the input state.
-  //  input_mode: an enum to specify whether a linear transformation is added
-  //    after the input state. If input_size is different from hidden_size, this
-  //    is required.
-  //  direction_mode: an enum to specify whether this model is unidirectional or
-  //    bidirectional.
-  //  rnn_mode: an enum to specify the type of model to build.
-  //  data_type: an enum to specify the data types used in this model.
-  //  dropout: the dropout threshold between layers. When it is 0., no dropout
-  //    is added.
-  //  seed: a seed for initializing the dropout layers.
-  //  state_allocator: an memory allocator that will be used to store the state
-  //    for dropout layer. The user has to maintain the memory until the model
-  //    is no longer in use.
-  virtual port::StatusOr<std::unique_ptr<dnn::RnnDescriptor>>
-  createRnnDescriptor(int num_layers, int hidden_size, int input_size,
-                      dnn::RnnInputMode input_mode,
-                      dnn::RnnDirectionMode direction_mode,
-                      dnn::RnnMode rnn_mode, dnn::DataType data_type,
-                      float dropout, uint64 seed,
-                      ScratchAllocator* state_allocator) {
-    return port::Status{port::error::UNIMPLEMENTED,
-                        "createRnnDescriptor is unimplemented"};
-  }
+  // // Create an RNN descriptor based on model shapes and configurations.
+  // // The caller retains the ownership of the descriptor.
+  // //
+  // // Arguments:
+  // //  num_layers: the number of layers for a RNN model.
+  // //  hidden_size: the size of the hidden state.
+  // //  input_size: the size of the input state.
+  // //  input_mode: an enum to specify whether a linear transformation is added
+  // //    after the input state. If input_size is different from hidden_size, this
+  // //    is required.
+  // //  direction_mode: an enum to specify whether this model is unidirectional or
+  // //    bidirectional.
+  // //  rnn_mode: an enum to specify the type of model to build.
+  // //  data_type: an enum to specify the data types used in this model.
+  // //  dropout: the dropout threshold between layers. When it is 0., no dropout
+  // //    is added.
+  // //  seed: a seed for initializing the dropout layers.
+  // //  state_allocator: an memory allocator that will be used to store the state
+  // //    for dropout layer. The user has to maintain the memory until the model
+  // //    is no longer in use.
+  // virtual port::StatusOr<std::unique_ptr<dnn::RnnDescriptor>>
+  // createRnnDescriptor(int num_layers, int hidden_size, int input_size,
+  //                     dnn::RnnInputMode input_mode,
+  //                     dnn::RnnDirectionMode direction_mode,
+  //                     dnn::RnnMode rnn_mode, dnn::DataType data_type,
+  //                     float dropout, uint64 seed,
+  //                     ScratchAllocator* state_allocator) {
+  //   return port::Status{port::error::UNIMPLEMENTED,
+  //                       "createRnnDescriptor is unimplemented"};
+  // }
 
-  // Create a RNN sequence descriptor that specifies either the input or output
-  // sequence. The caller retains the ownership of the returned descriptor.
-  //
-  // Arguments:
-  //  seq_length: the length of the sequence.
-  //  batch_size: the size of a minibatch.
-  //  data_size: the size of the state.
-  //  data_type: an enum to specify the type for the underlying data.
-  virtual port::StatusOr<std::unique_ptr<dnn::RnnSequenceTensorDescriptor>>
-  createRnnSequenceTensorDescriptor(int seq_length, int batch_size,
-                                    int data_size, dnn::DataType data_type) {
-    return port::Status{port::error::UNIMPLEMENTED,
-                        "createRnnSequenceTensorDescriptor is unimplemented"};
-  }
+  // // Create a RNN sequence descriptor that specifies either the input or output
+  // // sequence. The caller retains the ownership of the returned descriptor.
+  // //
+  // // Arguments:
+  // //  seq_length: the length of the sequence.
+  // //  batch_size: the size of a minibatch.
+  // //  data_size: the size of the state.
+  // //  data_type: an enum to specify the type for the underlying data.
+  // virtual port::StatusOr<std::unique_ptr<dnn::RnnSequenceTensorDescriptor>>
+  // createRnnSequenceTensorDescriptor(int seq_length, int batch_size,
+  //                                   int data_size, dnn::DataType data_type) {
+  //   return port::Status{port::error::UNIMPLEMENTED,
+  //                       "createRnnSequenceTensorDescriptor is unimplemented"};
+  // }
 
-  // Create an RNN state descriptor that specifies the input or hidden state.
-  // The caller retains the ownership of the returned descriptor.
-  virtual port::StatusOr<std::unique_ptr<dnn::RnnStateTensorDescriptor>>
-  createRnnStateTensorDescriptor(int num_layer, int batch_size, int data_size,
-                                 dnn::DataType data_type) {
-    return port::Status{port::error::UNIMPLEMENTED,
-                        "createRnnStateTensorDescriptor is unimplemented"};
-  }
+  // // Create an RNN state descriptor that specifies the input or hidden state.
+  // // The caller retains the ownership of the returned descriptor.
+  // virtual port::StatusOr<std::unique_ptr<dnn::RnnStateTensorDescriptor>>
+  // createRnnStateTensorDescriptor(int num_layer, int batch_size, int data_size,
+  //                                dnn::DataType data_type) {
+  //   return port::Status{port::error::UNIMPLEMENTED,
+  //                       "createRnnStateTensorDescriptor is unimplemented"};
+  // }
 
-  // Enqueue a forward operation of the RNN model onto the stream.
-  //
-  // Arguments:
-  //  stream: pointer to the stream where this operation should be enqueued to.
-  //  rnn_desc: a RNN descriptor created by createRnnDescriptor.
-  //  input_desc: descriptor for the input sequence.
-  //  input_data: the device memory region that contains the input data.
-  //  input_h_desc: descriptor for the input "h" state.
-  //  input_h_data: the device memory region that contains the input "h" data.
-  //  input_c_desc: descriptor for the input "c" state.
-  //  input_c_data: the device memory region that contains the input "c" data.
-  //    This must be specified for LSTM models.
-  //  params: the device memory region that contains the parameters used in this
-  //    model.
-  //  output_desc: descriptor for the output sequence.
-  //  output_data: the memory region that stores the output sequence data.
-  //  output_h_desc: descriptor for the output "h" state.
-  //  output_h_data: the memory region that stores the output "h" data.
-  //  output_c_desc: descriptor for the output "c" state.
-  //  output_c_data: the memory region that stores the outptu "c" data. This
-  //    must be specified for LSTM models.
-  //  is_training: whether this is used in training or inference. That decides
-  //    whether respace_space data need to be produced.
-  //  reserve_space_allocator: if "is_training" is true, an memory allocator
-  //    to create memory that holds the produced reserve_space. The caller is
-  //  retains the data and feed it to the backward pass.
-  //  workspace_allocator: an allocator to create temporary workspace used in
-  //    this kernel. The caller is responsible for retaining the memory long
-  //    enough for the lifespan of this operation, and recycles aftewards.
-  virtual bool DoRnnForward(Stream* stream, const dnn::RnnDescriptor& rnn_desc,
-                            const dnn::RnnSequenceTensorDescriptor& input_desc,
-                            const DeviceMemory<float>& input_data,
-                            const dnn::RnnStateTensorDescriptor& input_h_desc,
-                            const DeviceMemory<float>& input_h_data,
-                            const dnn::RnnStateTensorDescriptor& input_c_desc,
-                            const DeviceMemory<float>& input_c_data,
-                            const DeviceMemory<float>& params,
-                            const dnn::RnnSequenceTensorDescriptor& output_desc,
-                            DeviceMemory<float>* output_data,
-                            const dnn::RnnStateTensorDescriptor& output_h_desc,
-                            DeviceMemory<float>* output_h_data,
-                            const dnn::RnnStateTensorDescriptor& output_c_desc,
-                            DeviceMemory<float>* output_c_data,
-                            bool is_training,
-                            ScratchAllocator* reserve_space_allocator,
-                            ScratchAllocator* workspace_allocator) {
-    return false;
-  }
+  // // Enqueue a forward operation of the RNN model onto the stream.
+  // //
+  // // Arguments:
+  // //  stream: pointer to the stream where this operation should be enqueued to.
+  // //  rnn_desc: a RNN descriptor created by createRnnDescriptor.
+  // //  input_desc: descriptor for the input sequence.
+  // //  input_data: the device memory region that contains the input data.
+  // //  input_h_desc: descriptor for the input "h" state.
+  // //  input_h_data: the device memory region that contains the input "h" data.
+  // //  input_c_desc: descriptor for the input "c" state.
+  // //  input_c_data: the device memory region that contains the input "c" data.
+  // //    This must be specified for LSTM models.
+  // //  params: the device memory region that contains the parameters used in this
+  // //    model.
+  // //  output_desc: descriptor for the output sequence.
+  // //  output_data: the memory region that stores the output sequence data.
+  // //  output_h_desc: descriptor for the output "h" state.
+  // //  output_h_data: the memory region that stores the output "h" data.
+  // //  output_c_desc: descriptor for the output "c" state.
+  // //  output_c_data: the memory region that stores the outptu "c" data. This
+  // //    must be specified for LSTM models.
+  // //  is_training: whether this is used in training or inference. That decides
+  // //    whether respace_space data need to be produced.
+  // //  reserve_space_allocator: if "is_training" is true, an memory allocator
+  // //    to create memory that holds the produced reserve_space. The caller is
+  // //  retains the data and feed it to the backward pass.
+  // //  workspace_allocator: an allocator to create temporary workspace used in
+  // //    this kernel. The caller is responsible for retaining the memory long
+  // //    enough for the lifespan of this operation, and recycles aftewards.
+  // virtual bool DoRnnForward(Stream* stream, const dnn::RnnDescriptor& rnn_desc,
+  //                           const dnn::RnnSequenceTensorDescriptor& input_desc,
+  //                           const DeviceMemory<float>& input_data,
+  //                           const dnn::RnnStateTensorDescriptor& input_h_desc,
+  //                           const DeviceMemory<float>& input_h_data,
+  //                           const dnn::RnnStateTensorDescriptor& input_c_desc,
+  //                           const DeviceMemory<float>& input_c_data,
+  //                           const DeviceMemory<float>& params,
+  //                           const dnn::RnnSequenceTensorDescriptor& output_desc,
+  //                           DeviceMemory<float>* output_data,
+  //                           const dnn::RnnStateTensorDescriptor& output_h_desc,
+  //                           DeviceMemory<float>* output_h_data,
+  //                           const dnn::RnnStateTensorDescriptor& output_c_desc,
+  //                           DeviceMemory<float>* output_c_data,
+  //                           bool is_training,
+  //                           ScratchAllocator* reserve_space_allocator,
+  //                           ScratchAllocator* workspace_allocator) {
+  //   return false;
+  // }
 
-  // Enqueue a backward operation of the RNN model onto the stream.
-  //
-  // Arguments:
-  //  stream: pointer to the stream where this operation should be enqueued to.
-  //  rnn_desc: a RNN descriptor created by createRnnDescriptor.
-  //  input_desc: descriptor for the input sequence.
-  //  input_data: the device memory region that contains the input data.
-  //  input_h_desc: descriptor for the input "h" state.
-  //  input_h_data: the device memory region that contains the input "h" data.
-  //  input_c_desc: descriptor for the input "c" state.
-  //  input_c_data: the device memory region that contains the input "c" data.
-  //    This must be specified for LSTM models.
-  //  params: the device memory region that contains the parameters used in this
-  //    model.
-  //  output_desc: descriptor for the output sequence.
-  //  output_data: the memory region that stores the output sequence data.
-  //  output_h_desc: descriptor for the output "h" state.
-  //  output_h_data: the memory region that stores the output "h" data.
-  //  output_c_desc: descriptor for the output "c" state.
-  //  output_c_data: the memory region that stores the outptu "c" data. This
-  //    must be specified for LSTM models.
-  //  output_backprop_data: the device memory region that contains the backprop
-  //    to the output sequence.
-  //  output_h_backprop_data: the device memory region that contains the
-  //    backprop to the output "h" state.
-  //  output_c_backprop_data: the device memory region that contains the
-  //    backprop to the output "c" state.
-  //  input_backprop_data: the device memory region that stores the backprop
-  //    to the input sequence.
-  //  input_h_backprop_data: the device memory region that stores the backprop
-  //    to the input "h" state.
-  //  input_c_backprop_data: the device memory region that stores the backprop
-  //    to the input "c" state.
-  //  params_backprop_data: the device memory region that stores the backprop
-  //    to the parameters.
-  //  reserve_space_data: the reserve_space data that is produced by the forward
-  //    operation. This memory region could be modified by this operation.
-  //  workspace_allocator: a memory allocator that creates the temporary
-  //    workspace memory used by this operation. The caller is responsible for
-  //    keeping the memory alive long enough for this operation, and recylces
-  //    afterwards.
-  virtual bool DoRnnBackward(
-      Stream* stream, const dnn::RnnDescriptor& rnn_desc,
-      const dnn::RnnSequenceTensorDescriptor& input_desc,
-      const DeviceMemory<float>& input_data,
-      const dnn::RnnStateTensorDescriptor& input_h_desc,
-      const DeviceMemory<float>& input_h_data,
-      const dnn::RnnStateTensorDescriptor& input_c_desc,
-      const DeviceMemory<float>& input_c_data,
-      const DeviceMemory<float>& params,
-      const dnn::RnnSequenceTensorDescriptor& output_desc,
-      const DeviceMemory<float>& output_data,
-      const dnn::RnnStateTensorDescriptor& output_h_desc,
-      const DeviceMemory<float>& output_h_data,
-      const dnn::RnnStateTensorDescriptor& output_c_desc,
-      const DeviceMemory<float>& output_c_data,
-      const DeviceMemory<float>& output_backprop_data,
-      const DeviceMemory<float>& output_h_backprop_data,
-      const DeviceMemory<float>& output_c_backprop_data,
-      DeviceMemory<float>* input_backprop_data,
-      DeviceMemory<float>* input_h_backprop_data,
-      DeviceMemory<float>* input_c_backprop_data,
-      DeviceMemory<float>* params_backprop_data,
-      DeviceMemory<uint8>* reserve_space_data,
-      ScratchAllocator* workspace_allocator) {
-    return false;
-  }
+  // // Enqueue a backward operation of the RNN model onto the stream.
+  // //
+  // // Arguments:
+  // //  stream: pointer to the stream where this operation should be enqueued to.
+  // //  rnn_desc: a RNN descriptor created by createRnnDescriptor.
+  // //  input_desc: descriptor for the input sequence.
+  // //  input_data: the device memory region that contains the input data.
+  // //  input_h_desc: descriptor for the input "h" state.
+  // //  input_h_data: the device memory region that contains the input "h" data.
+  // //  input_c_desc: descriptor for the input "c" state.
+  // //  input_c_data: the device memory region that contains the input "c" data.
+  // //    This must be specified for LSTM models.
+  // //  params: the device memory region that contains the parameters used in this
+  // //    model.
+  // //  output_desc: descriptor for the output sequence.
+  // //  output_data: the memory region that stores the output sequence data.
+  // //  output_h_desc: descriptor for the output "h" state.
+  // //  output_h_data: the memory region that stores the output "h" data.
+  // //  output_c_desc: descriptor for the output "c" state.
+  // //  output_c_data: the memory region that stores the outptu "c" data. This
+  // //    must be specified for LSTM models.
+  // //  output_backprop_data: the device memory region that contains the backprop
+  // //    to the output sequence.
+  // //  output_h_backprop_data: the device memory region that contains the
+  // //    backprop to the output "h" state.
+  // //  output_c_backprop_data: the device memory region that contains the
+  // //    backprop to the output "c" state.
+  // //  input_backprop_data: the device memory region that stores the backprop
+  // //    to the input sequence.
+  // //  input_h_backprop_data: the device memory region that stores the backprop
+  // //    to the input "h" state.
+  // //  input_c_backprop_data: the device memory region that stores the backprop
+  // //    to the input "c" state.
+  // //  params_backprop_data: the device memory region that stores the backprop
+  // //    to the parameters.
+  // //  reserve_space_data: the reserve_space data that is produced by the forward
+  // //    operation. This memory region could be modified by this operation.
+  // //  workspace_allocator: a memory allocator that creates the temporary
+  // //    workspace memory used by this operation. The caller is responsible for
+  // //    keeping the memory alive long enough for this operation, and recylces
+  // //    afterwards.
+  // virtual bool DoRnnBackward(
+  //     Stream* stream, const dnn::RnnDescriptor& rnn_desc,
+  //     const dnn::RnnSequenceTensorDescriptor& input_desc,
+  //     const DeviceMemory<float>& input_data,
+  //     const dnn::RnnStateTensorDescriptor& input_h_desc,
+  //     const DeviceMemory<float>& input_h_data,
+  //     const dnn::RnnStateTensorDescriptor& input_c_desc,
+  //     const DeviceMemory<float>& input_c_data,
+  //     const DeviceMemory<float>& params,
+  //     const dnn::RnnSequenceTensorDescriptor& output_desc,
+  //     const DeviceMemory<float>& output_data,
+  //     const dnn::RnnStateTensorDescriptor& output_h_desc,
+  //     const DeviceMemory<float>& output_h_data,
+  //     const dnn::RnnStateTensorDescriptor& output_c_desc,
+  //     const DeviceMemory<float>& output_c_data,
+  //     const DeviceMemory<float>& output_backprop_data,
+  //     const DeviceMemory<float>& output_h_backprop_data,
+  //     const DeviceMemory<float>& output_c_backprop_data,
+  //     DeviceMemory<float>* input_backprop_data,
+  //     DeviceMemory<float>* input_h_backprop_data,
+  //     DeviceMemory<float>* input_c_backprop_data,
+  //     DeviceMemory<float>* params_backprop_data,
+  //     DeviceMemory<uint8>* reserve_space_data,
+  //     ScratchAllocator* workspace_allocator) {
+  //   return false;
+  // }
 
  private:
   SE_DISALLOW_COPY_AND_ASSIGN(DnnSupport);
