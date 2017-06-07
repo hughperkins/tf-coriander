@@ -80,10 +80,7 @@ git clone --recursive https://github.com/hughperkins/tf-coriander
 ### Configure Tensorflow
 
 ```
-cd ~/git/tf-coriander
-source ~/env3/bin/activate
-./configure
-# you can accept all defaults, just press enter tons, ie 'no' for everything, including for gpu (sic)
+util/run_configure.sh
 ```
 
 ### Build Coriander
