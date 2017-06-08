@@ -17,11 +17,16 @@ if [[ x${CLANG_HOME} != x ]]; then {
 } fi
 make -j 8
 
-if [[ $(uname) == Darwin ]]; then {
-    make install
-} else {
-    sudo make install
+SUDO=sudo
+if [[ $(cat /proc/1/sched | head -n 1 | grep bash) ]]; then {
+    # running in docker
+    SUDO=
 } fi
+if [[ $(uname) == Darwin ]]; then {
+    SUDO=
+} fi
+
+${SUDO} make install
 
 popd
 echo Installed coriander
