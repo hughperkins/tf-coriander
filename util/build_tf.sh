@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# builds tensorflow
+# assumes you already configured it
+
+# handles building/installing coriander, prior to building the main tensorflow package
+
+# doesnt create teh python wheel. You'll need to run util/build_wheel.sh to build that
+
 set -e
 set -x
 
