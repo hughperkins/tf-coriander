@@ -23,13 +23,13 @@ From the root of the cloned `tf-coriander` repo, do:
 bash ./build.sh
 ```
 
-### Install Tensorflow
+## Install
 
 ```
 pip install --upgrade soft/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
-### Test/validate
+## Test/validate
 
 ```
 source env3/bin/activate
@@ -55,7 +55,6 @@ If you do get errors, please collect together as much inforamtion as possible, a
 
 - if you pull down new updates from the `tf-coriander` repository, you need to update the [coriander](https://github.com/hughperkins/coriander) installation:
 ```
-cd ~/git/tf-coriander
 git submodule update --init --recursive
 ```
-- .. and then redo the build process, starting at section `Configure Tensorflow`
+- .. and then redo the build
