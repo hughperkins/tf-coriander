@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# assumes virtualenv in ~/env3
+# assumes running from virtualenv
 
-source ~/env3/bin/activate
 cat <<EOF | ./configure
 
 
