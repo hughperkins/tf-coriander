@@ -61,4 +61,5 @@ git submodule update --init --recursive
 
 ## Dockerfile
 
-There is a dockerfile, based on Ubuntu 16.04, at [docker](../docker)
+There is a dockerfile, based on Ubuntu 16.04, at [docker](../docker). Whilst this probalby wont run as such, it provides a useful reference to how to build,
+possibly.
