@@ -1,5 +1,17 @@
 # Older news
 
+- May 30 2017:
+  - created [v0.17.2 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.2):
+    - wheels available for both Ubuntu 16.04 and Mac Sierra, for Python 3.5
+    - Aymeric Damien's [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py) and [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py) run ok now
+    - `tf.random_normal` and `tf.random_uniform` working ok on Mac/Radeon
+    - Adam works now
+  - changed name to `tf-coriander`
+- May 27 2017:
+  - upgraded LLVM, in Coriander, from 3.8.0 to 4.0.0. Thank you to @iame6162013 for inspiring me to do this
+  - tons of operations are working now, on the github version:
+    - `tf.random_normal` and `tf.random_uniform` work now
+    - enabled a few operations like slicing, aggregation, concat, gather
 - May 10 2017:
   - test results on Mac Sierra with Radeon Pro 450, using v0.16.0 wheel, now approximately in line with earlier results on Ubuntu, using v0.14.0 wheel
     - https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0
