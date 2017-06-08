@@ -58,3 +58,7 @@ If you do get errors, please collect together as much inforamtion as possible, a
 git submodule update --init --recursive
 ```
 - .. and then redo the build
+
+## Dockerfile
+
+There is a dockerfile, based on Ubuntu 16.04, at [docker](../docker)
