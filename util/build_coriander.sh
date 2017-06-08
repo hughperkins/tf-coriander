@@ -10,7 +10,11 @@ if [[ ! -d build ]]; then {
     mkdir build
 } fi
 cd build
-cmake -DCMAKE_BUILD_TYPE=Debug ..
+if [[ x${CLANG_HOME} != x ]]; then {
+    cmake -DCMAKE_BUILD_TYPE=Debug -DCLANG_HOME=${CLANG_HOME} ..
+} else {
+    cmake -DCMAKE_BUILD_TYPE=Debug ..
+} fi
 make -j 8
 
 if [[ $(uname) == Darwin ]]; then {
