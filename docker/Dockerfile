@@ -41,7 +41,7 @@ RUN cd tf-coriander && \
 
 RUN cd tf-coriander && \
     . env3/bin/activate && \
-    CLANG_HOME=$PWD/soft/llvm-4.0 util/build_coriander.sh
+    LOCALRESOURCES=" --local_resources 4000,2,1.0" CLANG_HOME=$PWD/soft/llvm-4.0 util/build_coriander.sh
 
 RUN cd tf-coriander && \
     . env3/bin/activate && \
