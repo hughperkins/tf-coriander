@@ -2,6 +2,8 @@ FROM ubuntu:16.04
 
 ARG GIT_BRANCH=master
 
+RUN apt-get update && apt-get install -y git
+
 RUN git clone --recursive https://github.com/hughperkins/tf-coriander -b ${GIT_BRANCH}
 
 RUN cd tf-coriander && \
