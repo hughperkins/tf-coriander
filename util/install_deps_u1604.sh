@@ -4,11 +4,9 @@ set -e
 set -x
 
 SUDO=sudo
-if [[ $(cat /proc/1/sched | head -n 1 | grep bash) ]]; then {
+if [[ ! $(cat /proc/1/sched | head -n 1 | grep init) ]]; then {
     # running in docker
-    SUDO=
-} fi
-if [[ $(uname) == Darwin ]]; then {
+    echo running in docker
     SUDO=
 } fi
 
