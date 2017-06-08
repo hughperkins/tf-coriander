@@ -26,3 +26,6 @@ junit-pytest-report.xml
 /*BUILD
 /WORKSPACE
 tensorflow/core/platform/default/build_config.bzl
+
+/soft/
+/env3/
