@@ -1,3 +1,6 @@
 #!/bin/bash
 
-bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflowpkg
+set -e
+set -x
+
+bazel-bin/tensorflow/tools/pip_package/build_pip_package $PWD/soft/tensorflowpkg

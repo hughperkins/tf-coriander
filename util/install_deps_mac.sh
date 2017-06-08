@@ -15,7 +15,7 @@ if [[ ! -d env3 ]]; then {
 } fi
 
 source env3/bin/activate
-pip install numpy
+pip install -r util/requirements.txt
 
 if [[ ! -d soft ]]; then {
     mkdir soft
