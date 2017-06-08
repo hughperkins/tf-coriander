@@ -95,7 +95,7 @@ Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this ye
       - [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py)
       - [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/bidirectional_rnn.py)
       - [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py)
-  - (note that earlier v0.18.2 release had a regression in reduction, fixed in v0.18.3)
+  - (note that earlier v0.18.2 release had a regression)
 - June 2 2017:
   - created [v0.17.3 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.3):
     - bug fix release:
