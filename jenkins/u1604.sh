@@ -18,6 +18,7 @@ cd ${BASEDIR}
 virtualenv -p python3 env3
 
 source env3/bin/activate
+pip install numpy
 cat <<EOF | ./configure
 
 
