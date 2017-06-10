@@ -28,7 +28,7 @@ cat <<EOF | ./configure
 
 EOF
 
-util/build_u1604.sh
+util/build_tf_u1604.sh
 util/build_wheel.sh
 pip install soft/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
 py.test -v
