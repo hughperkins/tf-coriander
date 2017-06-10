@@ -4,7 +4,7 @@ set -e
 set -x
 
 SUDO=sudo
-if [[ ! $(cat /proc/1/sched | head -n 1 | grep init) ]]; then {
+if [[ ! $(cat /proc/1/sched | head -n 1 | grep '[init|systemd]') ]]; then {
     # running in docker
     echo running in docker
     SUDO=
