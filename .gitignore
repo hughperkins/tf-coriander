@@ -29,3 +29,4 @@ tensorflow/core/platform/default/build_config.bzl
 
 /soft/
 /env3/
+/pytest.ini
