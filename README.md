@@ -24,23 +24,43 @@ On a Mac:
 
 <img src="doc/img/multilayerperceptron.png" />
 
-## Test results
+## Test results, using [wheel v0.18.3](https://github.com/hughperkins/tf-coriander/releases/tag/v0.18.3) :
 
-Latest results, using commit [1986d6aa](https://github.com/hughperkins/tf-coriander/commit/1986d6aad93e2b3ad432118291cde4ee7ce99504) :
+The network examples from Aymeric Damien's [Tensorflow-Examples]() repository were modified to be unit tests:
+- reduce the number of training epochs/iterations
+- add asserts
 
-| test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 | NVIDIA® CUDA™, K520, as reference |
-|----- |-------|-------|----|
-| unit tests (`py.test -v`) | All pass :-) | All pass :-) |  |
-| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) |  Pass, epoch time 0.21s, kernel compile time 0.14s | Pass, epoch time 0.21s, kernel compile time 0.13s | epoch time 0.07s |
-| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | Pass, epoch time 27s, kernel compile time ~0s  | Pass, epoch time 9.5s, kernel compile time 0.9s | epoch time 3.7s |
-| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | Pass, accuracy 0.92  | Pass, accuracy 0.92 | 
-| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)| Pass | Pass |
-| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | Pass, epoch time 33s, kernel compile time 1s | Pass, epoch time 15.8s, kernel compile time ~0s | epoch time 15.1s |
-| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) | Pass, iter time 2.84s, kernel compile time 0.8s | Pass, iter time 0.84s, kernel compile time 1.9s | iter time 0.23s |
-| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Pass, iter time 2.1s, kernel compile time 1.7s | Pass, iter time 0.9s, kernel compile time 3.7s | iter time 0.23s
-| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/bidirectional_rnn.py) | Pass, iter time 3.1s, kernel compile time 0.8s | Pass, iter time 0.9s, kernel compile time 2.1s | iter time 0.24s |
+The results on [wheel v0.18.3](https://github.com/hughperkins/tf-coriander/releases/tag/v0.18.3) were:
 
-- for multilayer_perceptron.py, timings are comparable between Coriander and NVIDIA® CUDA™, on the same GPU
+| Test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 |
+|----- |-------|-------|
+| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/2_BasicModels/linear_regression.py) |  Pass | Pass |
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/2_BasicModels/logistic_regression.py) | Pass | Pass |
+| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/2_BasicModels/nearest_neighbor.py)  | Pass | Pass |
+| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/3_NeuralNetworks/autoencoder.py)| Pass | Pass |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/3_NeuralNetworks/multilayer_perceptron.py)  | Pass | Pass |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/3_NeuralNetworks/recurrent_network.py)  | Pass | Pass |
+| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/3_NeuralNetworks/dynamic_rnn.py)  | Pass | Pass |
+| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/3_NeuralNetworks/bidirectional_rnn.py)  | Pass | Pass |
+
+## Execution speed
+
+We can run the Tensorflow-Examples code on the same GPU: once using NVIDIA® CUDA™ directly, and once using OpenCL 1.2, via Coriander, and compare the execution times. The following execution times were measured using an aws g2.xlarge instance, which has an NVIDIA K520 GPU.  The meaning of 'epoch/iter time', versus 'kernel compile time' is:
+- we run the epochs/iterations, measuring the time of each epoch/iteration
+- we assume the first epoch/iteration takes longer, and measure the average time for the subsequent epochs/iterations
+- we deduce the kernel compilation time as the difference between the first epoch/iteration time and the average of the subsequent epoch/iteration times
+
+| Scenario | Coriander | NVIDIA® CUDA™ native |
+|----- |-------|-------|
+| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/2_BasicModels/linear_regression.py)  | Epoch time 0.21s, kernel compile time 0.13s | Epoch time 0.07s |
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/2_BasicModels/logistic_regression.py)  | Epoch time 9.5s, kernel compile time 0.9s | Epoch time 3.7s |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/3_NeuralNetworks/multilayer_perceptron.py) | Epoch time 15.8s, kernel compile time ~0s | Epoch time 15.1s |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/3_NeuralNetworks/recurrent_network.py)  | Iter time 0.84s, kernel compile time 1.9s | Iter time 0.23s |
+| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/3_NeuralNetworks/dynamic_rnn.py)  | Iter time 0.9s, kernel compile time 3.7s | Iter time 0.23s
+| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as_unit_tests/examples/3_NeuralNetworks/bidirectional_rnn.py) | Iter time 0.9s, kernel compile time 2.1s | Iter time 0.24s |
+
+We can see that:
+- for multilayer_perceptron.py, epoch time is comparable between Coriander and NVIDIA® CUDA™, on the same GPU
 - for the recurrent networks, Coriander is around 4 times slower than using NVIDIA® CUDA™ directly.
 
 ## Installation 

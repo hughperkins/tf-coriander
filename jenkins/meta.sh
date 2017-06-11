@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # - handles running u1604.sh, tee'ing to a log file, and uploading this logfile to s3
-# - assumes it runs from root of cloend ${PROJECT} repo
+# - assumes it runs from root of cloend tf-coriander repo
 
 set -e
 set -x
