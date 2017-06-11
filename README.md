@@ -2,7 +2,9 @@
 
 Run [Tensorflow](https://github.com/tensorflow/tensorflow) on OpenCL™ 1.2 devices
 
-- tested on Mac Sierra using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ), and Ubuntu 16.04, using NVIDIA K520
+- tested on:
+  - Mac Sierra using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) )
+  - Ubuntu 16.04, using NVIDIA K520
 - should work theoretically on any OpenCL 1.2 GPU
 
 ## Piccie
