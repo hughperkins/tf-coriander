@@ -1,5 +1,11 @@
 # Older news
 
+- June 2 2017:
+  - created [v0.17.3 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.3):
+    - bug fix release:
+      - `tf.random_uniform` and `tf.random_normal` should give equal results to the cpu version, on both Mac and Ubuntu
+      - `tf.random_normal` should no longer give all zeros results on Ubuntu, ie should fix https://github.com/hughperkins/tf-coriander/issues/35
+      - the Mac wheel should have `RPATH` set correctly, ie hopefully should not give error messages about unable to load `libclew.dylib` or similar, ie should fix https://github.com/hughperkins/tf-coriander/issues/39
 - May 30 2017:
   - created [v0.17.2 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.2):
     - wheels available for both Ubuntu 16.04 and Mac Sierra, for Python 3.5
