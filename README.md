@@ -40,7 +40,8 @@ Latest results, using commit [1986d6aa](https://github.com/hughperkins/tf-corian
 | [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Pass, iter time 2.1s, kernel compile time 1.7s | Pass, iter time 0.9s, kernel compile time 3.7s | iter time 0.23s
 | [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/bidirectional_rnn.py) | Pass, iter time 3.1s, kernel compile time 0.8s | Pass, iter time 0.9s, kernel compile time 2.1s | iter time 0.24s |
 
-For multilayer_perceptron.py, timings are comparable between Coriander and NVIDIA® CUDA™, on the same GPU. For the recurrent networks, Coriander is around 4 times slower than using NVIDIA® CUDA™ directly.
+- for multilayer_perceptron.py, timings are comparable between Coriander and NVIDIA® CUDA™, on the same GPU
+- for the recurrent networks, Coriander is around 4 times slower than using NVIDIA® CUDA™ directly.
 
 ## Installation 
 
