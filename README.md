@@ -43,18 +43,31 @@ Test results using Aymeric Damien's [Tensorflow-Examples](https://github.com/aym
 
 We can run the Tensorflow-Examples code on the same GPU: once using NVIDIA® CUDA™ directly, and once using OpenCL 1.2, via Coriander, and compare the execution times. [methodology](doc/speed_comparison_methodology.md)
 
-| Scenario | Coriander, kernel setup time | Coriander, iteration time | NVIDIA® CUDA™ native, iteration time |
+| Scenario | Coriander | NVIDIA® CUDA™ native |
 |----- |-------|-------|----|
-| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/linear_regression.py)  | 0.13s | 0.21s | 0.07s |
-| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/logistic_regression.py) | 0.9s | 9.5s | 3.7s |
-| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/multilayer_perceptron.py) | ~0s | 15.8s | 15.1s |
-| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/recurrent_network.py) | 1.9s | 0.84s | 0.23s |
-| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/dynamic_rnn.py) | 3.7s | 0.9s | 0.23s |
-| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/bidirectional_rnn.py) | 2.1s | 0.9s | 0.24s |
+| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/linear_regression.py)  | 0.21s | 0.07s |
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/logistic_regression.py) | 9.5s | 3.7s |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/multilayer_perceptron.py) | 15.8s | 15.1s |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/recurrent_network.py) | 0.84s | 0.23s |
+| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/dynamic_rnn.py) | 0.9s | 0.23s |
+| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/bidirectional_rnn.py) | 0.9s | 0.24s |
 
 We can see that:
 - for multilayer_perceptron.py, epoch time is comparable between Coriander and NVIDIA® CUDA™, using the same GPU
 - for the recurrent networks, Coriander is around 4 times slower than using NVIDIA® CUDA™ directly.
+
+## Kernel setup/compile time
+
+Coriander writes the kernels to OpenCL at runtime, and compiles them on-the-fly.  It only needs to generate/compile each specific kernel once, during the life of the process. However this does add some additional setup time.  How big is this?  The following table shows the kernel setup time for the Aymeric Damien networks, [methodology](doc/speed_comparison_methodology.md):
+
+| Scenario | Kernel generation/compile time |
+|----- |-------|-------|----|
+| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/linear_regression.py)  | 0.13s |
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/logistic_regression.py) | 0.9s |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/multilayer_perceptron.py) | ~0s |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/recurrent_network.py) | 1.9s |
+| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/dynamic_rnn.py) | 3.7s |
+| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/bidirectional_rnn.py) | 2.1s |
 
 ## Installation 
 
