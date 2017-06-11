@@ -26,19 +26,21 @@ On a Mac:
 
 ## Test results
 
-Latest results, [v0.18.3](https://github.com/hughperkins/tf-coriander/releases/tag/v0.18.3):
+Latest results:
 
-| test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 |
-|----- |-------|-------|
-| unit tests (`py.test -v`) | All pass :-) | All pass :-) |
-| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) |  Runs ok, loss decreases  | Runs ok, loss decreases |
-| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | Runs ok, loss decreases  | Runs ok, loss decreases |
-| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | Runs ok, accuracy 0.92  | Runs ok, accuracy 0.92 |
-| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)| Runs ok, loss decreases | Runs ok, loss decreases |
-| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | Runs ok, loss decreases | Runs ok, loss decreases |
-| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) | Runs ok, loss decreases | Runs ok, loss decreases |
-| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/bidirectional_rnn.py) | Runs ok, loss decreases | Runs ok, loss decreases |
-| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Runs ok, loss decreases | Runs ok, loss decreases |
+| test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 | NVIDIA® CUDA™, K520, as reference |
+|----- |-------|-------|----|
+| unit tests (`py.test -v`) | All pass :-) | All pass :-) |  |
+| [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) |  Pass, epoch time 0.21s, kernel compile time 0.14s | Pass, epoch time 0.21s, kernel compile time 0.13s | epoch time 0.07s |
+| [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/logistic_regression.py) | Pass, epoch time 27s, kernel compile time ~0s  | Pass, epoch time 9.5s, kernel compile time 0.9s | epoch time 3.7s |
+| [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/nearest_neighbor.py) | Pass, accuracy 0.92  | Pass, accuracy 0.92 | 
+| [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py)| Pass | Pass |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/multilayer_perceptron.py) | Pass, epoch time 33s, kernel compile time 1s | Pass, epoch time 15.8s, kernel compile time ~0s | 15.1s |
+| [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/recurrent_network.py) | Pass, iter time 2.84s, kernel compile time 0.8s | Pass, iter time 0.84s, kernel compile time 1.9s | iter time 0.23s |
+| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/dynamic_rnn.py) | Pass, iter time 2.1s, kernel compile time 1.7s | Pass, iter time 0.9s, kernel compile time 3.7s | iter time 0.23s
+| [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/bidirectional_rnn.py) | Pass, iter time 3.1s, kernel compile time 0.8s | Pass, iter time 0.9s, kernel compile time 2.1s | iter time 0.24s |
+
+For multilayer_perceptron.py, timings are comparable between Coriander and NVIDIA® CUDA™, on the same GPU. For the recurrent networks, Coriander is around 4 times slower than using NVIDIA® CUDA™ directly.
 
 ## Installation 
 
