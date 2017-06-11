@@ -5,10 +5,6 @@ Run [Tensorflow](https://github.com/tensorflow/tensorflow) on OpenCL™ 1.2 devi
 - tested on Mac Sierra using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ), and Ubuntu 16.04, using NVIDIA K520
 - should work theoretically on any OpenCL 1.2 GPU
 
-## What's working
-
-- [What's working](doc/whats_working.md)
-
 ## Piccie
 
 On a Mac:
@@ -18,6 +14,10 @@ On a Mac:
 ## Execution speed
 
 - [Execution speed](doc/execution_speed.md)
+
+## What's working
+
+- [What's working](doc/whats_working.md)
 
 ## Installation
 
