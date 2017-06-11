@@ -26,7 +26,7 @@ On a Mac:
 
 ## Test results
 
-Latest results, using commit https://github.com/hughperkins/tf-coriander/commit/1986d6aad93e2b3ad432118291cde4ee7ce99504 :
+Latest results, using commit [1986d6aa](https://github.com/hughperkins/tf-coriander/commit/1986d6aad93e2b3ad432118291cde4ee7ce99504) :
 
 | test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 | NVIDIA® CUDA™, K520, as reference |
 |----- |-------|-------|----|
