@@ -44,7 +44,7 @@ Test results using Aymeric Damien's [Tensorflow-Examples](https://github.com/aym
 We can run the Tensorflow-Examples code on the same GPU: once using NVIDIA® CUDA™ directly, and once using OpenCL 1.2, via Coriander, and compare the execution times. [methodology](doc/speed_comparison_methodology.md)
 
 | Scenario | Coriander | NVIDIA® CUDA™ native |
-|----- |-------|-------|----|
+|----- |-------|-------|
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/linear_regression.py)  | 0.21s | 0.07s |
 | [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/logistic_regression.py) | 9.5s | 3.7s |
 | [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/multilayer_perceptron.py) | 15.8s | 15.1s |
@@ -61,7 +61,7 @@ We can see that:
 Coriander writes the kernels to OpenCL at runtime, and compiles them on-the-fly.  It only needs to generate/compile each specific kernel once, during the life of the process. However this does add some additional setup time.  How big is this?  The following table shows the kernel setup time for the Aymeric Damien networks, [methodology](doc/speed_comparison_methodology.md):
 
 | Scenario | Kernel generation/compile time |
-|----- |-------|-------|----|
+|----- |-------|
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/linear_regression.py)  | 0.13s |
 | [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/logistic_regression.py) | 0.9s |
 | [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/multilayer_perceptron.py) | ~0s |
