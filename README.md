@@ -45,7 +45,7 @@ Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this ye
 ## News
 
 - June 11 2017:
-  - set up Jenkins build, which makes build logs and a Ubuntu 16.04 wheel available for certain commits, https://github.com/hughperkins/tf-coriander/commits/tensorflow-dev (click on one of the green ticks)
+  - set up Jenkins build, which makes build logs and a Ubuntu 16.04 wheel available for certain commits, https://github.com/hughperkins/tf-coriander/commits/example-jenkins-builds (click on one of the green ticks)
 - June 7 2017:
   - created [v0.18.3](https://github.com/hughperkins/tf-coriander/releases/tag/v0.18.3) release:
     - `tf.split` enabled
