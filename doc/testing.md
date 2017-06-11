@@ -39,7 +39,7 @@ bash ./run_tests.sh
 
 Test results, using [wheel v0.18.3](https://github.com/hughperkins/tf-coriander/releases/tag/v0.18.3) :
 
-| Test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 |
+| Test | Mac Sierra, using Radeon Pro 450 GPU | Ubuntu 16.04, using NVIDIA K520 |
 |----- |-------|-------|
 | Unit tests (`py.test -v`) | Pass | Pass |
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/linear_regression.py) |  Ok | Ok |
