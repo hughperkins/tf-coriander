@@ -46,7 +46,6 @@ Presentation on [Coriander](https://github.com/hughperkins/Coriander) at this ye
 
 ## Related projects
 
-### DNN Libraries
 - [OpenCL Torch](https://github.com/hughperkins/distro-cl)
 - [DeepCL](https://github.com/hughperkins/DeepCL)
 

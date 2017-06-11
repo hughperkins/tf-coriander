@@ -17,7 +17,7 @@ We can see that:
 - for multilayer_perceptron.py, epoch time is comparable between Coriander and NVIDIA® CUDA™, using the same GPU
 - for the recurrent networks, Coriander is around 4 times slower than using NVIDIA® CUDA™ directly.
 
-[methodology](doc/speed_comparison_methodology.md)
+[methodology](speed_comparison_methodology.md)
 
 ## Kernel setup/compile time
 
@@ -32,4 +32,4 @@ Coriander writes the kernels to OpenCL at runtime, and compiles them on-the-fly.
 | [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/dynamic_rnn.py) | 3.7s |
 | [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/bidirectional_rnn.py) | 2.1s |
 
-[methodology](doc/speed_comparison_methodology.md)
+[methodology](speed_comparison_methodology.md)

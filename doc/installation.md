@@ -15,7 +15,7 @@ Simply download, unzip, then install using `pip`:
 pip install --upgrade tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
-For other operating systems, please [build from source](doc/build-from-source.md)
+For other operating systems, please [build from source](build-from-source.md)
 
 By default, Tensorflow-cl will run using the first GPU available on your system. You can use the environment variable `CL_GPUOFFSET` to choose others:
 
