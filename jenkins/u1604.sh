@@ -37,4 +37,5 @@ git clone https://github.com/hughperkins/Tensorflow-Examples -b as-unit-tests
 cd Tensorflow-Examples
 bash run_tests.sh
 
+cd ${BASEDIR}
 zip artifacts.zip soft/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
