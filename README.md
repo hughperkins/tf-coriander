@@ -26,9 +26,10 @@ On a Mac:
 
 ## Test results, using [wheel v0.18.3](https://github.com/hughperkins/tf-coriander/releases/tag/v0.18.3) :
 
+Test results using Aymeric Damien's [Tensorflow-Examples](https://github.com/aymericdamien/TensorFlow-Examples) scripts:
+
 | Test | Mac Sierra, using Radeon Pro 450 GPU (thank you [ASAPP](http://asapp.com) :-) ) | Ubuntu 16.04, using NVIDIA K520 |
 |----- |-------|-------|
-| Unit tests (py.test -v) | All pass :-)   | All pass :-) |
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/linear_regression.py) |  Ok | Ok |
 | [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/logistic_regression.py) | Ok | Ok |
 | [nearest_neighbor.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/nearest_neighbor.py)  | Ok | Ok |
@@ -40,22 +41,19 @@ On a Mac:
 
 ## Execution speed
 
-We can run the Tensorflow-Examples code on the same GPU: once using NVIDIA® CUDA™ directly, and once using OpenCL 1.2, via Coriander, and compare the execution times. The following execution times were measured using an aws g2.xlarge instance, which has an NVIDIA K520 GPU.  The meaning of 'epoch/iter time', versus 'kernel compile time' is:
-- we run the epochs/iterations, measuring the time of each epoch/iteration
-- we assume the first epoch/iteration takes longer, and measure the average time for the subsequent epochs/iterations
-- we deduce the kernel compilation time as the difference between the first epoch/iteration time and the average of the subsequent epoch/iteration times
+We can run the Tensorflow-Examples code on the same GPU: once using NVIDIA® CUDA™ directly, and once using OpenCL 1.2, via Coriander, and compare the execution times. The following execution times were measured using an aws g2.xlarge instance, which has an NVIDIA K520 GPU. [methodology](doc/speed_comparison_methodology.md)
 
 | Scenario | Coriander, kernel setup time | Coriander, epoch/iteration time | NVIDIA® CUDA™ native, epoch/iteration time |
 |----- |-------|-------|----|
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/linear_regression.py)  | 0.13s | 0.21s | 0.07s |
 | [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/logistic_regression.py) | 0.9s | 9.5s | 3.7s |
-| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/multilayer_perceptron.py) | ~0s | 15.8s | Epoch time 15.1s |
+| [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/multilayer_perceptron.py) | ~0s | 15.8s | 15.1s |
 | [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/recurrent_network.py) | 1.9s | 0.84s | 0.23s |
 | [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/dynamic_rnn.py) | 3.7s | 0.9s | 0.23s |
 | [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/bidirectional_rnn.py) | 2.1s | 0.9s | 0.24s |
 
 We can see that:
-- for multilayer_perceptron.py, epoch time is comparable between Coriander and NVIDIA® CUDA™, on the same GPU
+- for multilayer_perceptron.py, epoch time is comparable between Coriander and NVIDIA® CUDA™, using the same GPU
 - for the recurrent networks, Coriander is around 4 times slower than using NVIDIA® CUDA™ directly.
 
 ## Installation 
