@@ -35,7 +35,7 @@ On a Mac:
 | [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/autoencoder.py)| Ok | Ok |
 | [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/multilayer_perceptron.py)  | Ok | Ok |
 | [recurrent_network.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/recurrent_network.py)  | Ok | Ok |
-| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/dynamic_rnn.py)  | Pass | Ok |
+| [dynamic_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/dynamic_rnn.py)  | Ok | Ok |
 | [bidirectional_rnn.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/bidirectional_rnn.py)  | Ok | Ok |
 
 ## Execution speed
@@ -46,7 +46,7 @@ We can run the Tensorflow-Examples code on the same GPU: once using NVIDIA® CUD
 - we deduce the kernel compilation time as the difference between the first epoch/iteration time and the average of the subsequent epoch/iteration times
 
 | Scenario | Coriander, kernel setup time | Coriander, epoch/iteration time | NVIDIA® CUDA™ native, epoch/iteration time |
-|----- |-------|-------|
+|----- |-------|-------|----|
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/linear_regression.py)  | 0.13s | 0.21s | 0.07s |
 | [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/logistic_regression.py) | 0.9s | 9.5s | 3.7s |
 | [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/3_NeuralNetworks/multilayer_perceptron.py) | ~0s | 15.8s | Epoch time 15.1s |
