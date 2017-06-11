@@ -41,9 +41,9 @@ Test results using Aymeric Damien's [Tensorflow-Examples](https://github.com/aym
 
 ## Execution speed
 
-We can run the Tensorflow-Examples code on the same GPU: once using NVIDIA® CUDA™ directly, and once using OpenCL 1.2, via Coriander, and compare the execution times. The following execution times were measured using an aws g2.xlarge instance, which has an NVIDIA K520 GPU. [methodology](doc/speed_comparison_methodology.md)
+We can run the Tensorflow-Examples code on the same GPU: once using NVIDIA® CUDA™ directly, and once using OpenCL 1.2, via Coriander, and compare the execution times. [methodology](doc/speed_comparison_methodology.md)
 
-| Scenario | Coriander, kernel setup time | Coriander, epoch/iteration time | NVIDIA® CUDA™ native, epoch/iteration time |
+| Scenario | Coriander, kernel setup time | Coriander, iteration time | NVIDIA® CUDA™ native, iteration time |
 |----- |-------|-------|----|
 | [linear_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/linear_regression.py)  | 0.13s | 0.21s | 0.07s |
 | [logistic_regression.py](https://github.com/hughperkins/TensorFlow-Examples/blob/as-unit-tests/examples/2_BasicModels/logistic_regression.py) | 0.9s | 9.5s | 3.7s |
