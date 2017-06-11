@@ -21,7 +21,7 @@ We can see that:
 
 ## Kernel setup/compile time
 
-Coriander writes the kernels to OpenCL at runtime, and compiles them on-the-fly.  This means the first iteration will take longer.  Here is the execution time for the first iteration, compared with the subsequent iterations:
+Coriander writes the kernels to OpenCL at runtime, and compiles them on-the-fly.  This means the first iteration will take longer.  Here is the increase in execution time for the first iteration, which is assumed to be the kernel generation/compile time:
 
 | Scenario | Kernel generation/compile time |
 |----- |-------|
