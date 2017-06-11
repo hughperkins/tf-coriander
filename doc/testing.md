@@ -26,7 +26,7 @@ On a Mac:
 
 First clone the tests:
 ```
-git clone https://github.com/hughperkins/TensorFlow-Examples/tree/as-unit-tests
+git clone https://github.com/hughperkins/TensorFlow-Examples -b as-unit-tests
 ```
 
 Then to run them:
