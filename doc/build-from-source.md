@@ -26,6 +26,7 @@ bash ./build.sh
 ## Install
 
 ```
+source env3/bin/activate
 pip install --upgrade soft/tensorflowpkg/tensorflow-0.11.0rc0-py3-none-any.whl
 ```
 
