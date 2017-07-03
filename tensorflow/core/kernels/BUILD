@@ -98,10 +98,6 @@ tf_kernel_library(
         "concat_lib.h",
         "concat_lib_cpu.h",
     ],
-    #copts = [
-    #    '-Ithird_party/coriander/src/EasyCL',
-    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
-    #],
     gpu_srcs = [
         "concat_lib_gpu_impl.cu.cc",
         "concat_lib.h",
@@ -115,7 +111,6 @@ tf_kernel_library(
         "//tensorflow/stream_executor:stream_executor",
         "//tensorflow/core:stream_executor",
         "//tensorflow/core:core",
-        # "//third_party:cocl",
     ],
     alwayslink = 0,
 )
@@ -313,15 +308,10 @@ tf_kernel_library(
         "split_lib_gpu.cu.cc",
         "split_lib.h",
     ],
-    #copts = [
-    #    '-Ithird_party/coriander/src/EasyCL',
-    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
-    #],
     deps = [
         ":cuda_device_array",
         "//tensorflow/core:framework",
         "//third_party/eigen3",
-        #'//third_party:cocl',
     ],
     alwayslink = 0,
 )
@@ -468,16 +458,9 @@ tf_kernel_libraries(
         "where_op",
     ],
     copts = [
-        # '-Ithird_party/coriander/include/cocl',
         '-Ithird_party/coriander/src/EasyCL',
         '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
     ],
-    #copts = [
-    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include'
-    #],
-    #copts = [
-    #    '-Iexternal/protobuf/src',  # cant build constantop without this
-    #],
     deps = ARRAY_DEPS,
 )
 
@@ -729,17 +712,11 @@ tf_kernel_library(
     name = "scatter_functor",
     prefix = "scatter_functor",
     visibility = [":friends"],
-    #copts = [
-    #    '-Ithird_party/coriander/include',
-    #    '-Ithird_party/coriander/src/EasyCL',
-    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
-    #],
     deps = [
         ":bounds_check",
         "//tensorflow/core:framework",
         "//tensorflow/core:lib",
         "//third_party/eigen3",
-        #"//third_party:cocl",
     ],
 )
 
@@ -1081,10 +1058,6 @@ tf_kernel_libraries(
         "resize_nearest_neighbor_op",
         "sample_distorted_bounding_box_op",
     ],
-    #copts = [
-    #    '-Ithird_party/coriander/src/EasyCL',
-    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
-    #],
     deps = [
         ":bounds_check",
         ":eigen_helpers",
@@ -1095,7 +1068,6 @@ tf_kernel_libraries(
         "//tensorflow/core:lib_internal",
         "//tensorflow/core:protos_all_cc",
         "//third_party/eigen3",
-        #'//third_party:cocl',
     ],
 )
 
@@ -1341,12 +1313,7 @@ tf_kernel_libraries(
         "cast_op",
         "check_numerics_op",
         "cross_op",
-
         "cwise_op",
-
-        # cwise_op_add",
-        #"cwise_ops",
-
         "fft_ops",
         "matmul_op",
         "reduction_ops",
@@ -1629,12 +1596,7 @@ tf_kernel_libraries(
         "topk_op",
         "xent_op",
     ],
-    #copts = [
-    #    '-Ithird_party/coriander/src/EasyCL',
-    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
-    #],
     deps = [
-        #'//third_party:cocl',
         ":bounds_check",
         ":conv_2d",
         ":conv_ops",
@@ -1807,13 +1769,8 @@ tf_kernel_library(
         "spacetobatch_functor.h",
         "spacetobatch_functor_gpu.cu.cc",
     ],
-    #copts = [
-    #    '-Ithird_party/coriander/src/EasyCL',
-    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
-    #],
     visibility = ["//visibility:private"],
     deps = [
-        # "//third_party:cocl",
         ":bounds_check",
         "//tensorflow/core:framework",
         "//tensorflow/core:lib",
@@ -1853,13 +1810,8 @@ tf_kernel_library(
         "spacetodepth_op.h",
         "spacetodepth_op_gpu.cu.cc",
     ],
-    #copts = [
-    #    '-Ithird_party/coriander/src/EasyCL',
-    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
-    #],
     visibility = ["//visibility:private"],
     deps = [
-     #   "//third_party:cocl",
         "//tensorflow/core:framework",
         "//tensorflow/core:lib",
         "//third_party/eigen3",
@@ -2045,10 +1997,6 @@ tf_kernel_libraries(
         "scatter_op",
         "variable_ops",
     ],
-#    copts = [
- #       '-Ithird_party/coriander/src/EasyCL',
-  #      '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
-   # ],
     deps = [
         ":assign_op",
         ":bounds_check",
@@ -2057,7 +2005,6 @@ tf_kernel_libraries(
         "//tensorflow/core:lib",
         "//tensorflow/core:state_ops_op_lib",
         "//third_party/eigen3",
-    #    "//third_party:cocl",
     ],
 )
 
@@ -2099,17 +2046,12 @@ tf_kernel_libraries(
 tf_kernel_library(
     name = "training_ops",
     prefix = "training_ops",
-    #copts = [
-    #    '-Ithird_party/coriander/src/EasyCL',
-    #    '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include',
-    #],
     deps = [
         ":bounds_check",
         "//tensorflow/core:framework",
         "//tensorflow/core:lib",
         "//tensorflow/core:training_ops_op_lib",
         "//third_party/eigen3",
-        #"//third_party:cocl",
     ],
 )
 

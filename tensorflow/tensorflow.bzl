@@ -535,7 +535,6 @@ def tf_kernel_library(name, prefix=None, srcs=None, gpu_srcs=None, hdrs=None,
         deps = deps,
         **kwargs)
     deps += [":" + name + "_gpu"]
-  # kwargs['copts'] = []
   if 'copt' not in kwargs:
     kwargs['copts'] = []
   kwargs['copts'] += tf_copts()
@@ -546,13 +545,10 @@ def tf_kernel_library(name, prefix=None, srcs=None, gpu_srcs=None, hdrs=None,
     '-Ithird_party/coriander/src/EasyCL',
     '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include'
   ]
-  # kwargs['copts']
-  # kwargs['copts'] += ['-Iexternal/eigen_archive', '-Ithird_party/coriander/include/cocl', '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include']
   tf_cuda_library(
       name = name,
       srcs = srcs,
       hdrs = hdrs,
-      # copts = tf_copts() + ['-Iexternal/eigen_archive', '-Ithird_party/coriander/include/cocl', '-Ithird_party/coriander/src/EasyCL/thirdparty/clew/include'],
       # copts = tf_copts(),
       cuda_deps = cuda_deps,
       linkstatic = 1,   # Needed since alwayslink is broken in bazel b/27630669

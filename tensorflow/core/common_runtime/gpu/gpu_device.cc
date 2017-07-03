@@ -157,14 +157,11 @@ class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
   }
 
   void* allocate(size_t num_bytes) const override {
-    // std::cout << "gpu_device.cc allocate(bytes=" << num_bytes << std::endl;
     void* ret = allocator_->AllocateRaw(32 /* alignment */, num_bytes);
     if (ret == nullptr) {
-      std::cout << "gpu_device.cc allocate() failed" << std::endl;
       LOG(FATAL) << "EigenAllocator for GPU ran out of memory when allocating "
                  << num_bytes << ". See error logs for more detailed info.";
     }
-    // std::cout << "gpu_device.cc allocate() ok" << std::endl;
     if (LogMemory::IsEnabled()) {
       LogMemory::RecordRawAllocation(operation_, step_id_, num_bytes, ret,
                                      allocator_);
@@ -172,14 +169,12 @@ class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
     return ret;
   }
   void deallocate(void* buffer) const override {
-    // std::cout << "gpu_device.cc deallocate()" << std::endl;
     if (LogMemory::IsEnabled()) {
       LogMemory::RecordRawDeallocation(operation_, step_id_, buffer, allocator_,
                                        true);
     }
     AsyncFreeData* afData =
         new AsyncFreeData(allocator_, buffer, operation_, step_id_);
-    // std::cout << "gpu_device.cc deallocate() failed call to AsyncFreeData " << (void *)buffer << std::endl;
     cudaError_t err = cudaStreamAddCallback(*stream_, asyncFree, afData, 0);
     CHECK_EQ(err, cudaSuccess);
   }
@@ -209,7 +204,6 @@ class EigenCudaStreamDevice : public ::Eigen::StreamInterface {
 
   static void CUDART_CB asyncFree(cudaStream_t stream, cudaError_t status,
                                   void* userData) {
-    // std::cout << "gpu_device.cc asyncFree stream=" << (void *)stream << std::endl;
     AsyncFreeData* data = static_cast<AsyncFreeData*>(userData);
     if (LogMemory::IsEnabled()) {
       LogMemory::RecordRawDeallocation(data->operation_, data->step_id_,
@@ -246,7 +240,6 @@ BaseGPUDevice::BaseGPUDevice(const SessionOptions& options, const string& name,
       gpu_id_(gpu_id),
       sync_every_op_(sync_every_op),
       max_streams_(max_streams) {
-  // std::cout <<   "BaseGPUDevice::BaseGPUDevice()" << std::endl;
   ProcessState::singleton()->EnableGPUDevice();
 }
 
@@ -262,7 +255,6 @@ BaseGPUDevice::~BaseGPUDevice() {
 }
 
 Status BaseGPUDevice::Init(const SessionOptions& options) {
-  // std::cout << "BaseGPUDevice::Init() " << std::endl;
   auto executor_status = GPUMachineManager()->ExecutorForDevice(gpu_id_);
   if (!executor_status.status().ok()) {
     return errors::Internal("Failed to get StreamExecutor for device ",
@@ -610,12 +602,10 @@ void BaseGPUDevice::ReinitializeGpuDevice(OpKernelContext* context,
 Status BaseGPUDeviceFactory::CreateDevices(const SessionOptions& options,
                                            const string& name_prefix,
                                            std::vector<Device*>* devices) {
-  // std::cout << "gpu_device.cc BaseGPUDeviceFactory::CreateDevices" << std::endl;
   int n = INT_MAX;
   auto iter = options.config.device_count().find("GPU");
   if (iter != options.config.device_count().end()) {
     n = iter->second;
-    // std::cout << "n " << n << std::endl;
   }
   std::vector<int> valid_gpu_ids;
   TF_RETURN_IF_ERROR(GetValidDeviceIds(
@@ -623,9 +613,7 @@ Status BaseGPUDeviceFactory::CreateDevices(const SessionOptions& options,
   if (static_cast<size_t>(n) > valid_gpu_ids.size()) {
     n = valid_gpu_ids.size();
   }
-  // std::cout << "n " << n << std::endl;
   for (int i = 0; i < n; i++) {
-    // std::cout << "i " << i << std::endl;
     BaseGPUDevice* gpu_device;
     TF_RETURN_IF_ERROR(CreateGPUDevice(options,
                                        strings::StrCat(name_prefix, "/gpu:", i),
@@ -666,7 +654,7 @@ Status BaseGPUDeviceFactory::CreateGPUDevice(const SessionOptions& options,
                                              const string& name, int gpu_id,
                                              BaseGPUDevice** out_device) {
   CHECK_GE(gpu_id, 0);
-// std::cout << "BaseGPUDeviceFactory::CreateGPUDevice gpu_id " << gpu_id << std::endl;
+
   // Look up the device, to see its attributes.
   gpu::Platform* gpu_platform = GPUMachineManager();
   CHECK_LT(gpu_id, gpu_platform->VisibleDeviceCount());
@@ -886,16 +874,13 @@ Status EnablePeerAccess(gpu::Platform* platform,
 
 Status BaseGPUDeviceFactory::GetValidDeviceIds(
     const string& visible_device_list, std::vector<int>* ids) {
-  // std::cout << "gpu_device.cc BaseGPUDeviceFactory::GetValidDeviceIds()" << std::endl;
   TF_RETURN_IF_ERROR(ValidateGPUMachineManager());
 
-  // std::cout << "gpu_device.cc BaseGPUDeviceFactory::GetValidDevceIds" << std::endl;
   gpu::Platform* gpu_manager = GPUMachineManager();
   if (gpu_manager == nullptr) {
     std::cout << "gpu_device.cc getvaliddeviceids, gpu_manager is null" << std::endl;
     return Status::OK();
   }
-  // std::cout << "gpu_device.cc getvaliddeviceids, got a gpu_manager" << std::endl;
 
   // If there are no GPUs visible, do nothing.
   if (gpu_manager->VisibleDeviceCount() <= 0) {
@@ -905,7 +890,6 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
 
   // If the user wants to remap the visible to virtual GPU mapping,
   // check for that here.
-  // std::cout << "gpu_device.cc getvaliddeviceids, 1" << std::endl;
   std::vector<int> visible_gpu_order;
   if (visible_device_list.empty()) {
     visible_gpu_order.resize(gpu_manager->VisibleDeviceCount());
@@ -933,7 +917,6 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
     }
   }
 
-  // std::cout << "gpu_device.cc getvaliddeviceids, 2" << std::endl;
   // Validate no repeats.
   std::set<int> visible_device_set(visible_gpu_order.begin(),
                                    visible_gpu_order.end());
@@ -944,10 +927,8 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
         visible_device_list);
   }
 
-  // std::cout << "gpu_device.cc getvaliddeviceids, 3" << std::endl;
   bool new_gpu_found = false;
   for (int i = 0; i < visible_gpu_order.size(); ++i) {
-    // std::cout << "gpu_device.cc GetValidDeviceIds post-3, gpu device i " << i << std::endl;
     int gpu_id = visible_gpu_order[i];
 
     // Only perform this once per visible gpu id.
@@ -958,34 +939,28 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
     visible_gpu_initialized_[gpu_id] = true;
     new_gpu_found = true;
 
-    // std::cout << "gpu_device.cc GetValidDeviceIds()  getting executor for device " << gpu_id << std::endl;
     auto executor = gpu_manager->ExecutorForDevice(gpu_id);
     if (!executor.ok()) {
       std::cout << "gpu_device.cc GetValidDeviceIds()  not executor for device " << gpu_id << std::endl;
       return StreamExecutorUtil::ConvertStatus(executor.status());
     }
 
-    // std::cout << "gpu_device.cc GetValidDeviceIds() calling executor.ValueOrDie" << std::endl;
     auto stream_exec = executor.ValueOrDie();
     int64 free_bytes;
     int64 total_bytes;
-    // std::cout << "gpu_device.cc GetValidDeviceIds() checking devicememoryusage" << std::endl;
     if (!stream_exec->DeviceMemoryUsage(&free_bytes, &total_bytes)) {
       // Logs internally on failure.
       free_bytes = 0;
       total_bytes = 0;
     }
-    // std::cout << "gpu_device.cc GetValidDeviceIds() getting devicedescipriont" << std::endl;
     const auto& description = stream_exec->GetDeviceDescription();
     int cc_major;
     int cc_minor;
-    // std::cout << "gpu_device.cc GetValidDeviceIds() getting computecapability" << std::endl;
     if (!description.cuda_compute_capability(&cc_major, &cc_minor)) {
       // Logs internally on failure.
       cc_major = 0;
       cc_minor = 0;
     }
-    // std::cout << "gpu_device.cc GetValidDeviceIds() logging properties" << std::endl;
     LOG(INFO) << "Found device " << i << " with properties: "
               << "\nname: " << description.name() << "\nmajor: " << cc_major
               << " minor: " << cc_minor << " memoryClockRate (GHz) "
@@ -996,7 +971,6 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
               << strings::HumanReadableNumBytes(free_bytes);
   }
 
-  // std::cout << "gpu_device.cc getvaliddeviceids, 4" << std::endl;
   if (new_gpu_found) {
     // Enable peer access
     TF_RETURN_IF_ERROR(EnablePeerAccess(gpu_manager, visible_gpu_order));
@@ -1041,9 +1015,7 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
     if (!exec_status.ok()) {
       continue;
     }
-    // std::cout << "got exeuctor for device " << visible_gpu_id << std::endl;
     gpu::StreamExecutor* se = exec_status.ValueOrDie();
-    // std::cout << "executor passed exec_status ok" << std::endl;
     const gpu::DeviceDescription& desc = se->GetDeviceDescription();
     // CudaVersion device_capability;
     // if (!desc.cuda_compute_capability(&device_capability.major_part,
@@ -1084,7 +1056,6 @@ Status BaseGPUDeviceFactory::GetValidDeviceIds(
               << "(" << GetShortDeviceDescription(visible_gpu_id, desc) << ")";
   }
 
-  // std::cout << "gpu_device.cc getvaliddeviceids, 6" << std::endl;
   return Status::OK();
 }
 
