@@ -1,0 +1,105 @@
+# Older news
+
+- June 2 2017:
+  - created [v0.17.3 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.3):
+    - bug fix release:
+      - `tf.random_uniform` and `tf.random_normal` should give equal results to the cpu version, on both Mac and Ubuntu
+      - `tf.random_normal` should no longer give all zeros results on Ubuntu, ie should fix https://github.com/hughperkins/tf-coriander/issues/35
+      - the Mac wheel should have `RPATH` set correctly, ie hopefully should not give error messages about unable to load `libclew.dylib` or similar, ie should fix https://github.com/hughperkins/tf-coriander/issues/39
+- May 30 2017:
+  - created [v0.17.2 release](https://github.com/hughperkins/tf-coriander/releases/tag/v0.17.2):
+    - wheels available for both Ubuntu 16.04 and Mac Sierra, for Python 3.5
+    - Aymeric Damien's [autoencoder.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py) and [multilayer_perceptron.py](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/3_NeuralNetworks/autoencoder.py) run ok now
+    - `tf.random_normal` and `tf.random_uniform` working ok on Mac/Radeon
+    - Adam works now
+  - changed name to `tf-coriander`
+- May 27 2017:
+  - upgraded LLVM, in Coriander, from 3.8.0 to 4.0.0. Thank you to @iame6162013 for inspiring me to do this
+  - tons of operations are working now, on the github version:
+    - `tf.random_normal` and `tf.random_uniform` work now
+    - enabled a few operations like slicing, aggregation, concat, gather
+- May 10 2017:
+  - test results on Mac Sierra with Radeon Pro 450, using v0.16.0 wheel, now approximately in line with earlier results on Ubuntu, using v0.14.0 wheel
+    - https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.16.0
+- May 9 2017:
+  - Mac build runs ok :-)  See the release at [Mac build and wheel](https://github.com/hughperkins/tensorflow-cl/releases/tag/v0.15.0)
+  - tested on Mac Sierra, using Radeon Pro 450 GPU
+- May 2017:
+  - My employer [ASAPP](http://asapp.com) have given me use of a nice Mac Book Pro 4th Generation, complete with Radeon Pro 450 GPU :-)  I've started looking into getting tensorflow-cl to build/run on it. Actually, it already builds. Just some small(-ish?) teething problems with getting it to run. Watch this space, or post/subscribe into [Mac build doesnt run yet](https://github.com/hughperkins/tensorflow-cl/issues/30) issue
+- Dec 3:
+  - BUILT A MAC WHEEL!!!  This is entirely untested.  But the wheel is here: https://s3.amazonaws.com/hughperkinstravis/cache/tensorflow-cl/travis/tensorflowpkg.tar.gz  (Simply untar it, and `pip install` it)
+    - corresponding travis log is at https://travis-ci.org/hughperkins/tensorflow-cl/builds/180917138 and https://travis-ci.org/hughperkins/tensorflow-cl/builds/180410593
+    - note that I had to built this in several stages, since it's a 3 hour build, and the logs for this are at https://s3.amazonaws.com/hughperkinstravis/cache/tensorflow-cl/travis/90-c520cc1-log.txt and https://s3.amazonaws.com/hughperkinstravis/cache/tensorflow-cl/travis/91-c55079d-log.txt
+    - hmmm, doesnt seem to import yet though.   https://travis-ci.org/hughperkins/tensorflow-cl#L2419
+- Nov 29:
+  - Mac build ran to completion!  On Travis.  Build output https://travis-ci.org/hughperkins/tensorflow-cl/builds/179727517  Yes, it didnt run, didnt create the wheel.  But the `build_pip_package` target built to completion.  which is a huge step forward :-)  Travis script here: [.travis.yml](.travis.yaml)
+- Nov 25:
+  - release wheel [v0.14.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.14.0/tensorflow-0.11.0rc0-py3-none-any.whl)
+    - this fixes `argmin`, `argmax`, and `softmax`
+    - tons of changes under-the-hood
+- Nov 10:
+  - released wheel [v0.13.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.13.0/tensorflow-0.11.0rc0-py3-none-any.whl)
+     - beignet test results fairly solidly match K520 results now
+     - fixed the regression on `not_equal` operator
+     - removed the spam from memory copy  
+- Nov 9:
+  - fixed unary and binary operators on beignet
+  - note that the tools/bazel.rc.templ has changed.  Please make sure to copy the new value into tools/bazel.rc, or re-run configure (probably need to do `bazel clean` anyway, so might as well do `./configure`)
+- Nov 1:
+  - building clew, CLBlast, easycl, cocl as shared libraries now, rather than static
+    - hopefully this will facilitate debugging things on the HD5500 on my laptop, since dont need to build/install entire wheel, for `libcocl` tweaks
+  - turned on `clew`
+    - this means no longer needs `libOpenCL.so` during build process
+    - might facilitiate building on Mac, since no longer need to link to `libOpenCL.so`, which was outside the Bazel build tree
+- Oct 30:
+  - new wheel [v0.11.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.11.0/tensorflow-0.11.0rc0-py3-none-any.whl)
+    - fixes critical bug in v0.10.0 release, where the number of devices was hard-coded to be 0 :-P
+    - Aymeric Damien's 2_BasicModels all run now, on NVIDIA K520.  Seem broken on Intel HD5500 for now
+    - bunch of fixes underneath to get 2_BasicModels working ok on K520
+- Oct 29:
+  - `reduce_min` working now, and [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py) tests three types of reduction axes: inner, outer, all
+  - Wheel [v0.10.0](https://github.com/hughperkins/tensorflow-cl/releases/download/v0.10.0/tensorflow-0.11.0rc0-py3-none-any.whl) released:
+     - Aymeric Damien's [linear_regression](https://github.com/hughperkins/TensorFlow-Examples/blob/enforce-gpu/examples/2_BasicModels/linear_regression.py) runs fairly ok now (a bit slow, but not monstrously slow, maybe 3-4 times slower than on CUDA)
+     - kernels cached between kernel launches (this gives a hugggeee speed boost, compared to earlier)
+     - bunch of behind-the-scenes ops added, like Cast
+     - memory and device name reported correctly now
+     - `reduce_min` working now
+     - `softmax` added
+- Oct 28:
+  - training working :-)  [test_gradients.py](tensorflow/stream_executor/cl/test/test_gradients.py)
+  - `reduce_sum`, `reduce_prod`, `reduce_max`, `reduce_mean` added, in beta [test_reductions.py](tensorflow/stream_executor/cl/test/test_reductions.py)
+- Oct 25:
+  - fixed BLAS wrapper, working now, on GPU, test script: [test_blas.py](tensorflow/stream_executor/cl/test/test_blas.py)
+  - int32 constant works on gpu now, [test_ints.py](tensorflow/stream_executor/cl/test/test_ints.py)
+- Oct 24:
+  - hmmm, just discovered some new options, to ensure operations really are on the gpu, and ... many are not :-P, so back to the drawing board a bit
+    - the good news is that component-wise add really is on the gpu
+    - the bad news is that everything else is not :-P
+  - (re-)added following per-element binary operators: `sub`, `mul`, `div`, `pow`, `minimum`, `maximum`, `squared_difference`.  This time, they actually are really running on the gpu :-)  (test: [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py))
+  - (re-)added following per-element unary operators:, which really are running on gpu now :-), [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py): `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sign`, `sin`, `sqrt`, square`, `tan`
+  - Variables can be placed on gpu now, [test_gradients.py](tensorflow/stream_executor/cl/test/test_gradients.py)
+- Oct 23:
+  - can use component wise addition from Python now :-)
+  - fixed critical bug involving `float4`s, that meant that tensors larger than, say, 3 :-P, could not be added correctly
+  - ~~added following per-element binary operators: `sub`, `mul`, `div`, `not_equal`, `minimum`, `maximum`, `pow`, `squared_difference` (test: [test_tf3.py](tensorflow/stream_executor/cl/test/test_tf3.py))~~
+  - ~~added following per-element unary operator: `tanh`, `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `exp`, `floor`, `inverse`, `isfinite`, `isinf`, `isnan`, `log`, `neg`, `sigmoid`, `sign`, `sin`, `sqrt`, square`, `tan` (test: [test_tf4.py](tensorflow/stream_executor/cl/test/test_tf4.py))~~
+  - ~~added following comparison operators: `equal_to`, `greater`, `greater_equal`, `less`, `less_equal`~~
+  - ~~added in BLAS (using Cedric Nugteren's [CLBlast](https://github.com/CNugteren/CLBlast) ).  Not very tested yet.  Test script [test_blas.py](tensorflow/stream_executor/cl/test/test_blas.py)~~
+- Oct 22:
+  - componentwise addition working, when called from c++
+  - commit `0db9cc2e`: re-enabled `-fPIC`, `-pie`
+    - this is a pre-requisite for being able to run from python at some point
+    - but if you built prior to this, you need to deeeeep clean, and rebuild from scratch:
+    ```
+    rm -Rf third_party/cuda-on-cl/build
+    bazel clean --expunge
+    ```
+  - python working (as of commit 5e67304c3c)
+    - you'll need to do `bazel clean`, and rebuild from scratch, if you already did a build prior to this commit
+- Oct 20:
+  - removed requirement for CUDA Toolkit
+  - updated build slightly: added https://github.com/hughperkins/cuda-on-cl as a submodule
+- Oct 18:
+  - stream executor up
+  - crosstool working
+  
