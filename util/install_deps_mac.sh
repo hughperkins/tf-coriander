@@ -5,13 +5,25 @@
 # - already have xcode and command-line tools installed
 # - running from root of the already cloned tf-coriander repo
 
+
+if [ -x '/opt/local/bin/port' ]; then
+  echo "Getting dependencies with MacPorts."
+  sudo port install autoconf automake libtool gflags python36
+  PYTHON=python3.6
+elif [ -x '/usr/local/bin/brew' ]; then
+  echo "Getting dependencies with Brew."
+  brew install autoconf automake libtool shtool gflags python3
+  PYTHON=python3
+else
+  echo "Could not find MacPorts or Brew in standard locations, aborting."
+fi
+
+
 set -e
 set -x
 
-brew install autoconf automake libtool shtool gflags python3
-
 if [[ ! -d env3 ]]; then {
-    python3 -m venv env3
+    $PYTHON -m venv env3
 } fi
 
 source env3/bin/activate
