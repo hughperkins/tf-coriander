@@ -35,7 +35,7 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
   native.http_archive(
     name = "gemmlowp",
     url = "http://github.com/google/gemmlowp/archive/8b20dd2ce142115857220bd6a35e8a081b3e0829.tar.gz",
-    sha256 = "9cf5f1e3d64b3632dbae5c65efb79f4374ca9ac362d788fc61e086af937ff6d7",
+    sha256 = "4fbbf7b8c41dd9d2d2500a594bcda70a5be7b64d607c1556b1be9737b2396e16",
     strip_prefix = "gemmlowp-8b20dd2ce142115857220bd6a35e8a081b3e0829",
   )
 
@@ -141,7 +141,7 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
   native.new_http_archive(
     name = "grpc",
     url = "http://github.com/grpc/grpc/archive/d7ff4ff40071d2b486a052183e3e9f9382afb745.tar.gz",
-    sha256 = "a15f352436ab92c521b1ac11e729e155ace38d0856380cf25048c5d1d9ba8e31",
+    sha256 = "81a20a2462cac1df00caa5ea9c05ced4633d657b19ed1ec3c6cf6e4f2bdbfce9",
     strip_prefix = "grpc-d7ff4ff40071d2b486a052183e3e9f9382afb745",
     build_file = str(Label("//:grpc.BUILD")),
   )
