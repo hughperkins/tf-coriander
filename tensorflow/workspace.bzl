@@ -105,9 +105,7 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
 
   native.new_http_archive(
     name = "gmock_archive",
-    url = "http://pkgs.fedoraproject.org/repo/pkgs/gmock/gmock-1.7.0.zip/073b984d8798ea1594f5e44d85b20d66/gmock-1.7.0.zip",
-    sha256 = "26fcbb5925b74ad5fc8c26b0495dfc96353f4d553492eb97e85a8a6d2f43095b",
-    strip_prefix = "gmock-1.7.0",
+    url = "https://github.com/paulsapps/gmock-1.7.0/archive/master.zip",
     build_file = str(Label("//:gmock.BUILD")),
   )
 
